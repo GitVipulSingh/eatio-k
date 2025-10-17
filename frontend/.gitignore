@@ -1,0 +1,95 @@
+# ================================
+# FRONTEND .GITIGNORE
+# ================================
+
+# ================================
+# ENVIRONMENT & SECRETS
+# ================================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.staging
+.env.prod
+
+# Keep example files
+!.env.example
+
+# ================================
+# NODE.JS
+# ================================
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# ================================
+# VITE & BUILD
+# ================================
+# Vite build output
+dist/
+dist-ssr/
+*.local
+
+# Vite cache
+.vite/
+
+# Build outputs
+build/
+out/
+
+# ================================
+# DEVELOPMENT
+# ================================
+# Hot reload
+.vite-inspect/
+
+# Vite logs
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+
+# ================================
+# CACHE & TEMP
+# ================================
+.cache/
+.parcel-cache/
+.tmp/
+.temp/
+
+# ================================
+# IDE & OS
+# ================================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ================================
+# LOGS
+# ================================
+logs/
+*.log
+
+# ================================
+# BACKUP FILES
+# ================================
+*.backup
+*.bak
+*.old
+
+# ================================
+# ROOT LEVEL BACKUPS
+# ================================
+../backup_*.zip

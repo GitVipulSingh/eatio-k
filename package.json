@@ -1,0 +1,27 @@
+{
+  "name": "eatio-fullstack",
+  "version": "1.0.0",
+  "description": "Full-stack food delivery application with React frontend and Express backend",
+  "private": true,
+  "scripts": {
+    "install": "npm install --prefix zomato-clone/server && npm install --prefix frontend",
+    "dev": "concurrently --kill-others-on-fail \"npm run dev --prefix zomato-clone/server\" \"npm run dev:wait --prefix frontend\"",
+    "build": "npm run build --prefix frontend",
+    "start": "concurrently --kill-others-on-fail \"npm run start --prefix zomato-clone/server\" \"npm run start --prefix frontend\"",
+    "dev:backend": "npm run dev --prefix zomato-clone/server",
+    "dev:frontend": "npm run dev:wait --prefix frontend",
+    "setup": "npm run install && echo ✅ Setup complete! Run 'npm run dev' to start development"
+  },
+  "keywords": [
+    "food-delivery",
+    "react",
+    "express",
+    "mongodb",
+    "fullstack"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
