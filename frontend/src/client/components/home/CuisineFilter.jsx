@@ -16,60 +16,111 @@ const CuisineFilter = ({ selectedCuisine, onCuisineChange }) => {
   ]
 
   return (
-    <Box sx={{ mb: 4 }}>
-      <Typography variant="h5" component="h2" sx={{ mb: 3, fontWeight: 600 }}>
-        Browse by Cuisine
+    <Box>
+      <Typography 
+        variant="h5" 
+        component="h2" 
+        sx={{ 
+          mb: 3, 
+          fontWeight: 700,
+          fontSize: { xs: '1.3rem', md: '1.5rem' }
+        }}
+      >
+        What's on your mind?
       </Typography>
       
       <Box
         sx={{
           display: 'flex',
-          gap: 1,
-          flexWrap: 'wrap',
+          gap: 2,
           overflowX: 'auto',
-          pb: 1,
+          pb: 2,
+          scrollBehavior: 'smooth',
           '&::-webkit-scrollbar': {
-            height: 4,
+            height: 6,
           },
           '&::-webkit-scrollbar-track': {
-            backgroundColor: 'transparent',
+            backgroundColor: 'grey.100',
+            borderRadius: 3,
           },
           '&::-webkit-scrollbar-thumb': {
             backgroundColor: 'primary.main',
-            borderRadius: 2,
+            borderRadius: 3,
+            '&:hover': {
+              backgroundColor: 'primary.dark',
+            }
           },
         }}
       >
         {cuisines.map((cuisine, index) => (
           <motion.div
             key={cuisine.id}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.3, delay: index * 0.05 }}
-            whileHover={{ scale: 1.05 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: index * 0.05 }}
+            whileHover={{ y: -4 }}
             whileTap={{ scale: 0.95 }}
           >
-            <Chip
-              label={
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                  <span>{cuisine.emoji}</span>
-                  <span>{cuisine.label}</span>
-                </Box>
-              }
+            <Box
               onClick={() => onCuisineChange(cuisine.id)}
-              variant={selectedCuisine === cuisine.id ? 'filled' : 'outlined'}
-              color={selectedCuisine === cuisine.id ? 'primary' : 'default'}
               sx={{
-                fontWeight: selectedCuisine === cuisine.id ? 600 : 400,
-                transition: 'all 0.2s ease-in-out',
+                minWidth: 120,
+                height: 100,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: 3,
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                backgroundColor: selectedCuisine === cuisine.id 
+                  ? 'primary.main' 
+                  : 'white',
+                color: selectedCuisine === cuisine.id 
+                  ? 'white' 
+                  : 'text.primary',
+                border: '2px solid',
+                borderColor: selectedCuisine === cuisine.id 
+                  ? 'primary.main' 
+                  : 'grey.200',
+                boxShadow: selectedCuisine === cuisine.id 
+                  ? '0 8px 24px rgba(249, 115, 22, 0.3)' 
+                  : '0 2px 8px rgba(0,0,0,0.05)',
                 '&:hover': {
+                  borderColor: 'primary.main',
+                  boxShadow: selectedCuisine === cuisine.id 
+                    ? '0 12px 32px rgba(249, 115, 22, 0.4)' 
+                    : '0 8px 24px rgba(249, 115, 22, 0.15)',
                   backgroundColor: selectedCuisine === cuisine.id 
                     ? 'primary.dark' 
                     : 'primary.light',
-                  color: 'white',
+                  color: selectedCuisine === cuisine.id 
+                    ? 'white' 
+                    : 'primary.main',
                 },
               }}
-            />
+            >
+              <Typography 
+                variant="h4" 
+                sx={{ 
+                  mb: 1,
+                  fontSize: '2rem',
+                  filter: selectedCuisine === cuisine.id ? 'brightness(1.2)' : 'none'
+                }}
+              >
+                {cuisine.emoji}
+              </Typography>
+              <Typography 
+                variant="body2" 
+                sx={{ 
+                  fontWeight: selectedCuisine === cuisine.id ? 700 : 600,
+                  fontSize: '0.9rem',
+                  textAlign: 'center',
+                }}
+              >
+                {cuisine.label}
+              </Typography>
+            </Box>
           </motion.div>
         ))}
       </Box>

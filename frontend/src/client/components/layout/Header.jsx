@@ -95,11 +95,11 @@ const Header = () => {
         position="sticky" 
         elevation={0}
         sx={{ 
-          backgroundColor: 'background.paper',
+          backgroundColor: 'rgba(255, 255, 255, 0.95)',
           borderBottom: '1px solid',
-          borderColor: 'divider',
-          backdropFilter: 'blur(10px)',
-          background: 'rgba(255, 255, 255, 0.95)',
+          borderColor: 'grey.100',
+          backdropFilter: 'blur(20px)',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
         }}
       >
         <Toolbar sx={{ px: { xs: 2, lg: 4 }, minHeight: { xs: 64, sm: 70 } }}>
@@ -119,20 +119,21 @@ const Header = () => {
           {/* Logo */}
           <Link to="/" style={{ textDecoration: 'none' }}>
             <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              style={{ display: 'flex', alignItems: 'center', gap: '12px' }}
             >
               <Box
                 sx={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: '50%',
-                  background: 'linear-gradient(45deg, #f97316, #ea580c)',
+                  width: 44,
+                  height: 44,
+                  borderRadius: 3,
+                  background: 'linear-gradient(135deg, #f97316, #ea580c)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontSize: '1.5rem'
+                  fontSize: '1.4rem',
+                  boxShadow: '0 4px 12px rgba(249, 115, 22, 0.3)',
                 }}
               >
                 🍽️
@@ -141,12 +142,14 @@ const Header = () => {
                 variant="h5"
                 component="div"
                 sx={{
-                  fontWeight: 700,
+                  fontWeight: 800,
                   background: 'linear-gradient(45deg, #f97316, #ea580c)',
                   backgroundClip: 'text',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
-                  display: { xs: 'none', sm: 'block' }
+                  display: { xs: 'none', sm: 'block' },
+                  fontSize: '1.5rem',
+                  letterSpacing: '-0.5px'
                 }}
               >
                 Eatio
@@ -178,28 +181,35 @@ const Header = () => {
           </IconButton>
 
           {/* Cart */}
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
             <IconButton
               component={Link}
               to="/cart"
               color="inherit"
               aria-label="shopping cart"
               sx={{ 
-                mr: 1,
-                backgroundColor: totalItems > 0 ? 'primary.light' : 'transparent',
+                mr: 2,
+                backgroundColor: totalItems > 0 ? 'primary.main' : 'grey.100',
+                color: totalItems > 0 ? 'white' : 'text.secondary',
+                borderRadius: 2,
+                width: 44,
+                height: 44,
                 '&:hover': {
-                  backgroundColor: 'primary.light',
-                }
+                  backgroundColor: totalItems > 0 ? 'primary.dark' : 'primary.light',
+                  color: totalItems > 0 ? 'white' : 'primary.main',
+                },
+                transition: 'all 0.2s ease'
               }}
             >
               <Badge 
                 badgeContent={totalItems} 
-                color="primary"
+                color="error"
                 sx={{
                   '& .MuiBadge-badge': {
-                    fontSize: '0.75rem',
-                    minWidth: '18px',
-                    height: '18px'
+                    fontSize: '0.7rem',
+                    minWidth: '16px',
+                    height: '16px',
+                    backgroundColor: totalItems > 0 ? 'error.main' : 'primary.main',
                   }
                 }}
               >

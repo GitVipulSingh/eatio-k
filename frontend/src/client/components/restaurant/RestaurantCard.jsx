@@ -15,6 +15,7 @@ import {
   MapPinIcon,
   ClockIcon,
   HeartIcon,
+  StarIcon,
 } from '@heroicons/react/24/outline'
 import { HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid'
 import { getRestaurantImage } from '../../../common/utils/foodImages'
@@ -143,35 +144,82 @@ const RestaurantCard = ({ restaurant }) => {
         </IconButton>
 
         {/* Restaurant Image */}
-        <CardMedia
-          component="img"
-          height="160"
-          image={getRestaurantImage(restaurant.cuisine)}
-          alt={restaurant.name}
-          sx={{
-            objectFit: 'cover',
-          }}
-        />
+        <Box sx={{ position: 'relative', overflow: 'hidden' }}>
+          <CardMedia
+            component="img"
+            height="180"
+            image={getRestaurantImage(restaurant.cuisine)}
+            alt={restaurant.name}
+            sx={{
+              objectFit: 'cover',
+              transition: 'transform 0.3s ease',
+              '&:hover': {
+                transform: 'scale(1.05)',
+              },
+            }}
+          />
+          
+          {/* Delivery Time Badge */}
+          <Box
+            sx={{
+              position: 'absolute',
+              bottom: 8,
+              right: 8,
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              color: 'white',
+              px: 1.5,
+              py: 0.5,
+              borderRadius: 1,
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 0.5,
+            }}
+          >
+            <ClockIcon className="h-3 w-3" />
+            {getDeliveryTime()}
+          </Box>
 
-        <CardContent sx={{ flexGrow: 1, p: 1.5 }}>
+          {/* Offer Badge */}
+          <Box
+            sx={{
+              position: 'absolute',
+              top: 8,
+              right: 8,
+              backgroundColor: 'success.main',
+              color: 'white',
+              px: 1,
+              py: 0.5,
+              borderRadius: 1,
+              fontSize: '0.7rem',
+              fontWeight: 600,
+            }}
+          >
+            FREE DELIVERY
+          </Box>
+        </Box>
+
+        <CardContent sx={{ flexGrow: 1, p: 2 }}>
           {/* Restaurant Name */}
           <Typography
-            variant="subtitle1"
+            variant="h6"
             component="h3"
             sx={{
-              fontWeight: 600,
-              mb: 0.5,
+              fontWeight: 700,
+              mb: 1,
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
-              lineHeight: 1.3
+              lineHeight: 1.2,
+              fontSize: '1.1rem'
             }}
           >
             {restaurant.name}
           </Typography>
 
           {/* Cuisine Tags */}
-          <Box sx={{ mb: 1.5 }}>
+          <Box sx={{ mb: 2 }}>
             <Typography 
               variant="body2" 
               color="text.secondary"
@@ -179,6 +227,8 @@ const RestaurantCard = ({ restaurant }) => {
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap',
+                fontSize: '0.9rem',
+                fontWeight: 500,
               }}
             >
               {restaurant.cuisine?.slice(0, 3).join(', ')}
@@ -186,67 +236,77 @@ const RestaurantCard = ({ restaurant }) => {
             </Typography>
           </Box>
 
-          {/* Rating and Delivery Time */}
+          {/* Rating and Reviews */}
           <Box
             sx={{
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'space-between',
-              mb: 1,
+              gap: 1,
+              mb: 2,
             }}
           >
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-              <Rating
-                value={restaurant.averageRating || 4.2}
-                precision={0.1}
-                size="small"
-                readOnly
-                sx={{ fontSize: '1rem' }}
-              />
-              <Typography variant="caption" color="text.secondary">
-                ({restaurant.averageRating?.toFixed(1) || '4.2'})
-              </Typography>
+            <Box 
+              sx={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: 0.5,
+                backgroundColor: 'success.main',
+                color: 'white',
+                px: 1,
+                py: 0.3,
+                borderRadius: 1,
+                fontSize: '0.8rem',
+                fontWeight: 600,
+              }}
+            >
+              <StarIcon className="h-3 w-3" />
+              {restaurant.averageRating?.toFixed(1) || '4.2'}
             </Box>
-
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-              <ClockIcon className="h-3 w-3 text-gray-500" />
-              <Typography variant="caption" color="text.secondary">
-                {getDeliveryTime()}
-              </Typography>
-            </Box>
+            <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.85rem' }}>
+              ({Math.floor(Math.random() * 1000) + 100}+ reviews)
+            </Typography>
           </Box>
 
-          {/* Location and Menu Count */}
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-              <MapPinIcon className="h-3 w-3 text-gray-500" />
-              <Typography
-                variant="caption"
-                color="text.secondary"
-                sx={{
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {restaurant.address?.city || 'Location'}
-              </Typography>
-            </Box>
-            {restaurant.menuItems?.length > 0 && (
-              <Typography variant="caption" color="text.secondary">
-                {restaurant.menuItems.length} dishes
-              </Typography>
-            )}
+          {/* Location */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 2 }}>
+            <MapPinIcon className="h-4 w-4 text-gray-400" />
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                fontSize: '0.85rem',
+              }}
+            >
+              {restaurant.address?.city || 'Location'}
+            </Typography>
           </Box>
 
-          {/* Delivery Info */}
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Typography variant="caption" color="primary.main" fontWeight={500}>
-              Free Delivery
+          {/* Price and Offers */}
+          <Box sx={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center',
+            pt: 1,
+            borderTop: '1px solid',
+            borderColor: 'grey.100',
+          }}>
+            <Typography variant="body2" sx={{ fontWeight: 600, color: 'text.primary' }}>
+              ₹{Math.floor(Math.random() * 200) + 200} for two
             </Typography>
-            <Typography variant="caption" color="success.main" fontWeight={500}>
-              ₹200 for two
-            </Typography>
+            <Box sx={{ 
+              backgroundColor: 'primary.light', 
+              color: 'primary.main',
+              px: 1,
+              py: 0.3,
+              borderRadius: 1,
+              fontSize: '0.75rem',
+              fontWeight: 600,
+            }}>
+              {Math.floor(Math.random() * 30) + 10}% OFF
+            </Box>
           </Box>
         </CardContent>
       </Card>
