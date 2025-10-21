@@ -139,171 +139,80 @@ const RestaurantDetailPage = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        {/* Restaurant Header */}
-        <Box sx={{ mb: 4 }}>
-          {/* Hero Image */}
-          <Box sx={{ position: 'relative', height: { xs: 200, md: 300 }, overflow: 'hidden', borderRadius: 3 }}>
-            <CardMedia
-              component="img"
-              height="100%"
-              image={getRestaurantHeroImage(restaurant.cuisine)}
-              alt={restaurant.name}
-              sx={{ 
-                objectFit: 'cover',
-                width: '100%',
-                height: '100%',
-              }}
-            />
-            
-            {/* Overlay Gradient */}
-            <Box
-              sx={{
-                position: 'absolute',
-                bottom: 0,
-                left: 0,
-                right: 0,
-                height: '50%',
-                background: 'linear-gradient(transparent, rgba(0,0,0,0.7))',
-              }}
-            />
+        {/* Compact Restaurant Header */}
+        <Box sx={{ 
+          backgroundColor: 'white',
+          borderBottom: '1px solid',
+          borderColor: 'grey.200',
+          p: 3,
+          mb: 3
+        }}>
+          <Typography 
+            variant="h4" 
+            component="h1" 
+            sx={{ 
+              fontWeight: 700, 
+              mb: 1,
+              fontSize: { xs: '1.5rem', md: '1.8rem' }
+            }}
+          >
+            {restaurant.name}
+          </Typography>
 
-            {/* Restaurant Status Badge */}
-            <Box
-              sx={{
-                position: 'absolute',
-                top: 16,
-                left: 16,
-                backgroundColor: restaurant.isOpen ? 'success.main' : 'error.main',
-                color: 'white',
-                px: 2,
-                py: 1,
-                borderRadius: 2,
-                fontWeight: 600,
-                fontSize: '0.9rem',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-              }}
-            >
-              {restaurant.isOpen !== false ? '🟢 Open Now' : '🔴 Closed'}
+          <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
+            {restaurant.cuisine?.join(', ')}
+          </Typography>
+
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, flexWrap: 'wrap', mb: 2 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+              <span>📍</span>
+              <Typography variant="body2" color="text.secondary">
+                {restaurant.address?.street}, {restaurant.address?.city}
+              </Typography>
             </Box>
 
-            {/* Favorite Button */}
-            <IconButton
-              sx={{
-                position: 'absolute',
-                top: 16,
-                right: 16,
-                backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                '&:hover': {
-                  backgroundColor: 'white',
-                },
-              }}
-            >
-              <HeartIcon className="h-5 w-5" />
-            </IconButton>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+              <Box sx={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: 0.5,
+                backgroundColor: 'success.main',
+                color: 'white',
+                px: 1,
+                py: 0.3,
+                borderRadius: 1,
+                fontSize: '0.85rem',
+                fontWeight: 600,
+              }}>
+                <StarIcon className="h-3 w-3" />
+                {restaurant.averageRating?.toFixed(1) || '4.2'}
+              </Box>
+              <Typography variant="body2" color="text.secondary">
+                ({Math.floor(Math.random() * 1000) + 500}+ reviews)
+              </Typography>
+            </Box>
+
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+              <span>🕒</span>
+              <Typography variant="body2">28-35 mins</Typography>
+            </Box>
+
+            <Typography variant="body2" sx={{ fontWeight: 600 }}>
+              ₹{Math.floor(Math.random() * 200) + 200} for two
+            </Typography>
           </Box>
 
-          {/* Restaurant Info Card */}
-          <Card sx={{ mt: -6, mx: 2, position: 'relative', zIndex: 1, borderRadius: 3 }}>
-            <CardContent sx={{ p: 3 }}>
-              <Grid container spacing={3} alignItems="center">
-                <Grid item xs={12} md={8}>
-                  <Typography 
-                    variant="h3" 
-                    component="h1" 
-                    sx={{ 
-                      fontWeight: 800, 
-                      mb: 2,
-                      fontSize: { xs: '1.8rem', md: '2.5rem' }
-                    }}
-                  >
-                    {restaurant.name}
-                  </Typography>
-
-                  {/* Cuisine Tags */}
-                  <Box sx={{ display: 'flex', gap: 1, mb: 3, flexWrap: 'wrap' }}>
-                    {restaurant.cuisine?.map((cuisine) => (
-                      <Chip 
-                        key={cuisine} 
-                        label={cuisine} 
-                        sx={{
-                          backgroundColor: 'primary.light',
-                          color: 'primary.main',
-                          fontWeight: 600,
-                          '&:hover': {
-                            backgroundColor: 'primary.main',
-                            color: 'white',
-                          }
-                        }}
-                      />
-                    ))}
-                  </Box>
-
-                  {/* Rating and Stats */}
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, mb: 2, flexWrap: 'wrap' }}>
-                    <Box sx={{ 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      gap: 1,
-                      backgroundColor: 'success.main',
-                      color: 'white',
-                      px: 2,
-                      py: 1,
-                      borderRadius: 2,
-                      fontWeight: 600,
-                    }}>
-                      <StarIcon className="h-4 w-4" />
-                      {restaurant.averageRating?.toFixed(1) || '4.2'}
-                      <Typography variant="body2" sx={{ opacity: 0.9 }}>
-                        ({Math.floor(Math.random() * 1000) + 500}+ reviews)
-                      </Typography>
-                    </Box>
-
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <ClockIcon className="h-4 w-4 text-gray-500" />
-                      <Typography variant="body1" sx={{ fontWeight: 500 }}>
-                        28-35 mins
-                      </Typography>
-                    </Box>
-
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Typography variant="body1" sx={{ fontWeight: 600, color: 'success.main' }}>
-                        ₹{Math.floor(Math.random() * 200) + 200} for two
-                      </Typography>
-                    </Box>
-                  </Box>
-
-                  {/* Address */}
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <MapPinIcon className="h-4 w-4 text-gray-500" />
-                    <Typography variant="body2" color="text.secondary">
-                      {restaurant.address?.street}, {restaurant.address?.city} - {restaurant.address?.pincode}
-                    </Typography>
-                  </Box>
-                </Grid>
-
-                <Grid item xs={12} md={4}>
-                  <Box sx={{ 
-                    textAlign: { xs: 'left', md: 'right' },
-                    backgroundColor: 'success.light',
-                    p: 2,
-                    borderRadius: 2,
-                    border: '2px dashed',
-                    borderColor: 'success.main',
-                  }}>
-                    <Typography variant="h6" color="success.main" sx={{ fontWeight: 700, mb: 1 }}>
-                      🚚 FREE DELIVERY
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      On orders above ₹199
-                    </Typography>
-                    <Typography variant="caption" color="success.main" sx={{ fontWeight: 600 }}>
-                      You'll save ₹49 on delivery!
-                    </Typography>
-                  </Box>
-                </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
+          <Box sx={{ 
+            backgroundColor: 'success.light',
+            color: 'success.main',
+            p: 1.5,
+            borderRadius: 1,
+            display: 'inline-block'
+          }}>
+            <Typography variant="body2" sx={{ fontWeight: 600 }}>
+              ✅ FREE DELIVERY on orders above ₹199
+            </Typography>
+          </Box>
         </Box>
 
         {/* Menu Section */}
@@ -390,25 +299,7 @@ const RestaurantDetailPage = () => {
                                       }}
                                     />
                                     
-                                    {/* Bestseller Badge */}
-                                    {Math.random() > 0.7 && (
-                                      <Box
-                                        sx={{
-                                          position: 'absolute',
-                                          top: 8,
-                                          left: 8,
-                                          backgroundColor: 'error.main',
-                                          color: 'white',
-                                          px: 1,
-                                          py: 0.3,
-                                          borderRadius: 1,
-                                          fontSize: '0.7rem',
-                                          fontWeight: 600,
-                                        }}
-                                      >
-                                        BESTSELLER
-                                      </Box>
-                                    )}
+
 
                                     {/* Veg/Non-veg Indicator */}
                                     <Box
@@ -524,46 +415,68 @@ const RestaurantDetailPage = () => {
                                       </Box>
 
                                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                        {quantities[item._id] > 0 ? (
+                                        {(quantities[item._id] || 0) > 0 ? (
                                           <>
+                                            {/* Quantity Selector */}
                                             <Box sx={{ 
                                               display: 'flex', 
                                               alignItems: 'center', 
-                                              backgroundColor: 'primary.light',
+                                              backgroundColor: 'white',
+                                              border: '2px solid',
+                                              borderColor: 'primary.main',
                                               borderRadius: 2,
-                                              p: 0.5,
+                                              overflow: 'hidden',
                                             }}>
                                               <IconButton
                                                 size="small"
                                                 onClick={() => handleQuantityChange(item._id, -1)}
                                                 sx={{ 
                                                   color: 'primary.main',
-                                                  '&:hover': { backgroundColor: 'primary.main', color: 'white' }
+                                                  borderRadius: 0,
+                                                  width: 36,
+                                                  height: 36,
+                                                  '&:hover': { 
+                                                    backgroundColor: 'primary.main', 
+                                                    color: 'white' 
+                                                  }
                                                 }}
                                               >
                                                 <MinusIcon className="h-4 w-4" />
                                               </IconButton>
+                                              
                                               <Typography 
                                                 sx={{ 
-                                                  minWidth: 24, 
+                                                  minWidth: 40, 
                                                   textAlign: 'center',
-                                                  fontWeight: 600,
-                                                  color: 'primary.main'
+                                                  fontWeight: 700,
+                                                  color: 'primary.main',
+                                                  py: 1,
+                                                  backgroundColor: 'primary.light',
+                                                  fontSize: '1rem',
                                                 }}
                                               >
                                                 {quantities[item._id]}
                                               </Typography>
+                                              
                                               <IconButton
                                                 size="small"
                                                 onClick={() => handleQuantityChange(item._id, 1)}
                                                 sx={{ 
                                                   color: 'primary.main',
-                                                  '&:hover': { backgroundColor: 'primary.main', color: 'white' }
+                                                  borderRadius: 0,
+                                                  width: 36,
+                                                  height: 36,
+                                                  '&:hover': { 
+                                                    backgroundColor: 'primary.main', 
+                                                    color: 'white' 
+                                                  }
                                                 }}
                                               >
                                                 <PlusIcon className="h-4 w-4" />
                                               </IconButton>
                                             </Box>
+                                            
+                                            {/* Add to Cart Button */}
                                             <Button
                                               variant="contained"
                                               size="small"
@@ -572,12 +485,15 @@ const RestaurantDetailPage = () => {
                                                 borderRadius: 2,
                                                 fontWeight: 600,
                                                 px: 2,
+                                                py: 1,
+                                                fontSize: '0.85rem',
                                               }}
                                             >
                                               ADD TO CART
                                             </Button>
                                           </>
                                         ) : (
+                                          /* Initial Add Button */
                                           <Button
                                             variant="outlined"
                                             size="medium"
@@ -586,9 +502,12 @@ const RestaurantDetailPage = () => {
                                               borderRadius: 2,
                                               fontWeight: 600,
                                               px: 3,
+                                              py: 1,
                                               borderWidth: 2,
                                               '&:hover': {
                                                 borderWidth: 2,
+                                                backgroundColor: 'primary.main',
+                                                color: 'white',
                                               }
                                             }}
                                           >

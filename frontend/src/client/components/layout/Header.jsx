@@ -181,42 +181,45 @@ const Header = () => {
           </IconButton>
 
           {/* Cart */}
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-            <IconButton
-              component={Link}
-              to="/cart"
-              color="inherit"
-              aria-label="shopping cart"
-              sx={{ 
-                mr: 2,
-                backgroundColor: totalItems > 0 ? 'primary.main' : 'grey.100',
-                color: totalItems > 0 ? 'white' : 'text.secondary',
-                borderRadius: 2,
-                width: 44,
-                height: 44,
-                '&:hover': {
-                  backgroundColor: totalItems > 0 ? 'primary.dark' : 'primary.light',
-                  color: totalItems > 0 ? 'white' : 'primary.main',
-                },
-                transition: 'all 0.2s ease'
+          <IconButton
+            component={Link}
+            to="/cart"
+            aria-label="shopping cart"
+            sx={{ 
+              mr: 2,
+              backgroundColor: totalItems > 0 ? 'primary.main' : 'grey.100',
+              color: totalItems > 0 ? 'white' : 'grey.600',
+              borderRadius: 2,
+              width: 44,
+              height: 44,
+              '&:hover': {
+                backgroundColor: totalItems > 0 ? 'primary.dark' : 'primary.light',
+                color: totalItems > 0 ? 'white' : 'primary.main',
+              },
+              transition: 'all 0.2s ease'
+            }}
+          >
+            <Badge 
+              badgeContent={totalItems || 0} 
+              color="error"
+              sx={{
+                '& .MuiBadge-badge': {
+                  fontSize: '0.7rem',
+                  minWidth: '16px',
+                  height: '16px',
+                  display: totalItems > 0 ? 'flex' : 'none',
+                }
               }}
             >
-              <Badge 
-                badgeContent={totalItems} 
-                color="error"
-                sx={{
-                  '& .MuiBadge-badge': {
-                    fontSize: '0.7rem',
-                    minWidth: '16px',
-                    height: '16px',
-                    backgroundColor: totalItems > 0 ? 'error.main' : 'primary.main',
-                  }
-                }}
-              >
-                <ShoppingCartIcon className="h-5 w-5" />
-              </Badge>
-            </IconButton>
-          </motion.div>
+              <ShoppingCartIcon 
+                style={{ 
+                  width: '20px', 
+                  height: '20px',
+                  display: 'block'
+                }} 
+              />
+            </Badge>
+          </IconButton>
 
           {/* Auth Section */}
           {isAuthenticated ? (

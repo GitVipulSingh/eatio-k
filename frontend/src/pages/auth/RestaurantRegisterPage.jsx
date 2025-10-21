@@ -595,32 +595,37 @@ const RestaurantRegisterPage = () => {
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <Paper elevation={3} sx={{ p: 4 }}>
-          {/* Header */}
-          <Box sx={{ mb: 4 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-              <IconButton
-                component={Link}
-                to="/"
-                sx={{ mr: 1 }}
-              >
-                <ArrowLeftIcon className="h-5 w-5" />
-              </IconButton>
-              <BuildingStorefrontIcon className="h-6 w-6 mr-2 text-orange-500" />
-              <Typography variant="h4" sx={{ fontWeight: 600 }}>
+    <Box sx={{ 
+      minHeight: '100vh',
+      backgroundColor: 'grey.50',
+      py: 4
+    }}>
+      <Container maxWidth="md">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <Paper elevation={0} sx={{ p: 4, borderRadius: 3 }}>
+            {/* Header */}
+            <Box sx={{ mb: 4 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <Button
+                  component={Link}
+                  to="/"
+                  startIcon={<ArrowLeftIcon className="h-4 w-4" />}
+                  sx={{ mr: 2 }}
+                >
+                  Back to Home
+                </Button>
+              </Box>
+              <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
                 Partner with Eatio
               </Typography>
+              <Typography variant="body1" color="text.secondary">
+                Join our platform and start serving customers across the city
+              </Typography>
             </Box>
-            <Typography variant="body1" color="text.secondary">
-              Join our platform and start serving customers across the city
-            </Typography>
-          </Box>
 
           {/* Stepper */}
           <Stepper activeStep={activeStep} sx={{ mb: 4 }}>
@@ -722,6 +727,7 @@ const RestaurantRegisterPage = () => {
         </Paper>
       </motion.div>
     </Container>
+    </Box>
   )
 }
 

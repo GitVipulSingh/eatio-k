@@ -58,31 +58,39 @@ const CustomerRegisterPage = () => {
   }
 
   return (
-    <Container maxWidth="sm" sx={{ py: 8 }}>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <Paper elevation={3} sx={{ p: 4 }}>
-          {/* Header */}
-          <Box sx={{ mb: 4 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-              <IconButton
-                component={Link}
-                to="/"
-                sx={{ mr: 1 }}
-              >
-                <ArrowLeftIcon className="h-5 w-5" />
-              </IconButton>
-              <Typography variant="h4" sx={{ fontWeight: 600 }}>
+    <Box sx={{ 
+      minHeight: '100vh',
+      backgroundColor: 'grey.50',
+      py: 4,
+      display: 'flex',
+      alignItems: 'center'
+    }}>
+      <Container maxWidth="sm">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <Paper elevation={0} sx={{ p: 4, borderRadius: 3 }}>
+            {/* Header */}
+            <Box sx={{ mb: 4 }}>
+              <Box sx={{ mb: 2 }}>
+                <Button
+                  component={Link}
+                  to="/"
+                  startIcon={<ArrowLeftIcon className="h-4 w-4" />}
+                  sx={{ mb: 2 }}
+                >
+                  Back to Home
+                </Button>
+              </Box>
+              <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
                 Join Eatio
               </Typography>
+              <Typography variant="body1" color="text.secondary">
+                Create your account and start ordering delicious food!
+              </Typography>
             </Box>
-            <Typography variant="body1" color="text.secondary">
-              Create your customer account and start ordering delicious food!
-            </Typography>
-          </Box>
 
           {/* Registration Form */}
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -235,6 +243,7 @@ const CustomerRegisterPage = () => {
         </Paper>
       </motion.div>
     </Container>
+    </Box>
   )
 }
 

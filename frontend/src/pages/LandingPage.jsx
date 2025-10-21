@@ -83,12 +83,9 @@ const LandingPage = () => {
         sx={{
           background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
           color: 'white',
-          py: { xs: 6, md: 10 },
+          py: { xs: 4, md: 6 },
           position: 'relative',
           overflow: 'hidden',
-          minHeight: { xs: '70vh', md: '80vh' },
-          display: 'flex',
-          alignItems: 'center',
         }}
       >
         {/* Background Pattern */}
@@ -105,7 +102,7 @@ const LandingPage = () => {
 
         <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
           <Grid container spacing={4} alignItems="center">
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12}>
               <motion.div
                 initial={{ opacity: 0, x: -50 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -131,386 +128,149 @@ const LandingPage = () => {
                 </motion.div>
 
                 <Typography
-                  variant={isMobile ? 'h3' : 'h2'}
+                  variant="h4"
                   component="h1"
                   sx={{
-                    fontWeight: 800,
-                    mb: 3,
-                    lineHeight: 1.1,
-                    fontSize: { xs: '2.5rem', md: '3.5rem' }
+                    fontWeight: 700,
+                    mb: 2,
+                    lineHeight: 1.2,
+                    fontSize: { xs: '1.8rem', md: '2.2rem' }
                   }}
                 >
-                  Craving Something
-                  <br />
-                  <Box component="span" sx={{ 
-                    background: 'linear-gradient(45deg, #fed7aa, #fbbf24)',
-                    backgroundClip: 'text',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                  }}>
-                    Delicious?
-                  </Box>
+                  Order food online from your favorite restaurants
                 </Typography>
 
                 <Typography
-                  variant="h6"
+                  variant="body1"
                   sx={{
-                    mb: 4,
-                    opacity: 0.95,
-                    fontWeight: 400,
-                    lineHeight: 1.6,
-                    fontSize: { xs: '1.1rem', md: '1.25rem' }
+                    mb: 3,
+                    opacity: 0.9,
+                    fontSize: { xs: '1rem', md: '1.1rem' }
                   }}
                 >
-                  Get your favorite food delivered in just 28 minutes from 10,000+ restaurants across 50+ cities
+                  Fast delivery • 10,000+ restaurants • 50+ cities
                 </Typography>
 
-                {/* Stats Row */}
-                <Box sx={{ display: 'flex', gap: 3, mb: 4, flexWrap: 'wrap' }}>
-                  {stats.slice(0, 2).map((stat, index) => (
-                    <motion.div
-                      key={stat.label}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.5 + index * 0.1 }}
-                    >
-                      <Box sx={{ textAlign: 'center' }}>
-                        <Typography variant="h5" sx={{ fontWeight: 700, color: '#fed7aa' }}>
-                          {stat.number}
-                        </Typography>
-                        <Typography variant="body2" sx={{ opacity: 0.8 }}>
-                          {stat.label}
-                        </Typography>
-                      </Box>
-                    </motion.div>
-                  ))}
-                </Box>
-
-                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mb: 4 }}>
-                  <motion.div
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
+                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+                  <Button
+                    component={Link}
+                    to="/auth/register/customer"
+                    variant="contained"
+                    size="large"
+                    sx={{
+                      backgroundColor: 'white',
+                      color: 'primary.main',
+                      fontWeight: 600,
+                      px: 3,
+                      py: 1.2,
+                      borderRadius: 2,
+                      '&:hover': {
+                        backgroundColor: '#f8fafc',
+                      },
+                    }}
                   >
-                    <Button
-                      component={Link}
-                      to="/auth/register/customer"
-                      variant="contained"
-                      size="large"
-                      sx={{
-                        backgroundColor: 'white',
-                        color: 'primary.main',
-                        fontWeight: 600,
-                        px: 4,
-                        py: 1.8,
-                        borderRadius: 2,
-                        boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
-                        '&:hover': {
-                          backgroundColor: '#f8fafc',
-                          boxShadow: '0 12px 40px rgba(0,0,0,0.15)',
-                        },
-                      }}
-                      endIcon={<ArrowRightIcon className="h-4 w-4" />}
-                    >
-                      Order Now - It's Free!
-                    </Button>
-                  </motion.div>
+                    Start Ordering
+                  </Button>
 
-                  <motion.div
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
+                  <Button
+                    component={Link}
+                    to="/auth/login"
+                    variant="outlined"
+                    size="large"
+                    sx={{
+                      borderColor: 'white',
+                      color: 'white',
+                      fontWeight: 600,
+                      px: 3,
+                      py: 1.2,
+                      borderRadius: 2,
+                      '&:hover': {
+                        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                      },
+                    }}
                   >
-                    <Button
-                      component={Link}
-                      to="/auth/login"
-                      variant="outlined"
-                      size="large"
-                      sx={{
-                        borderColor: 'rgba(255, 255, 255, 0.5)',
-                        color: 'white',
-                        fontWeight: 600,
-                        px: 4,
-                        py: 1.8,
-                        borderRadius: 2,
-                        backdropFilter: 'blur(10px)',
-                        '&:hover': {
-                          borderColor: 'white',
-                          backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                        },
-                      }}
-                    >
-                      Sign In
-                    </Button>
-                  </motion.div>
+                    Sign In
+                  </Button>
                 </Stack>
-
-                {/* Partner CTA */}
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.8 }}
-                >
-                  <Box sx={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    gap: 2,
-                    p: 2,
-                    borderRadius: 2,
-                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                    backdropFilter: 'blur(10px)',
-                  }}>
-                    <Typography variant="body2" sx={{ opacity: 0.9 }}>
-                      Restaurant owner?
-                    </Typography>
-                    <Button
-                      component={Link}
-                      to="/auth/register/restaurant"
-                      size="small"
-                      sx={{
-                        color: '#fed7aa',
-                        fontWeight: 600,
-                        textDecoration: 'underline',
-                        '&:hover': {
-                          backgroundColor: 'rgba(254, 215, 170, 0.1)',
-                        },
-                      }}
-                    >
-                      Partner with us →
-                    </Button>
-                  </Box>
-                </motion.div>
               </motion.div>
             </Grid>
 
-            <Grid item xs={12} md={6}>
-              <motion.div
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-              >
-                <Box
-                  sx={{
-                    position: 'relative',
-                    height: { xs: 300, md: 450 },
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}
-                >
-                  {/* Main Hero Image */}
-                  <motion.div
-                    animate={{
-                      y: [0, -10, 0],
-                    }}
-                    transition={{
-                      duration: 4,
-                      repeat: Infinity,
-                      ease: 'easeInOut',
-                    }}
-                    style={{
-                      position: 'relative',
-                      zIndex: 2,
-                    }}
-                  >
-                    <Box
-                      component="img"
-                      src="https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-                      alt="Delicious food delivery"
-                      sx={{
-                        width: { xs: 280, md: 350 },
-                        height: { xs: 280, md: 350 },
-                        objectFit: 'cover',
-                        borderRadius: 4,
-                        boxShadow: '0 25px 50px rgba(0, 0, 0, 0.25)',
-                      }}
-                    />
-                  </motion.div>
 
-                  {/* Floating Elements */}
-                  <motion.div
-                    animate={{
-                      y: [0, -15, 0],
-                      rotate: [0, 5, 0],
-                    }}
-                    transition={{
-                      duration: 3,
-                      repeat: Infinity,
-                      ease: 'easeInOut',
-                    }}
-                    style={{
-                      position: 'absolute',
-                      top: '10%',
-                      right: '10%',
-                      zIndex: 3,
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                        borderRadius: 2,
-                        p: 1.5,
-                        boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
-                        backdropFilter: 'blur(10px)',
-                      }}
-                    >
-                      <Typography variant="body2" sx={{ fontWeight: 600, color: 'primary.main' }}>
-                        🍕 28min delivery
-                      </Typography>
-                    </Box>
-                  </motion.div>
-
-                  <motion.div
-                    animate={{
-                      y: [0, 10, 0],
-                      rotate: [0, -3, 0],
-                    }}
-                    transition={{
-                      duration: 3.5,
-                      repeat: Infinity,
-                      ease: 'easeInOut',
-                    }}
-                    style={{
-                      position: 'absolute',
-                      bottom: '15%',
-                      left: '5%',
-                      zIndex: 3,
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                        borderRadius: 2,
-                        p: 1.5,
-                        boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
-                        backdropFilter: 'blur(10px)',
-                      }}
-                    >
-                      <Typography variant="body2" sx={{ fontWeight: 600, color: 'success.main' }}>
-                        ⭐ 4.8 Rating
-                      </Typography>
-                    </Box>
-                  </motion.div>
-                </Box>
-              </motion.div>
-            </Grid>
           </Grid>
         </Container>
       </Box>
 
       {/* Features Section */}
-      <Container maxWidth="lg" sx={{ py: { xs: 6, md: 10 } }}>
-        <Box sx={{ textAlign: 'center', mb: 8 }}>
+      <Container maxWidth="lg" sx={{ py: 6 }}>
+        <Box sx={{ textAlign: 'center', mb: 6 }}>
           <Typography 
-            variant="h3" 
+            variant="h4" 
             component="h2" 
             sx={{ 
               fontWeight: 700, 
               mb: 2,
-              fontSize: { xs: '2rem', md: '2.5rem' }
             }}
           >
-            Why 2M+ customers love us
-          </Typography>
-          <Typography variant="h6" color="text.secondary" sx={{ maxWidth: 600, mx: 'auto' }}>
-            Experience the best food delivery service with unmatched quality and speed
+            Why choose us?
           </Typography>
         </Box>
 
         <Grid container spacing={3}>
           {features.map((feature, index) => (
-            <Grid item xs={12} sm={6} md={3} key={index}>
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                whileHover={{ y: -8 }}
-              >
-                <Card
+            <Grid item xs={6} md={3} key={index}>
+              <Box sx={{ textAlign: 'center', p: 2 }}>
+                <Box
                   sx={{
-                    height: '100%',
-                    textAlign: 'center',
-                    p: 3,
-                    border: '1px solid',
-                    borderColor: 'grey.100',
-                    borderRadius: 3,
-                    transition: 'all 0.3s ease',
-                    '&:hover': {
-                      boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
-                      borderColor: feature.color,
-                    }
+                    width: 48,
+                    height: 48,
+                    borderRadius: '50%',
+                    backgroundColor: `${feature.color}15`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    mx: 'auto',
+                    mb: 2,
+                    color: feature.color,
                   }}
                 >
-                  <CardContent sx={{ p: 0 }}>
-                    <Box
-                      sx={{
-                        width: 56,
-                        height: 56,
-                        borderRadius: '50%',
-                        backgroundColor: `${feature.color}15`,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        mx: 'auto',
-                        mb: 2,
-                        color: feature.color,
-                      }}
-                    >
-                      {feature.icon}
-                    </Box>
-                    <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
-                      {feature.title}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>
-                      {feature.description}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </motion.div>
+                  {feature.icon}
+                </Box>
+                <Typography variant="h6" sx={{ fontWeight: 600, mb: 1, fontSize: '1rem' }}>
+                  {feature.title}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.9rem' }}>
+                  {feature.description}
+                </Typography>
+              </Box>
             </Grid>
           ))}
         </Grid>
-
-        {/* Stats Section */}
-        <Box sx={{ mt: 10, textAlign: 'center' }}>
-          <Grid container spacing={4}>
-            {stats.map((stat, index) => (
-              <Grid item xs={6} md={3} key={stat.label}>
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                >
-                  <Box>
-                    <Typography 
-                      variant="h3" 
-                      sx={{ 
-                        fontWeight: 800, 
-                        color: 'primary.main',
-                        fontSize: { xs: '1.8rem', md: '2.5rem' }
-                      }}
-                    >
-                      {stat.number}
-                    </Typography>
-                    <Typography variant="body1" color="text.secondary" sx={{ fontWeight: 500 }}>
-                      {stat.label}
-                    </Typography>
-                  </Box>
-                </motion.div>
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
       </Container>
 
       {/* Restaurants Preview Section */}
-      <Box sx={{ backgroundColor: 'grey.50', py: 8 }}>
-        <Container maxWidth="lg">
-          <Box sx={{ textAlign: 'center', mb: 6 }}>
-            <Typography variant="h3" component="h2" sx={{ fontWeight: 600, mb: 2 }}>
+      <Box sx={{ backgroundColor: 'grey.50', py: { xs: 4, sm: 6, md: 8 } }}>
+        <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3 } }}>
+          <Box sx={{ textAlign: 'center', mb: { xs: 4, sm: 6 } }}>
+            <Typography 
+              variant="h3" 
+              component="h2" 
+              sx={{ 
+                fontWeight: 600, 
+                mb: 2,
+                fontSize: { xs: '1.75rem', sm: '2.125rem', md: '3rem' }
+              }}
+            >
               Popular Restaurants
             </Typography>
-            <Typography variant="h6" color="text.secondary" sx={{ mb: 4 }}>
+            <Typography 
+              variant="h6" 
+              color="text.secondary" 
+              sx={{ 
+                mb: 4,
+                fontSize: { xs: '1rem', sm: '1.25rem' },
+                px: { xs: 1, sm: 0 }
+              }}
+            >
               Discover amazing food from top-rated restaurants
             </Typography>
 
@@ -522,9 +282,9 @@ const LandingPage = () => {
           </Box>
 
           {isLoading ? (
-            <Grid container spacing={3}>
-              {[...Array(6)].map((_, index) => (
-                <Grid item xs={12} sm={6} md={4} key={index}>
+            <Grid container spacing={{ xs: 2, sm: 2, md: 3 }}>
+              {[...Array(8)].map((_, index) => (
+                <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
                   <Card>
                     <Skeleton variant="rectangular" height={160} />
                     <CardContent>
@@ -537,9 +297,9 @@ const LandingPage = () => {
               ))}
             </Grid>
           ) : (
-            <Grid container spacing={3}>
-              {filteredRestaurants?.slice(0, 6).map((restaurant, index) => (
-                <Grid item xs={12} sm={6} md={4} key={restaurant._id}>
+            <Grid container spacing={{ xs: 2, sm: 2, md: 3 }}>
+              {filteredRestaurants?.slice(0, 8).map((restaurant, index) => (
+                <Grid item xs={12} sm={6} md={4} lg={3} key={restaurant._id}>
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -553,13 +313,18 @@ const LandingPage = () => {
             </Grid>
           )}
 
-          <Box sx={{ textAlign: 'center', mt: 4 }}>
+          <Box sx={{ textAlign: 'center', mt: 4, px: { xs: 2, sm: 0 } }}>
             <Button
               component={Link}
               to="/auth/register/customer"
               variant="contained"
               size="large"
-              sx={{ px: 4 }}
+              sx={{ 
+                width: { xs: '100%', sm: 'auto' },
+                px: { xs: 3, sm: 4 },
+                py: { xs: 1.5, sm: 1 },
+                fontSize: { xs: '1rem', sm: '0.875rem' }
+              }}
             >
               Sign Up to See All Restaurants
             </Button>
@@ -567,167 +332,9 @@ const LandingPage = () => {
         </Container>
       </Box>
 
-      {/* Partner Section */}
-      <Container maxWidth="lg" sx={{ py: 8 }}>
-        <Grid container spacing={6} alignItems="center">
-          <Grid item xs={12} md={6}>
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-            >
-              <Typography variant="h3" component="h2" sx={{ fontWeight: 600, mb: 2 }}>
-                Partner with Eatio
-              </Typography>
-              <Typography variant="h6" color="text.secondary" sx={{ mb: 4 }}>
-                Grow your restaurant business with our platform. Reach more customers,
-                increase sales, and manage orders efficiently.
-              </Typography>
 
-              <Box sx={{ mb: 4 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <Box sx={{
-                    width: 8,
-                    height: 8,
-                    borderRadius: '50%',
-                    backgroundColor: 'primary.main',
-                    mr: 2
-                  }} />
-                  <Typography variant="body1">Zero commission for the first month</Typography>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <Box sx={{
-                    width: 8,
-                    height: 8,
-                    borderRadius: '50%',
-                    backgroundColor: 'primary.main',
-                    mr: 2
-                  }} />
-                  <Typography variant="body1">Easy-to-use restaurant dashboard</Typography>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <Box sx={{
-                    width: 8,
-                    height: 8,
-                    borderRadius: '50%',
-                    backgroundColor: 'primary.main',
-                    mr: 2
-                  }} />
-                  <Typography variant="body1">Real-time order management</Typography>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <Box sx={{
-                    width: 8,
-                    height: 8,
-                    borderRadius: '50%',
-                    backgroundColor: 'primary.main',
-                    mr: 2
-                  }} />
-                  <Typography variant="body1">Marketing support and promotions</Typography>
-                </Box>
-              </Box>
 
-              <Button
-                component={Link}
-                to="/auth/register/restaurant"
-                variant="contained"
-                size="large"
-                sx={{ px: 4, py: 1.5, fontWeight: 600 }}
-              >
-                🤝 Partner with Us Today
-              </Button>
-            </motion.div>
-          </Grid>
 
-          <Grid item xs={12} md={6}>
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              viewport={{ once: true }}
-            >
-              <Box
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  height: 400,
-                }}
-              >
-                <img
-                  src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-                  alt="Restaurant partnership"
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                    borderRadius: '16px',
-                    boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1)',
-                  }}
-                />
-              </Box>
-            </motion.div>
-          </Grid>
-        </Grid>
-      </Container>
-
-      {/* CTA Section */}
-      <Container maxWidth="lg" sx={{ py: 8 }}>
-        <Box
-          sx={{
-            textAlign: 'center',
-            background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
-            color: 'white',
-            borderRadius: 4,
-            p: 6,
-          }}
-        >
-          <Typography variant="h3" component="h2" sx={{ fontWeight: 600, mb: 2 }}>
-            Ready to Order?
-          </Typography>
-          <Typography variant="h6" sx={{ mb: 4, opacity: 0.9 }}>
-            Join thousands of happy customers and start ordering today!
-          </Typography>
-          <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Button
-              component={Link}
-              to="/auth/register/customer"
-              variant="contained"
-              size="large"
-              sx={{
-                backgroundColor: 'white',
-                color: 'primary.main',
-                fontWeight: 600,
-                px: 4,
-                '&:hover': {
-                  backgroundColor: '#f8fafc',
-                },
-              }}
-            >
-              Get Started
-            </Button>
-            <Button
-              component={Link}
-              to="/auth/login"
-              variant="outlined"
-              size="large"
-              sx={{
-                borderColor: 'white',
-                color: 'white',
-                fontWeight: 600,
-                px: 4,
-                '&:hover': {
-                  borderColor: 'white',
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                },
-              }}
-            >
-              Already have an account?
-            </Button>
-          </Box>
-        </Box>
-      </Container>
     </div>
   )
 }

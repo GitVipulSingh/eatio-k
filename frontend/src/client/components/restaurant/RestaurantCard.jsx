@@ -200,26 +200,57 @@ const RestaurantCard = ({ restaurant }) => {
           </Box>
         </Box>
 
-        <CardContent sx={{ flexGrow: 1, p: 2 }}>
-          {/* Restaurant Name */}
-          <Typography
-            variant="h6"
-            component="h3"
-            sx={{
-              fontWeight: 700,
-              mb: 1,
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              lineHeight: 1.2,
-              fontSize: '1.1rem'
-            }}
-          >
-            {restaurant.name}
-          </Typography>
+        <CardContent sx={{ flexGrow: 1, p: { xs: 1.5, sm: 2 } }}>
+          {/* Line 1: Restaurant Name and Rating */}
+          <Box sx={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'flex-start',
+            mb: { xs: 0.8, sm: 1 }
+          }}>
+            <Typography
+              variant="h6"
+              component="h3"
+              sx={{
+                fontWeight: 700,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                lineHeight: 1.2,
+                fontSize: { xs: '0.95rem', sm: '1rem' },
+                flex: 1,
+                mr: 1
+              }}
+            >
+              {restaurant.name}
+            </Typography>
+            <Box 
+              sx={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: 0.3,
+                backgroundColor: 'success.main',
+                color: 'white',
+                px: { xs: 0.6, sm: 0.8 },
+                py: 0.2,
+                borderRadius: 1,
+                fontSize: { xs: '0.7rem', sm: '0.75rem' },
+                fontWeight: 600,
+                flexShrink: 0
+              }}
+            >
+              <StarIcon className="h-3 w-3" />
+              {restaurant.averageRating?.toFixed(1) || '4.2'}
+            </Box>
+          </Box>
 
-          {/* Cuisine Tags */}
-          <Box sx={{ mb: 2 }}>
+          {/* Line 2: Cuisine and Review Count */}
+          <Box sx={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center',
+            mb: { xs: 0.8, sm: 1 }
+          }}>
             <Typography 
               variant="body2" 
               color="text.secondary"
@@ -227,49 +258,36 @@ const RestaurantCard = ({ restaurant }) => {
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap',
-                fontSize: '0.9rem',
+                fontSize: { xs: '0.8rem', sm: '0.85rem' },
                 fontWeight: 500,
+                flex: 1,
+                mr: 1
               }}
             >
-              {restaurant.cuisine?.slice(0, 3).join(', ')}
-              {restaurant.cuisine?.length > 3 && ` +${restaurant.cuisine.length - 3} more`}
+              {restaurant.cuisine?.slice(0, 2).join(', ')}
+              {restaurant.cuisine?.length > 2 && ` +${restaurant.cuisine.length - 2}`}
             </Typography>
-          </Box>
-
-          {/* Rating and Reviews */}
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 1,
-              mb: 2,
-            }}
-          >
-            <Box 
+            <Typography 
+              variant="caption" 
+              color="text.secondary" 
               sx={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: 0.5,
-                backgroundColor: 'success.main',
-                color: 'white',
-                px: 1,
-                py: 0.3,
-                borderRadius: 1,
-                fontSize: '0.8rem',
-                fontWeight: 600,
+                fontSize: { xs: '0.7rem', sm: '0.75rem' },
+                flexShrink: 0,
+                display: { xs: 'none', sm: 'block' }
               }}
             >
-              <StarIcon className="h-3 w-3" />
-              {restaurant.averageRating?.toFixed(1) || '4.2'}
-            </Box>
-            <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.85rem' }}>
-              ({Math.floor(Math.random() * 1000) + 100}+ reviews)
+              {Math.floor(Math.random() * 1000) + 100}+ reviews
             </Typography>
           </Box>
 
-          {/* Location */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 2 }}>
-            <MapPinIcon className="h-4 w-4 text-gray-400" />
+          {/* Line 3: Location */}
+          <Box sx={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: 0.5, 
+            mb: { xs: 1.5, sm: 2 }
+          }}>
+            <span style={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}>📍</span>
             <Typography
               variant="body2"
               color="text.secondary"
@@ -277,36 +295,42 @@ const RestaurantCard = ({ restaurant }) => {
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap',
-                fontSize: '0.85rem',
+                fontSize: { xs: '0.75rem', sm: '0.8rem' },
               }}
             >
               {restaurant.address?.city || 'Location'}
             </Typography>
           </Box>
 
-          {/* Price and Offers */}
+          {/* Price and Delivery Info */}
           <Box sx={{ 
             display: 'flex', 
             justifyContent: 'space-between', 
             alignItems: 'center',
-            pt: 1,
+            pt: { xs: 1, sm: 1.5 },
             borderTop: '1px solid',
             borderColor: 'grey.100',
           }}>
-            <Typography variant="body2" sx={{ fontWeight: 600, color: 'text.primary' }}>
+            <Typography 
+              variant="body2" 
+              sx={{ 
+                fontWeight: 600, 
+                color: 'text.primary', 
+                fontSize: { xs: '0.8rem', sm: '0.85rem' }
+              }}
+            >
               ₹{Math.floor(Math.random() * 200) + 200} for two
             </Typography>
-            <Box sx={{ 
-              backgroundColor: 'primary.light', 
-              color: 'primary.main',
-              px: 1,
-              py: 0.3,
-              borderRadius: 1,
-              fontSize: '0.75rem',
-              fontWeight: 600,
-            }}>
-              {Math.floor(Math.random() * 30) + 10}% OFF
-            </Box>
+            <Typography 
+              variant="caption" 
+              sx={{ 
+                color: 'success.main', 
+                fontWeight: 600, 
+                fontSize: { xs: '0.7rem', sm: '0.75rem' }
+              }}
+            >
+              {getDeliveryTime()}
+            </Typography>
           </Box>
         </CardContent>
       </Card>
