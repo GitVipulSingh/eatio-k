@@ -15,7 +15,7 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'zomato-clone',
+    folder: 'eatio-backend',
     allowed_formats: ['jpg', 'png', 'jpeg', 'pdf'],
   },
 });

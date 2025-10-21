@@ -68,7 +68,7 @@ A full-stack food delivery application built with the MERN stack, featuring a un
 
 3. **Environment Setup**
    
-   **Backend (.env in zomato-clone/server/)**
+   **Backend (.env in eatio-backend/server/)**
    ```env
    MONGO_URI=your_mongodb_connection_string
    PORT=5000
@@ -141,7 +141,7 @@ eatio-unified/
 │   ├── .env.production    # Production-specific config
 │   └── .gitignore         # Frontend-specific ignores
 │
-└── zomato-clone/          # Backend
+└── eatio-backend/          # Backend
     ├── .gitignore         # Backend-specific ignores
     └── server/
         ├── controllers/   # Route controllers
@@ -168,7 +168,7 @@ eatio-unified/
 - `npm run dev:backend` - Start only backend server
 - `npm run dev:frontend` - Start only frontend (waits for backend)
 
-### Backend (zomato-clone/server/)
+### Backend (eatio-backend/server/)
 - `npm run dev` - Start development server with nodemon
 - `npm start` - Start production server
 
@@ -257,7 +257,7 @@ eatio-unified/
 - `npm run preview` - Preview production build
 - `npm run lint` - Run ESLint
 
-### Backend (zomato-clone/server/)
+### Backend (eatio-backend/server/)
 - `npm run dev` - Start with nodemon (port 5000)
 - `npm start` - Start production server
 
@@ -349,7 +349,7 @@ npm run test
 
 ### Backend Testing
 ```bash
-cd zomato-clone/server
+cd eatio-backend/server
 npm run test
 ```
 
