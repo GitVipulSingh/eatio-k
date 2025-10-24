@@ -25,6 +25,8 @@ const paymentRoutes = require('./routes/payment.routes');
 const adminRoutes = require('./routes/admin.routes');
 const menuImageRoutes = require('./routes/menuImage.routes');
 const staticRoutes = require('./routes/static.routes');
+// NEW ADDITIVE ROUTE - RATING SYSTEM
+const reviewRoutes = require('./routes/review.routes');
 
 const app = express();
 const server = http.createServer(app);
@@ -120,6 +122,8 @@ app.use('/api/upload', uploadRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/menu-images', menuImageRoutes);
+// NEW ADDITIVE ROUTE - RATING SYSTEM
+app.use('/api/reviews', reviewRoutes);
 // Keep the custom static routes as fallback
 app.use('/api/uploads', staticRoutes);
 

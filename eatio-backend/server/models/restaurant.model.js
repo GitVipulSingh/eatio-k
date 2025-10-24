@@ -56,7 +56,16 @@ const restaurantSchema = new mongoose.Schema({
   ratings: [ratingSchema],
   averageRating: {
     type: Number,
-    default: 0,
+    default: 4.0,
+  },
+  // NEW ADDITIVE FIELDS FOR DYNAMIC RATING SYSTEM
+  totalRatingSum: {
+    type: Number,
+    default: 16, // 4 stars * 4 initial ratings = 16
+  },
+  totalRatingCount: {
+    type: Number,
+    default: 4, // Start with 4 initial ratings
   },
   
   fssaiLicenseNumber: {

@@ -462,3 +462,59 @@ export const useDeleteMenuImage = () => {
     },
   })
 }
+
+// NEW ADDITIVE RATING SYSTEM QUERIES
+export const RATING_QUERY_KEYS = {
+  canReview: 'canReview',
+  reviews: 'reviews',
+}
+
+// Check if user can review an order
+export const useCanReviewOrder = (orderId, options = {}) => {
+  return useQuery({
+    queryKey: [RATING_QUERY_KEYS.canReview, orderId],
+    queryFn: async () => {
+      const { data } = await api.get(`/reviews/can-review/${orderId}`)
+      return data
+    },
+    enabled: !!orderId,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    ...options,
+  })
+}
+
+// Get reviews for a restaurant
+export const useRestaurantReviews = (restaurantId, options = {}) => {
+  return useQuery({
+    queryKey: [RATING_QUERY_KEYS.reviews, restaurantId],
+    queryFn: async () => {
+      const { data } = await api.get(`/reviews/restaurant/${restaurantId}`)
+      return data
+    },
+    enabled: !!restaurantId,
+    staleTime: 2 * 60 * 1000, // 2 minutes
+    ...options,
+  })
+}
+
+// Submit a review for an order
+export const useSubmitReview = () => {
+  const queryClient = useQueryClient()
+  
+  return useMutation({
+    mutationFn: async ({ orderId, rating, comment }) => {
+      const { data } = await api.post(`/reviews/order/${orderId}`, {
+        rating,
+        comment,
+      })
+      return data
+    },
+    onSuccess: (data, variables) => {
+      // Invalidate relevant queries
+      queryClient.invalidateQueries([RATING_QUERY_KEYS.canReview, variables.orderId])
+      queryClient.invalidateQueries([QUERY_KEYS.orders])
+      queryClient.invalidateQueries([QUERY_KEYS.restaurants])
+      queryClient.invalidateQueries([QUERY_KEYS.restaurant])
+    },
+  })
+}

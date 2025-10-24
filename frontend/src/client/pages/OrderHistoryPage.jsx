@@ -38,6 +38,8 @@ import { format } from 'date-fns'
 
 import { useOrderHistory } from '../api/queries'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
+// NEW ADDITIVE IMPORT - RATING SYSTEM
+import RateOrderButton from '../components/rating/RateOrderButton'
 
 const OrderHistoryPage = () => {
   const navigate = useNavigate()
@@ -230,7 +232,7 @@ const OrderHistoryPage = () => {
                             </Box>
                           )}
                         </Box>
-                        <Box sx={{ display: 'flex', gap: 1 }}>
+                        <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
                           {order.status !== 'Delivered' && order.status !== 'Cancelled' && (
                             <Button
                               variant="outlined"
@@ -241,6 +243,13 @@ const OrderHistoryPage = () => {
                               Track
                             </Button>
                           )}
+                          
+                          {/* NEW ADDITIVE COMPONENT - RATING SYSTEM */}
+                          <RateOrderButton 
+                            order={order} 
+                            restaurant={order.restaurant} 
+                          />
+                          
                           <Button
                             variant="contained"
                             size="small"
