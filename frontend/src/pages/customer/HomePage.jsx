@@ -65,10 +65,10 @@ const HomePage = () => {
         </Container>
       </Box>
 
-      <Container maxWidth="lg" sx={{ pb: { xs: 4, sm: 6 }, px: { xs: 2, sm: 3 } }}>
+      <Container maxWidth="lg" sx={{ py: { xs: 3, sm: 4 }, px: { xs: 2, sm: 3 } }}>
         {/* Why Choose Us Section */}
-        <Box sx={{ mb: { xs: 4, sm: 6 } }}>
-          <Grid container spacing={4} sx={{ mb: 4 }}>
+        <Box sx={{ mb: { xs: 3, sm: 4 } }}>
+          <Grid container spacing={4}>
             <Grid item xs={12} sm={4}>
               <Box textAlign="center">
                 <Box
@@ -148,45 +148,30 @@ const HomePage = () => {
         </Box>
 
         {/* Cuisine Filter */}
-        <Box sx={{ mb: { xs: 4, sm: 6 } }}>
+        <Box sx={{ mb: { xs: 3, sm: 4 } }}>
           <CuisineFilter
             selectedCuisine={selectedCuisine}
             onCuisineChange={setSelectedCuisine}
           />
         </Box>
 
-        {/* Popular Restaurants Section */}
+        {/* Restaurant Grid - Clean layout without redundant heading */}
         <Box>
-          <Box sx={{ mb: { xs: 3, sm: 4 }, textAlign: 'center' }}>
-            <Typography 
-              variant="h4" 
-              component="h2" 
-              sx={{ 
-                fontWeight: 700,
-                fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
-                mb: 1
-              }}
-            >
-              Popular Restaurants
-            </Typography>
-            <Typography 
-              variant="body1" 
-              color="text.secondary"
-              sx={{ 
-                fontSize: { xs: '0.9rem', sm: '1rem' },
-                mb: 2
-              }}
-            >
-              Discover amazing food and restaurants around you
-            </Typography>
-            <Typography 
-              variant="body2" 
-              color="text.secondary"
-              sx={{ fontSize: { xs: '0.8rem', sm: '0.875rem' } }}
-            >
-              {filteredRestaurants?.length || 0} restaurants found
-            </Typography>
-          </Box>
+          {/* Subtle restaurant count indicator */}
+          {!isLoading && filteredRestaurants && (
+            <Box sx={{ mb: 3, textAlign: 'center' }}>
+              <Typography 
+                variant="body2" 
+                color="text.secondary"
+                sx={{ 
+                  fontSize: '0.9rem',
+                  fontWeight: 500
+                }}
+              >
+                {filteredRestaurants.length} restaurant{filteredRestaurants.length !== 1 ? 's' : ''} available
+              </Typography>
+            </Box>
+          )}
 
         {isLoading ? (
           <Grid container spacing={{ xs: 2, sm: 2, md: 3 }}>
