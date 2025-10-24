@@ -73,10 +73,27 @@ router.post('/order/:orderId',
     // Update restaurant's rating statistics
     const restaurant = await Restaurant.findById(order.restaurant);
     if (restaurant) {
+      const oldRating = restaurant.averageRating;
       restaurant.totalRatingSum += rating;
       restaurant.totalRatingCount += 1;
       restaurant.averageRating = restaurant.totalRatingSum / restaurant.totalRatingCount;
       await restaurant.save();
+      
+      console.log(`⭐ [RATING_UPDATE] Restaurant ${restaurant.name} rating updated from ${oldRating} to ${restaurant.averageRating}`);
+      
+      // Emit real-time update for restaurant rating
+      const io = req.app.get('socketio');
+      if (io) {
+        io.emit('restaurant_rating_updated', {
+          restaurantId: restaurant._id,
+          restaurantName: restaurant.name,
+          oldRating,
+          newRating: restaurant.averageRating,
+          totalReviews: restaurant.totalRatingCount,
+          timestamp: new Date()
+        });
+        console.log(`📡 [RATING_UPDATE] Socket event emitted for rating update`);
+      }
     }
 
     res.status(201).json({

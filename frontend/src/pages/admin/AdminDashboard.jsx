@@ -47,6 +47,7 @@ import {
   useUpdateRestaurantOpenStatus 
 } from '../../client/api/queries'
 import LoadingSpinner from '../../common/components/LoadingSpinner'
+import { useAdminDashboardUpdates } from '../../hooks/useRealTimeUpdates'
 
 const AdminDashboard = () => {
   const [hoursDialogOpen, setHoursDialogOpen] = useState(false)
@@ -55,6 +56,9 @@ const AdminDashboard = () => {
   const { data: restaurant, isLoading: restaurantLoading, refetch } = useMyRestaurant()
   const { data: orders, isLoading: ordersLoading } = useRestaurantOrders()
   const updateRestaurantStatusMutation = useUpdateRestaurantOpenStatus()
+
+  // Enable real-time updates for restaurant admin dashboard
+  useAdminDashboardUpdates(restaurant?._id)
 
   // Calculate stats
   const todayOrders = orders?.filter(order => {

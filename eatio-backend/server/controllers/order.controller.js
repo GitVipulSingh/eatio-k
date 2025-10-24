@@ -4,17 +4,21 @@ const Restaurant = require('../models/restaurant.model');
 
 // This function can be kept for future features like "Cash on Delivery".
 const createOrder = async (req, res) => {
-  // ... existing code ...
   try {
     const { restaurantId, items, deliveryAddress } = req.body;
     const userId = req.user._id;
+    
+    console.log(`🛒 [CREATE_ORDER] New order request for restaurant ${restaurantId} by user ${userId}`);
+    
     if (!items || items.length === 0) {
       return res.status(400).json({ message: 'No order items' });
     }
+    
     const restaurant = await Restaurant.findById(restaurantId);
     if (!restaurant) {
       return res.status(404).json({ message: 'Restaurant not found' });
     }
+    
     let totalAmount = 0;
     const orderItems = items.map(item => {
       const menuItem = restaurant.menuItems.find(mi => mi._id.toString() === item.menuItemId);
@@ -22,11 +26,53 @@ const createOrder = async (req, res) => {
       totalAmount += menuItem.price * item.quantity;
       return { name: menuItem.name, price: menuItem.price, quantity: item.quantity };
     });
-    const order = new Order({ user: userId, restaurant: restaurantId, items: orderItems, totalAmount, deliveryAddress });
+    
+    const order = new Order({ 
+      user: userId, 
+      restaurant: restaurantId, 
+      items: orderItems, 
+      totalAmount, 
+      deliveryAddress 
+    });
+    
     const createdOrder = await order.save();
+    
+    // Populate the order with user and restaurant details for real-time updates
+    const populatedOrder = await Order.findById(createdOrder._id)
+      .populate('user', 'name email phone')
+      .populate('restaurant', 'name');
+    
+    console.log(`✅ [CREATE_ORDER] Order created successfully: ${createdOrder._id}`);
+    
+    // Emit real-time update for restaurant admin dashboard
+    const io = req.app.get('socketio');
+    if (io) {
+      io.emit('new_order_for_admin', {
+        orderId: populatedOrder._id,
+        restaurantId: populatedOrder.restaurant._id,
+        restaurantName: populatedOrder.restaurant.name,
+        customerName: populatedOrder.user.name,
+        totalAmount: populatedOrder.totalAmount,
+        itemsCount: populatedOrder.items.length,
+        status: populatedOrder.status,
+        timestamp: new Date()
+      });
+      
+      // Also emit to Super Admin for system-wide stats
+      io.emit('system_stats_update', {
+        type: 'new_order',
+        orderId: populatedOrder._id,
+        restaurantId: populatedOrder.restaurant._id,
+        totalAmount: populatedOrder.totalAmount,
+        timestamp: new Date()
+      });
+      
+      console.log(`📡 [CREATE_ORDER] Socket events emitted for new order`);
+    }
+    
     res.status(201).json(createdOrder);
   } catch (error) {
-    console.error(error);
+    console.error('❌ [CREATE_ORDER] Error creating order:', error);
     res.status(500).json({ message: 'Server error while creating order.' });
   }
 };

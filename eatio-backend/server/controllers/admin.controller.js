@@ -6,9 +6,14 @@ const User = require('../models/user.model');
 // --- Functions for Super Admin ---
 const getPendingRestaurants = async (req, res) => {
   try {
-    const restaurants = await Restaurant.find({ status: 'pending' }).populate('owner', 'name email phone');
+    console.log('🔍 [PENDING_RESTAURANTS] Fetching pending restaurants...');
+    const restaurants = await Restaurant.find({ 
+      status: { $in: ['pending', 'pending_approval'] } 
+    }).populate('owner', 'name email phone');
+    console.log(`🔍 [PENDING_RESTAURANTS] Found ${restaurants.length} pending restaurants`);
     res.status(200).json(restaurants);
   } catch (error) {
+    console.error('❌ [PENDING_RESTAURANTS] Error:', error);
     res.status(500).json({ message: 'Server error fetching pending restaurants.' });
   }
 };
@@ -16,20 +21,35 @@ const getPendingRestaurants = async (req, res) => {
 // Get system statistics for super admin dashboard
 const getSystemStats = async (req, res) => {
   try {
+    console.log('📊 [SYSTEM_STATS] Starting system stats calculation...');
+    
     // Get total restaurants count
     const totalRestaurants = await Restaurant.countDocuments();
+    console.log(`📊 [SYSTEM_STATS] Total restaurants: ${totalRestaurants}`);
     
-    // Get pending approvals count
-    const pendingApprovals = await Restaurant.countDocuments({ status: 'pending' });
+    // Get pending approvals count (handle both 'pending' and 'pending_approval')
+    const pendingApprovals = await Restaurant.countDocuments({ 
+      status: { $in: ['pending', 'pending_approval'] } 
+    });
+    console.log(`📊 [SYSTEM_STATS] Pending approvals: ${pendingApprovals}`);
     
     // Get active restaurants count
     const activeRestaurants = await Restaurant.countDocuments({ status: 'approved' });
+    console.log(`📊 [SYSTEM_STATS] Active restaurants: ${activeRestaurants}`);
     
     // Get total users count
     const totalUsers = await User.countDocuments();
+    console.log(`📊 [SYSTEM_STATS] Total users: ${totalUsers}`);
     
     // Get total orders count
     const totalOrders = await Order.countDocuments();
+    console.log(`📊 [SYSTEM_STATS] Total orders: ${totalOrders}`);
+    
+    // Debug: Check all order statuses
+    const orderStatusCounts = await Order.aggregate([
+      { $group: { _id: '$status', count: { $sum: 1 } } }
+    ]);
+    console.log(`📊 [SYSTEM_STATS] Order status breakdown:`, orderStatusCounts);
     
     // Get today's orders
     const today = new Date();
@@ -40,13 +60,22 @@ const getSystemStats = async (req, res) => {
     const todayOrders = await Order.countDocuments({
       createdAt: { $gte: today, $lt: tomorrow }
     });
+    console.log(`📊 [SYSTEM_STATS] Today's orders: ${todayOrders}`);
     
-    // Calculate total revenue
+    // Calculate total revenue (fix: use 'Delivered' with capital D)
     const revenueResult = await Order.aggregate([
-      { $match: { status: 'delivered' } },
+      { $match: { status: 'Delivered' } },
       { $group: { _id: null, totalRevenue: { $sum: '$totalAmount' } } }
     ]);
     const totalRevenue = revenueResult.length > 0 ? revenueResult[0].totalRevenue : 0;
+    
+    // Also check if there are any delivered orders at all
+    const deliveredOrdersCount = await Order.countDocuments({ status: 'Delivered' });
+    console.log(`💰 [SYSTEM_STATS] Revenue calculation:`, { 
+      deliveredOrdersCount,
+      totalRevenue,
+      revenueResult
+    });
     
     // Get recent activity (last 7 days)
     const sevenDaysAgo = new Date();
@@ -60,7 +89,7 @@ const getSystemStats = async (req, res) => {
       createdAt: { $gte: sevenDaysAgo }
     });
 
-    res.status(200).json({
+    const stats = {
       totalRestaurants,
       pendingApprovals,
       activeRestaurants,
@@ -72,9 +101,12 @@ const getSystemStats = async (req, res) => {
         orders: recentOrders,
         registrations: recentRegistrations
       }
-    });
+    };
+    
+    console.log('📊 [SYSTEM_STATS] Final stats:', stats);
+    res.status(200).json(stats);
   } catch (error) {
-    console.error('Error fetching system stats:', error);
+    console.error('❌ [SYSTEM_STATS] Error fetching system stats:', error);
     res.status(500).json({ message: 'Server error fetching system statistics.' });
   }
 };
@@ -117,15 +149,34 @@ const getAllOrders = async (req, res) => {
 const updateRestaurantStatus = async (req, res) => {
   try {
     const { status } = req.body;
-    const restaurant = await Restaurant.findById(req.params.id);
+    const restaurant = await Restaurant.findById(req.params.id).populate('owner', 'name email');
+    
     if (restaurant) {
+      const oldStatus = restaurant.status;
       restaurant.status = status;
       await restaurant.save();
-      res.json({ message: `Restaurant has been ${status}.` });
+      
+      console.log(`🏪 [RESTAURANT_STATUS] Updated restaurant ${restaurant.name} from ${oldStatus} to ${status}`);
+      
+      // Emit real-time update for Super Admin dashboard
+      const io = req.app.get('socketio');
+      if (io) {
+        io.emit('restaurant_status_updated', {
+          restaurantId: restaurant._id,
+          restaurantName: restaurant.name,
+          oldStatus,
+          newStatus: status,
+          timestamp: new Date()
+        });
+        console.log(`📡 [RESTAURANT_STATUS] Socket event emitted for restaurant status update`);
+      }
+      
+      res.json({ message: `Restaurant has been ${status}.`, restaurant });
     } else {
       res.status(404).json({ message: 'Restaurant not found.' });
     }
   } catch (error) {
+    console.error('❌ [RESTAURANT_STATUS] Error updating restaurant status:', error);
     res.status(500).json({ message: 'Server error updating restaurant status.' });
   }
 };
@@ -164,8 +215,38 @@ const updateOrderStatus = async (req, res) => {
     // Emit socket event for real-time updates
     const io = req.app.get('socketio');
     if (io) {
-      io.to(order._id.toString()).emit('order_status_updated', updatedOrder);
-      console.log(`📡 [UPDATE_STATUS] Socket event emitted for order ${order._id}`);
+      // Emit to specific order room for customer tracking
+      io.to(order._id.toString()).emit('order_status_updated', {
+        orderId: updatedOrder._id,
+        oldStatus,
+        newStatus: status,
+        order: updatedOrder,
+        timestamp: new Date()
+      });
+      
+      // Emit to restaurant admin dashboard
+      io.emit('order_status_changed', {
+        orderId: updatedOrder._id,
+        restaurantId: updatedOrder.restaurant._id,
+        oldStatus,
+        newStatus: status,
+        customerName: updatedOrder.user.name,
+        totalAmount: updatedOrder.totalAmount,
+        timestamp: new Date()
+      });
+      
+      // If order is delivered, emit system stats update
+      if (status === 'Delivered') {
+        io.emit('system_stats_update', {
+          type: 'order_delivered',
+          orderId: updatedOrder._id,
+          restaurantId: updatedOrder.restaurant._id,
+          totalAmount: updatedOrder.totalAmount,
+          timestamp: new Date()
+        });
+      }
+      
+      console.log(`📡 [UPDATE_STATUS] Socket events emitted for order ${order._id}`);
     }
     
     res.json({

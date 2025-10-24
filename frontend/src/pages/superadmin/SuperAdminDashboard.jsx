@@ -43,6 +43,7 @@ import {
   useAllOrders 
 } from '../../client/api/queries'
 import LoadingSpinner from '../../common/components/LoadingSpinner'
+import { useSuperAdminDashboardUpdates } from '../../hooks/useRealTimeUpdates'
 
 const SuperAdminDashboard = () => {
   const { data: pendingRestaurants, isLoading: pendingLoading } = usePendingRestaurants()
@@ -50,6 +51,9 @@ const SuperAdminDashboard = () => {
   const { data: allRestaurants, isLoading: restaurantsLoading } = useAllRestaurants()
   const { data: allUsers, isLoading: usersLoading } = useAllUsers()
   const { data: allOrders, isLoading: ordersLoading } = useAllOrders()
+
+  // Enable real-time updates for Super Admin dashboard
+  useSuperAdminDashboardUpdates()
 
   const isLoading = statsLoading || pendingLoading
 
