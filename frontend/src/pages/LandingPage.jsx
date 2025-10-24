@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
   Box,
@@ -9,21 +9,15 @@ import {
   Grid,
   Card,
   CardContent,
-  useTheme,
-  useMediaQuery,
   Skeleton,
-  Stack,
   Chip,
 } from '@mui/material'
 import {
-  ArrowRightIcon,
   StarIcon,
   ClockIcon,
   ShieldCheckIcon,
-  TruckIcon,
   SparklesIcon,
   HeartIcon,
-  GiftIcon,
 } from '@heroicons/react/24/outline'
 
 import { useRestaurants } from '../client/api/queries'
@@ -31,9 +25,6 @@ import RestaurantCard from '../client/components/restaurant/RestaurantCard'
 import CuisineFilter from '../client/components/home/CuisineFilter'
 
 const LandingPage = () => {
-  const theme = useTheme()
-  const navigate = useNavigate()
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'))
   const { data: restaurants, isLoading } = useRestaurants()
   const [selectedCuisine, setSelectedCuisine] = useState('all')
 
@@ -67,13 +58,6 @@ const LandingPage = () => {
       description: '2M+ happy customers',
       color: '#ef4444'
     }
-  ]
-
-  const stats = [
-    { number: '10,000+', label: 'Restaurants' },
-    { number: '2M+', label: 'Happy Customers' },
-    { number: '50+', label: 'Cities' },
-    { number: '28min', label: 'Avg Delivery' }
   ]
 
   return (
@@ -114,17 +98,32 @@ const LandingPage = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
                 >
-                  <Chip
-                    icon={<SparklesIcon className="h-4 w-4" />}
-                    label="India's #1 Food Delivery App"
-                    sx={{
-                      backgroundColor: 'rgba(255, 255, 255, 0.15)',
-                      color: 'white',
-                      mb: 3,
-                      fontWeight: 500,
-                      backdropFilter: 'blur(10px)',
-                    }}
-                  />
+                  <Box sx={{ display: 'flex', justifyContent: { xs: 'center', sm: 'flex-start' }, mb: 3 }}>
+                    <Chip
+                      icon={<SparklesIcon className="h-3 w-3" />}
+                      label="India's #1 Food Delivery App"
+                      sx={{
+                        backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                        color: 'white',
+                        fontWeight: 500,
+                        backdropFilter: 'blur(10px)',
+                        fontSize: { xs: '0.7rem', sm: '0.8rem', md: '0.875rem' },
+                        height: { xs: 26, sm: 30, md: 32 },
+                        maxWidth: { xs: '280px', sm: 'none' },
+                        '& .MuiChip-label': {
+                          px: { xs: 1, sm: 1.5 },
+                          fontSize: { xs: '0.7rem', sm: '0.8rem', md: '0.875rem' },
+                          whiteSpace: 'nowrap',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis'
+                        },
+                        '& .MuiChip-icon': {
+                          fontSize: { xs: '0.8rem', sm: '1rem' },
+                          marginLeft: { xs: '4px', sm: '8px' }
+                        }
+                      }}
+                    />
+                  </Box>
                 </motion.div>
 
                 <Typography
@@ -151,47 +150,34 @@ const LandingPage = () => {
                   Fast delivery • 10,000+ restaurants • 50+ cities
                 </Typography>
 
-                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+                <Box sx={{ display: 'flex', justifyContent: { xs: 'center', sm: 'flex-start' } }}>
                   <Button
                     component={Link}
                     to="/auth/register/customer"
                     variant="contained"
                     size="large"
                     sx={{
-                      backgroundColor: 'white',
+                      background: 'linear-gradient(135deg, #ffffff, #f8fafc)',
                       color: 'primary.main',
-                      fontWeight: 600,
-                      px: 3,
-                      py: 1.2,
-                      borderRadius: 2,
+                      fontWeight: 700,
+                      px: 4,
+                      py: 1.5,
+                      borderRadius: 3,
+                      fontSize: '1.1rem',
+                      textTransform: 'none',
+                      boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
+                      border: '2px solid rgba(255,255,255,0.8)',
                       '&:hover': {
-                        backgroundColor: '#f8fafc',
+                        background: 'linear-gradient(135deg, #f8fafc, #f1f5f9)',
+                        boxShadow: '0 12px 40px rgba(0,0,0,0.2)',
+                        transform: 'translateY(-2px)',
                       },
+                      transition: 'all 0.3s ease',
                     }}
                   >
-                    Start Ordering
+                    🍽️ Start Ordering Now
                   </Button>
-
-                  <Button
-                    component={Link}
-                    to="/auth/login"
-                    variant="outlined"
-                    size="large"
-                    sx={{
-                      borderColor: 'white',
-                      color: 'white',
-                      fontWeight: 600,
-                      px: 3,
-                      py: 1.2,
-                      borderRadius: 2,
-                      '&:hover': {
-                        backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                      },
-                    }}
-                  >
-                    Sign In
-                  </Button>
-                </Stack>
+                </Box>
               </motion.div>
             </Grid>
 
