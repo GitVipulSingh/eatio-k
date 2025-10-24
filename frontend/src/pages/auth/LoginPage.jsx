@@ -67,8 +67,42 @@ const LoginPage = () => {
       background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
       display: 'flex',
       alignItems: 'center',
-      py: 4
+      py: 4,
+      position: 'relative'
     }}>
+      {/* Top Back to Home Button */}
+      <Box sx={{ 
+        position: 'absolute', 
+        top: 20, 
+        left: 20,
+        zIndex: 10
+      }}>
+        <Button
+          component={Link}
+          to="/"
+          startIcon={<ArrowLeftIcon className="h-5 w-5" />}
+          variant="contained"
+          sx={{ 
+            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+            color: 'primary.main',
+            fontWeight: 600,
+            px: 3,
+            py: 1.5,
+            borderRadius: 3,
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+            backdropFilter: 'blur(10px)',
+            '&:hover': { 
+              backgroundColor: 'white',
+              transform: 'translateY(-2px)',
+              boxShadow: '0 6px 20px rgba(0,0,0,0.2)',
+            },
+            transition: 'all 0.3s ease',
+          }}
+        >
+          Back to Home
+        </Button>
+      </Box>
+
       <Container maxWidth="sm">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -119,18 +153,26 @@ const LoginPage = () => {
               </Typography>
             </Box>
 
-            {/* Go Home Button */}
-            <Box sx={{ mb: 3 }}>
+            {/* Back to Home Button */}
+            <Box sx={{ mb: 4 }}>
               <Button
                 component={Link}
                 to="/"
-                startIcon={<ArrowLeftIcon className="h-4 w-4" />}
+                startIcon={<ArrowLeftIcon className="h-5 w-5" />}
+                variant="text"
                 sx={{ 
                   color: 'text.secondary',
+                  fontWeight: 500,
+                  fontSize: '0.95rem',
+                  px: 2,
+                  py: 1,
+                  borderRadius: 2,
                   '&:hover': { 
-                    backgroundColor: 'grey.100',
-                    color: 'primary.main'
-                  }
+                    backgroundColor: 'primary.light',
+                    color: 'primary.main',
+                    transform: 'translateX(-2px)',
+                  },
+                  transition: 'all 0.2s ease',
                 }}
               >
                 Back to Home

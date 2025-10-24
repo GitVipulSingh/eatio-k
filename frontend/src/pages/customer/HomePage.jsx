@@ -66,33 +66,118 @@ const HomePage = () => {
       </Box>
 
       <Container maxWidth="lg" sx={{ pb: { xs: 4, sm: 6 }, px: { xs: 2, sm: 3 } }}>
+        {/* Why Choose Us Section */}
+        <Box sx={{ mb: { xs: 4, sm: 6 } }}>
+          <Grid container spacing={4} sx={{ mb: 4 }}>
+            <Grid item xs={12} sm={4}>
+              <Box textAlign="center">
+                <Box
+                  sx={{
+                    width: 80,
+                    height: 80,
+                    borderRadius: '50%',
+                    backgroundColor: 'primary.light',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    mx: 'auto',
+                    mb: 2,
+                  }}
+                >
+                  <Typography variant="h3">🚀</Typography>
+                </Box>
+                <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
+                  Fast Delivery
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Get your food delivered in 30 minutes or less
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <Box textAlign="center">
+                <Box
+                  sx={{
+                    width: 80,
+                    height: 80,
+                    borderRadius: '50%',
+                    backgroundColor: 'primary.light',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    mx: 'auto',
+                    mb: 2,
+                  }}
+                >
+                  <Typography variant="h3">⭐</Typography>
+                </Box>
+                <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
+                  Quality Food
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Fresh ingredients from top-rated restaurants
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <Box textAlign="center">
+                <Box
+                  sx={{
+                    width: 80,
+                    height: 80,
+                    borderRadius: '50%',
+                    backgroundColor: 'primary.light',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    mx: 'auto',
+                    mb: 2,
+                  }}
+                >
+                  <Typography variant="h3">💳</Typography>
+                </Box>
+                <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
+                  Easy Payment
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Multiple payment options for your convenience
+                </Typography>
+              </Box>
+            </Grid>
+          </Grid>
+        </Box>
+
         {/* Cuisine Filter */}
-        <Box sx={{ mb: { xs: 3, sm: 4 } }}>
+        <Box sx={{ mb: { xs: 4, sm: 6 } }}>
           <CuisineFilter
             selectedCuisine={selectedCuisine}
             onCuisineChange={setSelectedCuisine}
           />
         </Box>
 
-        {/* Restaurants Section */}
+        {/* Popular Restaurants Section */}
         <Box>
-          <Box sx={{ 
-            display: 'flex', 
-            alignItems: { xs: 'flex-start', sm: 'center' },
-            justifyContent: 'space-between', 
-            mb: { xs: 3, sm: 4 },
-            flexDirection: { xs: 'column', sm: 'row' },
-            gap: { xs: 1, sm: 0 }
-          }}>
+          <Box sx={{ mb: { xs: 3, sm: 4 }, textAlign: 'center' }}>
             <Typography 
               variant="h4" 
               component="h2" 
               sx={{ 
                 fontWeight: 700,
-                fontSize: { xs: '1.25rem', sm: '1.5rem', md: '2rem' }
+                fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
+                mb: 1
               }}
             >
-              Restaurants Near You
+              Popular Restaurants
+            </Typography>
+            <Typography 
+              variant="body1" 
+              color="text.secondary"
+              sx={{ 
+                fontSize: { xs: '0.9rem', sm: '1rem' },
+                mb: 2
+              }}
+            >
+              Discover amazing food and restaurants around you
             </Typography>
             <Typography 
               variant="body2" 

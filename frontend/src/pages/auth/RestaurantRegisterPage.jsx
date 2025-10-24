@@ -597,34 +597,117 @@ const RestaurantRegisterPage = () => {
   return (
     <Box sx={{ 
       minHeight: '100vh',
-      backgroundColor: 'grey.50',
-      py: 4
+      background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
+      py: 4,
+      position: 'relative'
     }}>
+      {/* Top Back to Home Button */}
+      <Box sx={{ 
+        position: 'absolute', 
+        top: 20, 
+        left: 20,
+        zIndex: 10
+      }}>
+        <Button
+          component={Link}
+          to="/"
+          startIcon={<ArrowLeftIcon className="h-5 w-5" />}
+          variant="contained"
+          sx={{ 
+            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+            color: 'primary.main',
+            fontWeight: 600,
+            px: 3,
+            py: 1.5,
+            borderRadius: 3,
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+            backdropFilter: 'blur(10px)',
+            '&:hover': { 
+              backgroundColor: 'white',
+              transform: 'translateY(-2px)',
+              boxShadow: '0 6px 20px rgba(0,0,0,0.2)',
+            },
+            transition: 'all 0.3s ease',
+          }}
+        >
+          Back to Home
+        </Button>
+      </Box>
+
       <Container maxWidth="md">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <Paper elevation={0} sx={{ p: 4, borderRadius: 3 }}>
+          <Paper 
+            elevation={0} 
+            sx={{ 
+              p: { xs: 3, sm: 5 },
+              borderRadius: 4,
+              boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
+              backgroundColor: 'rgba(255, 255, 255, 0.95)',
+              backdropFilter: 'blur(20px)',
+            }}
+          >
             {/* Header */}
-            <Box sx={{ mb: 4 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <Button
-                  component={Link}
-                  to="/"
-                  startIcon={<ArrowLeftIcon className="h-4 w-4" />}
-                  sx={{ mr: 2 }}
+            <Box sx={{ mb: 4, textAlign: 'center' }}>
+              <motion.div
+                initial={{ scale: 0.8 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.2 }}
+              >
+                <Box
+                  sx={{
+                    width: 64,
+                    height: 64,
+                    borderRadius: 4,
+                    background: 'linear-gradient(135deg, #f97316, #ea580c)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '2rem',
+                    mx: 'auto',
+                    mb: 3,
+                    boxShadow: '0 8px 24px rgba(249, 115, 22, 0.3)',
+                  }}
                 >
-                  Back to Home
-                </Button>
-              </Box>
-              <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
+                  🏪
+                </Box>
+              </motion.div>
+              
+              <Typography variant="h3" sx={{ fontWeight: 800, mb: 1, color: 'text.primary' }}>
                 Partner with Eatio
               </Typography>
-              <Typography variant="body1" color="text.secondary">
+              <Typography variant="body1" color="text.secondary" sx={{ fontSize: '1.1rem' }}>
                 Join our platform and start serving customers across the city
               </Typography>
+            </Box>
+
+            {/* Back to Home Button */}
+            <Box sx={{ mb: 4 }}>
+              <Button
+                component={Link}
+                to="/"
+                startIcon={<ArrowLeftIcon className="h-5 w-5" />}
+                variant="text"
+                sx={{ 
+                  color: 'text.secondary',
+                  fontWeight: 500,
+                  fontSize: '0.95rem',
+                  px: 2,
+                  py: 1,
+                  borderRadius: 2,
+                  '&:hover': { 
+                    backgroundColor: 'primary.light',
+                    color: 'primary.main',
+                    transform: 'translateX(-2px)',
+                  },
+                  transition: 'all 0.2s ease',
+                }}
+              >
+                Back to Home
+              </Button>
             </Box>
 
           {/* Stepper */}
