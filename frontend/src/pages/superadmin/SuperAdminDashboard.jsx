@@ -20,6 +20,7 @@ import {
   LinearProgress,
   Alert,
   Skeleton,
+  Divider,
 } from '@mui/material'
 import {
   BuildingStorefrontIcon,
@@ -29,6 +30,9 @@ import {
   ChartBarIcon,
   ClockIcon,
   ShoppingBagIcon,
+  CogIcon,
+  EyeIcon,
+  CalendarDaysIcon,
 } from '@heroicons/react/24/outline'
 
 import { 
@@ -50,7 +54,7 @@ const SuperAdminDashboard = () => {
   const isLoading = statsLoading || pendingLoading
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
+    <Container maxWidth="xl" sx={{ py: 4 }}>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -58,7 +62,7 @@ const SuperAdminDashboard = () => {
       >
         {/* Header */}
         <Box sx={{ mb: 4 }}>
-          <Typography variant="h4" component="h1" sx={{ fontWeight: 600, mb: 1 }}>
+          <Typography variant="h4" component="h1" sx={{ fontWeight: 700, mb: 1 }}>
             Super Admin Dashboard
           </Typography>
           <Typography variant="body1" color="text.secondary">
