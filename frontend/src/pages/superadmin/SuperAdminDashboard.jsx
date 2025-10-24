@@ -70,200 +70,189 @@ const SuperAdminDashboard = () => {
           </Typography>
         </Box>
 
-        {/* Stats Cards */}
+        {/* Row 1: Professional Stats Cards (4-Column Grid) */}
         <Grid container spacing={3} sx={{ mb: 4 }}>
           <Grid item xs={12} sm={6} md={3}>
-            <Card>
-              <CardContent sx={{ textAlign: 'center' }}>
-                <Box sx={{ display: 'flex', justifyContent: 'center', mb: 1 }}>
-                  <BuildingStorefrontIcon className="h-8 w-8 text-blue-500" />
+            <Card sx={{ 
+              height: '100%',
+              background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+              color: 'white',
+              position: 'relative',
+              overflow: 'hidden'
+            }}>
+              <CardContent sx={{ p: 3 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                  <Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                      <BuildingStorefrontIcon className="h-4 w-4" />
+                      <Typography variant="body2" sx={{ opacity: 0.9, fontWeight: 500 }}>
+                        Total Restaurants
+                      </Typography>
+                    </Box>
+                    {statsLoading ? (
+                      <Skeleton variant="text" width={80} height={48} sx={{ bgcolor: 'rgba(255,255,255,0.2)' }} />
+                    ) : (
+                      <Typography variant="h2" sx={{ fontWeight: 800, lineHeight: 1 }}>
+                        {systemStats?.totalRestaurants || 0}
+                      </Typography>
+                    )}
+                  </Box>
                 </Box>
-                {statsLoading ? (
-                  <Skeleton variant="text" width={60} height={40} sx={{ mx: 'auto' }} />
-                ) : (
-                  <Typography variant="h4" sx={{ fontWeight: 700, color: 'primary.main' }}>
-                    {systemStats?.totalRestaurants || 0}
-                  </Typography>
-                )}
-                <Typography variant="body2" color="text.secondary">
-                  Total Restaurants
-                </Typography>
-                {!statsLoading && (
-                  <Typography variant="caption" color="success.main">
-                    {systemStats?.activeRestaurants || 0} active
-                  </Typography>
-                )}
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Card>
-              <CardContent sx={{ textAlign: 'center' }}>
-                <Box sx={{ display: 'flex', justifyContent: 'center', mb: 1 }}>
-                  <ExclamationTriangleIcon className="h-8 w-8 text-orange-500" />
-                </Box>
-                {statsLoading ? (
-                  <Skeleton variant="text" width={60} height={40} sx={{ mx: 'auto' }} />
-                ) : (
-                  <Typography variant="h4" sx={{ fontWeight: 700, color: 'warning.main' }}>
-                    {systemStats?.pendingApprovals || 0}
-                  </Typography>
-                )}
-                <Typography variant="body2" color="text.secondary">
-                  Pending Approvals
-                </Typography>
-                {!statsLoading && systemStats?.pendingApprovals > 0 && (
-                  <Typography variant="caption" color="warning.main">
-                    Requires attention
-                  </Typography>
-                )}
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Card>
-              <CardContent sx={{ textAlign: 'center' }}>
-                <Box sx={{ display: 'flex', justifyContent: 'center', mb: 1 }}>
-                  <UsersIcon className="h-8 w-8 text-green-500" />
-                </Box>
-                {statsLoading ? (
-                  <Skeleton variant="text" width={60} height={40} sx={{ mx: 'auto' }} />
-                ) : (
-                  <Typography variant="h4" sx={{ fontWeight: 700, color: 'success.main' }}>
-                    {systemStats?.totalUsers?.toLocaleString() || 0}
-                  </Typography>
-                )}
-                <Typography variant="body2" color="text.secondary">
-                  Total Users
+                <Typography variant="body2" sx={{ opacity: 0.8 }}>
+                  {!statsLoading && `${systemStats?.activeRestaurants || 0} active restaurants`}
                 </Typography>
               </CardContent>
             </Card>
           </Grid>
+          
           <Grid item xs={12} sm={6} md={3}>
-            <Card>
-              <CardContent sx={{ textAlign: 'center' }}>
-                <Box sx={{ display: 'flex', justifyContent: 'center', mb: 1 }}>
-                  <CurrencyRupeeIcon className="h-8 w-8 text-purple-500" />
+            <Card sx={{ 
+              height: '100%',
+              background: systemStats?.pendingApprovals > 0 
+                ? 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)'
+                : 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+              color: 'white',
+              position: 'relative',
+              overflow: 'hidden'
+            }}>
+              <CardContent sx={{ p: 3 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                  <Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                      <ExclamationTriangleIcon className="h-4 w-4" />
+                      <Typography variant="body2" sx={{ opacity: 0.9, fontWeight: 500 }}>
+                        Pending Approvals
+                      </Typography>
+                    </Box>
+                    {statsLoading ? (
+                      <Skeleton variant="text" width={80} height={48} sx={{ bgcolor: 'rgba(255,255,255,0.2)' }} />
+                    ) : (
+                      <Typography variant="h2" sx={{ fontWeight: 800, lineHeight: 1 }}>
+                        {systemStats?.pendingApprovals || 0}
+                      </Typography>
+                    )}
+                  </Box>
                 </Box>
-                {statsLoading ? (
-                  <Skeleton variant="text" width={60} height={40} sx={{ mx: 'auto' }} />
-                ) : (
-                  <Typography variant="h4" sx={{ fontWeight: 700, color: 'info.main' }}>
-                    ₹{systemStats?.totalRevenue ? (systemStats.totalRevenue / 100000).toFixed(1) + 'L' : '0'}
-                  </Typography>
-                )}
-                <Typography variant="body2" color="text.secondary">
-                  Total Revenue
+                <Typography variant="body2" sx={{ opacity: 0.8 }}>
+                  {!statsLoading && (systemStats?.pendingApprovals > 0 ? 'Requires immediate attention' : 'All applications processed')}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          <Grid item xs={12} sm={6} md={3}>
+            <Card sx={{ 
+              height: '100%',
+              background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+              color: 'white',
+              position: 'relative',
+              overflow: 'hidden'
+            }}>
+              <CardContent sx={{ p: 3 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                  <Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                      <UsersIcon className="h-4 w-4" />
+                      <Typography variant="body2" sx={{ opacity: 0.9, fontWeight: 500 }}>
+                        Total Users
+                      </Typography>
+                    </Box>
+                    {statsLoading ? (
+                      <Skeleton variant="text" width={80} height={48} sx={{ bgcolor: 'rgba(255,255,255,0.2)' }} />
+                    ) : (
+                      <Typography variant="h2" sx={{ fontWeight: 800, lineHeight: 1 }}>
+                        {systemStats?.totalUsers?.toLocaleString() || 0}
+                      </Typography>
+                    )}
+                  </Box>
+                </Box>
+                <Typography variant="body2" sx={{ opacity: 0.8 }}>
+                  Platform user base
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          <Grid item xs={12} sm={6} md={3}>
+            <Card sx={{ 
+              height: '100%',
+              background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
+              color: 'white',
+              position: 'relative',
+              overflow: 'hidden'
+            }}>
+              <CardContent sx={{ p: 3 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                  <Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                      <CurrencyRupeeIcon className="h-4 w-4" />
+                      <Typography variant="body2" sx={{ opacity: 0.9, fontWeight: 500 }}>
+                        Total Revenue
+                      </Typography>
+                    </Box>
+                    {statsLoading ? (
+                      <Skeleton variant="text" width={80} height={48} sx={{ bgcolor: 'rgba(255,255,255,0.2)' }} />
+                    ) : (
+                      <Typography variant="h2" sx={{ fontWeight: 800, lineHeight: 1 }}>
+                        ₹{systemStats?.totalRevenue ? (systemStats.totalRevenue / 100000).toFixed(1) + 'L' : '0'}
+                      </Typography>
+                    )}
+                  </Box>
+                </Box>
+                <Typography variant="body2" sx={{ opacity: 0.8 }}>
+                  Platform lifetime revenue
                 </Typography>
               </CardContent>
             </Card>
           </Grid>
         </Grid>
 
-        {/* Additional Stats Row */}
+        {/* Row 2: Key Actions & Overview */}
         <Grid container spacing={3} sx={{ mb: 4 }}>
-          <Grid item xs={12} sm={6} md={3}>
-            <Card>
-              <CardContent sx={{ textAlign: 'center' }}>
-                <Box sx={{ display: 'flex', justifyContent: 'center', mb: 1 }}>
-                  <ShoppingBagIcon className="h-8 w-8 text-indigo-500" />
-                </Box>
-                {statsLoading ? (
-                  <Skeleton variant="text" width={60} height={40} sx={{ mx: 'auto' }} />
-                ) : (
-                  <Typography variant="h4" sx={{ fontWeight: 700, color: 'secondary.main' }}>
-                    {systemStats?.totalOrders || 0}
+          <Grid item xs={12} md={4}>
+            <Card sx={{ height: '100%' }}>
+              <CardContent sx={{ p: 3 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+                  <Box sx={{ 
+                    p: 1.5, 
+                    borderRadius: 2, 
+                    backgroundColor: 'warning.main',
+                    color: 'white'
+                  }}>
+                    <CogIcon className="h-5 w-5" />
+                  </Box>
+                  <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                    Quick Actions
                   </Typography>
-                )}
-                <Typography variant="body2" color="text.secondary">
-                  Total Orders
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Card>
-              <CardContent sx={{ textAlign: 'center' }}>
-                <Box sx={{ display: 'flex', justifyContent: 'center', mb: 1 }}>
-                  <ClockIcon className="h-8 w-8 text-teal-500" />
                 </Box>
-                {statsLoading ? (
-                  <Skeleton variant="text" width={60} height={40} sx={{ mx: 'auto' }} />
-                ) : (
-                  <Typography variant="h4" sx={{ fontWeight: 700, color: 'info.main' }}>
-                    {systemStats?.todayOrders || 0}
-                  </Typography>
-                )}
-                <Typography variant="body2" color="text.secondary">
-                  Today's Orders
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Card>
-              <CardContent sx={{ textAlign: 'center' }}>
-                <Box sx={{ display: 'flex', justifyContent: 'center', mb: 1 }}>
-                  <ChartBarIcon className="h-8 w-8 text-pink-500" />
-                </Box>
-                {statsLoading ? (
-                  <Skeleton variant="text" width={60} height={40} sx={{ mx: 'auto' }} />
-                ) : (
-                  <Typography variant="h4" sx={{ fontWeight: 700, color: 'error.main' }}>
-                    {systemStats?.recentActivity?.orders || 0}
-                  </Typography>
-                )}
-                <Typography variant="body2" color="text.secondary">
-                  Orders (7 days)
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Card>
-              <CardContent sx={{ textAlign: 'center' }}>
-                <Box sx={{ display: 'flex', justifyContent: 'center', mb: 1 }}>
-                  <BuildingStorefrontIcon className="h-8 w-8 text-amber-500" />
-                </Box>
-                {statsLoading ? (
-                  <Skeleton variant="text" width={60} height={40} sx={{ mx: 'auto' }} />
-                ) : (
-                  <Typography variant="h4" sx={{ fontWeight: 700, color: 'warning.main' }}>
-                    {systemStats?.recentActivity?.registrations || 0}
-                  </Typography>
-                )}
-                <Typography variant="body2" color="text.secondary">
-                  New Restaurants (7 days)
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
-
-        {/* Quick Actions */}
-        <Grid container spacing={3} sx={{ mb: 4 }}>
-          <Grid item xs={12} md={6}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
-                  Quick Actions
-                </Typography>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                   <Button
                     component={Link}
                     to="/super-admin/restaurants"
                     variant="contained"
                     color="warning"
-                    startIcon={<ExclamationTriangleIcon className="h-4 w-4" />}
+                    startIcon={<ExclamationTriangleIcon className="h-5 w-5" />}
                     fullWidth
+                    sx={{ 
+                      py: 1.5,
+                      fontSize: '1rem',
+                      fontWeight: 600,
+                      textTransform: 'none'
+                    }}
                   >
                     Review Pending Restaurants ({systemStats?.pendingApprovals || 0})
                   </Button>
                   <Button
                     variant="outlined"
-                    startIcon={<ChartBarIcon className="h-4 w-4" />}
+                    startIcon={<ChartBarIcon className="h-5 w-5" />}
                     fullWidth
                     disabled
+                    sx={{ 
+                      py: 1.5,
+                      fontSize: '1rem',
+                      fontWeight: 600,
+                      textTransform: 'none'
+                    }}
                   >
                     View Analytics (Coming Soon)
                   </Button>
@@ -271,12 +260,23 @@ const SuperAdminDashboard = () => {
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} md={6}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
-                  Today's Overview
-                </Typography>
+          
+          <Grid item xs={12} md={4}>
+            <Card sx={{ height: '100%' }}>
+              <CardContent sx={{ p: 3 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+                  <Box sx={{ 
+                    p: 1.5, 
+                    borderRadius: 2, 
+                    backgroundColor: 'info.main',
+                    color: 'white'
+                  }}>
+                    <CalendarDaysIcon className="h-5 w-5" />
+                  </Box>
+                  <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                    Today's Overview
+                  </Typography>
+                </Box>
                 {statsLoading ? (
                   <Box>
                     <Skeleton variant="text" width="100%" height={20} />
@@ -285,320 +285,485 @@ const SuperAdminDashboard = () => {
                     <Skeleton variant="rectangular" width="100%" height={8} />
                   </Box>
                 ) : (
-                  <>
-                    <Box sx={{ mb: 2 }}>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                    <Box>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
                         <Typography variant="body2" color="text.secondary">
                           Orders Today
                         </Typography>
-                        <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                        <Typography variant="h6" sx={{ fontWeight: 700 }}>
                           {systemStats?.todayOrders || 0}
                         </Typography>
                       </Box>
-                      <LinearProgress 
-                        variant="determinate" 
-                        value={Math.min((systemStats?.todayOrders || 0), 100)} 
-                        sx={{ mb: 2 }}
-                      />
+                      <Typography variant="body2" color="text.secondary">
+                        {systemStats?.todayOrders > 0 ? 'Active day' : 'Quiet day'}
+                      </Typography>
                     </Box>
+                    <Divider />
                     <Box>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
                         <Typography variant="body2" color="text.secondary">
                           Active Restaurants
                         </Typography>
-                        <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                        <Typography variant="h6" sx={{ fontWeight: 700 }}>
                           {systemStats?.activeRestaurants || 0}/{systemStats?.totalRestaurants || 0}
                         </Typography>
                       </Box>
-                      <LinearProgress 
-                        variant="determinate" 
-                        value={systemStats?.totalRestaurants ? 
-                          (systemStats.activeRestaurants / systemStats.totalRestaurants) * 100 : 0
-                        } 
-                        color="success"
-                      />
+                      <Typography variant="body2" color="text.secondary">
+                        {systemStats?.totalRestaurants ? 
+                          `${Math.round((systemStats.activeRestaurants / systemStats.totalRestaurants) * 100)}% active` : 
+                          'No restaurants yet'
+                        }
+                      </Typography>
                     </Box>
-                  </>
+                  </Box>
+                )}
+              </CardContent>
+            </Card>
+          </Grid>
+
+          <Grid item xs={12} md={4}>
+            <Card sx={{ height: '100%' }}>
+              <CardContent sx={{ p: 3 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+                  <Box sx={{ 
+                    p: 1.5, 
+                    borderRadius: 2, 
+                    backgroundColor: 'success.main',
+                    color: 'white'
+                  }}>
+                    <ChartBarIcon className="h-5 w-5" />
+                  </Box>
+                  <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                    Weekly Activity
+                  </Typography>
+                </Box>
+                {statsLoading ? (
+                  <Box>
+                    <Skeleton variant="text" width="100%" height={20} />
+                    <Skeleton variant="text" width="100%" height={20} />
+                    <Skeleton variant="text" width="100%" height={20} />
+                  </Box>
+                ) : (
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                    <Box>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                        <Typography variant="body2" color="text.secondary">
+                          Orders (7 days)
+                        </Typography>
+                        <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                          {systemStats?.recentActivity?.orders || 0}
+                        </Typography>
+                      </Box>
+                      <Typography variant="body2" color="text.secondary">
+                        Weekly order volume
+                      </Typography>
+                    </Box>
+                    <Divider />
+                    <Box>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                        <Typography variant="body2" color="text.secondary">
+                          New Restaurants
+                        </Typography>
+                        <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                          {systemStats?.recentActivity?.registrations || 0}
+                        </Typography>
+                      </Box>
+                      <Typography variant="body2" color="text.secondary">
+                        New registrations this week
+                      </Typography>
+                    </Box>
+                  </Box>
                 )}
               </CardContent>
             </Card>
           </Grid>
         </Grid>
 
-        {/* Pending Restaurants Preview */}
-        <Card sx={{ mb: 4 }}>
-          <CardContent>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-              <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                Pending Restaurant Approvals
-              </Typography>
-              <Button
-                component={Link}
-                to="/super-admin/restaurants"
-                variant="outlined"
-                size="small"
-              >
-                View All
-              </Button>
-            </Box>
+        {/* Row 3: Pending Approvals Section */}
+        {pendingLoading || (pendingRestaurants?.length > 0) ? (
+          <Card sx={{ mb: 4, boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}>
+            <CardContent sx={{ p: 0 }}>
+              <Box sx={{ p: 3, borderBottom: '1px solid', borderColor: 'divider' }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <Box sx={{ 
+                      p: 1.5, 
+                      borderRadius: 2, 
+                      backgroundColor: 'warning.main',
+                      color: 'white'
+                    }}>
+                      <ExclamationTriangleIcon className="h-5 w-5" />
+                    </Box>
+                    <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                      Pending Restaurant Approvals
+                    </Typography>
+                    {pendingRestaurants?.length > 0 && (
+                      <Chip 
+                        label={`${pendingRestaurants.length} pending`} 
+                        size="small" 
+                        color="warning"
+                        variant="filled"
+                      />
+                    )}
+                  </Box>
+                  <Button
+                    component={Link}
+                    to="/super-admin/restaurants"
+                    variant="contained"
+                    color="warning"
+                    size="small"
+                    startIcon={<EyeIcon className="h-4 w-4" />}
+                    sx={{ textTransform: 'none' }}
+                  >
+                    Review All Applications
+                  </Button>
+                </Box>
+              </Box>
 
-            {pendingLoading ? (
-              <LoadingSpinner />
-            ) : pendingRestaurants?.length > 0 ? (
-              <TableContainer>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Restaurant</TableCell>
-                      <TableCell>Owner Details</TableCell>
-                      <TableCell>Contact</TableCell>
-                      <TableCell>Location</TableCell>
-                      <TableCell>FSSAI License</TableCell>
-                      <TableCell>Cuisine</TableCell>
-                      <TableCell>Applied</TableCell>
-                      <TableCell>Documents</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {pendingRestaurants.slice(0, 5).map((restaurant) => (
-                      <TableRow key={restaurant._id}>
-                        <TableCell>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <Avatar sx={{ width: 32, height: 32 }}>
-                              🍽️
-                            </Avatar>
+              {pendingLoading ? (
+                <Box sx={{ p: 4, textAlign: 'center' }}>
+                  <LoadingSpinner />
+                </Box>
+              ) : (
+                <TableContainer>
+                  <Table sx={{ minWidth: 650 }}>
+                    <TableHead>
+                      <TableRow sx={{ backgroundColor: 'grey.50' }}>
+                        <TableCell sx={{ fontWeight: 600 }}>Restaurant</TableCell>
+                        <TableCell sx={{ fontWeight: 600 }}>Owner Details</TableCell>
+                        <TableCell sx={{ fontWeight: 600 }}>Contact</TableCell>
+                        <TableCell sx={{ fontWeight: 600 }}>Location</TableCell>
+                        <TableCell sx={{ fontWeight: 600 }}>FSSAI License</TableCell>
+                        <TableCell sx={{ fontWeight: 600 }}>Cuisine</TableCell>
+                        <TableCell sx={{ fontWeight: 600 }}>Applied</TableCell>
+                        <TableCell sx={{ fontWeight: 600 }}>Documents</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {pendingRestaurants.slice(0, 5).map((restaurant) => (
+                        <TableRow 
+                          key={restaurant._id}
+                          sx={{ 
+                            '&:hover': { backgroundColor: 'grey.50' },
+                            borderLeft: '4px solid',
+                            borderLeftColor: 'warning.main'
+                          }}
+                        >
+                          <TableCell>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                              <Avatar sx={{ width: 36, height: 36 }}>
+                                🍽️
+                              </Avatar>
+                              <Box>
+                                <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                                  {restaurant.name}
+                                </Typography>
+                                {restaurant.description && (
+                                  <Typography variant="caption" color="text.secondary">
+                                    {restaurant.description.substring(0, 30)}...
+                                  </Typography>
+                                )}
+                              </Box>
+                            </Box>
+                          </TableCell>
+                          <TableCell>
+                            <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                              {restaurant.owner?.name || 'N/A'}
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
                             <Box>
-                              <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                                {restaurant.name}
+                              <Typography variant="caption" color="text.secondary">
+                                📧 {restaurant.owner?.email || 'N/A'}
                               </Typography>
-                              {restaurant.description && (
-                                <Typography variant="caption" color="text.secondary">
-                                  {restaurant.description.substring(0, 30)}...
+                              <br />
+                              <Typography variant="caption" color="text.secondary">
+                                📱 {restaurant.owner?.phone || 'N/A'}
+                              </Typography>
+                            </Box>
+                          </TableCell>
+                          <TableCell>
+                            <Typography variant="body2" color="text.secondary">
+                              {restaurant.address?.street && `${restaurant.address.street}, `}
+                              {restaurant.address?.city}, {restaurant.address?.state}
+                              <br />
+                              <Typography variant="caption">
+                                📍 {restaurant.address?.pincode}
+                              </Typography>
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Typography variant="caption" sx={{ fontFamily: 'monospace' }}>
+                              {restaurant.fssaiLicenseNumber}
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
+                              {restaurant.cuisine?.slice(0, 2).map((cuisine) => (
+                                <Chip key={cuisine} label={cuisine} size="small" variant="outlined" />
+                              ))}
+                              {restaurant.cuisine?.length > 2 && (
+                                <Chip label={`+${restaurant.cuisine.length - 2}`} size="small" variant="outlined" />
+                              )}
+                            </Box>
+                          </TableCell>
+                          <TableCell>
+                            <Typography variant="body2" color="text.secondary">
+                              {new Date(restaurant.createdAt).toLocaleDateString()}
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Box>
+                              {restaurant.documents?.fssaiLicense ? (
+                                <Box sx={{ mb: 0.5 }}>
+                                  <Chip 
+                                    label="FSSAI License" 
+                                    size="small" 
+                                    color="success" 
+                                    variant="outlined" 
+                                    sx={{ mr: 0.5 }}
+                                    onClick={() => {
+                                      alert(`FSSAI License: ${restaurant.documents.fssaiLicense}\n\nNote: File viewing requires file storage service setup.`)
+                                    }}
+                                    style={{ cursor: 'pointer' }}
+                                  />
+                                </Box>
+                              ) : (
+                                <Typography variant="caption" color="error.main" sx={{ display: 'block', mb: 0.5 }}>
+                                  ❌ No FSSAI License
+                                </Typography>
+                              )}
+                              
+                              {restaurant.documents?.restaurantPhoto ? (
+                                <Box sx={{ mb: 0.5 }}>
+                                  <Chip 
+                                    label="Restaurant Photo" 
+                                    size="small" 
+                                    color="info" 
+                                    variant="outlined" 
+                                    sx={{ mr: 0.5 }}
+                                    onClick={() => {
+                                      alert(`Restaurant Photo: ${restaurant.documents.restaurantPhoto}\n\nNote: File viewing requires file storage service setup.`)
+                                    }}
+                                    style={{ cursor: 'pointer' }}
+                                  />
+                                </Box>
+                              ) : (
+                                <Typography variant="caption" color="error.main" sx={{ display: 'block', mb: 0.5 }}>
+                                  ❌ No Restaurant Photo
                                 </Typography>
                               )}
                             </Box>
-                          </Box>
-                        </TableCell>
-                        <TableCell>
-                          <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                            {restaurant.owner?.name || 'N/A'}
-                          </Typography>
-                        </TableCell>
-                        <TableCell>
-                          <Box>
-                            <Typography variant="caption" color="text.secondary">
-                              📧 {restaurant.owner?.email || 'N/A'}
-                            </Typography>
-                            <br />
-                            <Typography variant="caption" color="text.secondary">
-                              📱 {restaurant.owner?.phone || 'N/A'}
-                            </Typography>
-                          </Box>
-                        </TableCell>
-                        <TableCell>
-                          <Typography variant="body2" color="text.secondary">
-                            {restaurant.address?.street && `${restaurant.address.street}, `}
-                            {restaurant.address?.city}, {restaurant.address?.state}
-                            <br />
-                            <Typography variant="caption">
-                              📍 {restaurant.address?.pincode}
-                            </Typography>
-                          </Typography>
-                        </TableCell>
-                        <TableCell>
-                          <Typography variant="caption" sx={{ fontFamily: 'monospace' }}>
-                            {restaurant.fssaiLicenseNumber}
-                          </Typography>
-                        </TableCell>
-                        <TableCell>
-                          <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
-                            {restaurant.cuisine?.slice(0, 2).map((cuisine) => (
-                              <Chip key={cuisine} label={cuisine} size="small" variant="outlined" />
-                            ))}
-                            {restaurant.cuisine?.length > 2 && (
-                              <Chip label={`+${restaurant.cuisine.length - 2}`} size="small" variant="outlined" />
-                            )}
-                          </Box>
-                        </TableCell>
-                        <TableCell>
-                          <Typography variant="body2" color="text.secondary">
-                            {new Date(restaurant.createdAt).toLocaleDateString()}
-                          </Typography>
-                        </TableCell>
-                        <TableCell>
-                          <Box>
-                            {restaurant.documents?.fssaiLicense ? (
-                              <Box sx={{ mb: 0.5 }}>
-                                <Chip 
-                                  label="FSSAI License" 
-                                  size="small" 
-                                  color="success" 
-                                  variant="outlined" 
-                                  sx={{ mr: 0.5 }}
-                                  onClick={() => {
-                                    // For now, show the filename in an alert
-                                    // In production, this would open/download the file
-                                    alert(`FSSAI License: ${restaurant.documents.fssaiLicense}\n\nNote: File viewing requires file storage service setup.`)
-                                  }}
-                                  style={{ cursor: 'pointer' }}
-                                />
-                                <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
-                                  📄 {restaurant.documents.fssaiLicense}
-                                </Typography>
-                              </Box>
-                            ) : (
-                              <Typography variant="caption" color="error.main" sx={{ display: 'block', mb: 0.5 }}>
-                                ❌ No FSSAI License
-                              </Typography>
-                            )}
-                            
-                            {restaurant.documents?.restaurantPhoto ? (
-                              <Box sx={{ mb: 0.5 }}>
-                                <Chip 
-                                  label="Restaurant Photo" 
-                                  size="small" 
-                                  color="info" 
-                                  variant="outlined" 
-                                  sx={{ mr: 0.5 }}
-                                  onClick={() => {
-                                    // For now, show the filename in an alert
-                                    // In production, this would open/download the file
-                                    alert(`Restaurant Photo: ${restaurant.documents.restaurantPhoto}\n\nNote: File viewing requires file storage service setup.`)
-                                  }}
-                                  style={{ cursor: 'pointer' }}
-                                />
-                                <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
-                                  🖼️ {restaurant.documents.restaurantPhoto}
-                                </Typography>
-                              </Box>
-                            ) : (
-                              <Typography variant="caption" color="error.main" sx={{ display: 'block', mb: 0.5 }}>
-                                ❌ No Restaurant Photo
-                              </Typography>
-                            )}
-                            
-                            {(!restaurant.documents?.fssaiLicense && !restaurant.documents?.restaurantPhoto) && (
-                              <Typography variant="caption" color="error.main">
-                                ❌ No documents uploaded
-                              </Typography>
-                            )}
-                          </Box>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            ) : (
-              <Box sx={{ textAlign: 'center', py: 4 }}>
-                <Typography variant="body1" color="text.secondary">
-                  No pending restaurant applications
-                </Typography>
-              </Box>
-            )}
-          </CardContent>
-        </Card>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              )}
+            </CardContent>
+          </Card>
+        ) : (
+          <Alert severity="info" sx={{ mb: 4 }}>
+            <Typography variant="body2">
+              No pending restaurant applications at this time.
+            </Typography>
+          </Alert>
+        )}
 
-        {/* Recent Activity Summary */}
+        {/* Row 4: Recent Activity Lists */}
         <Grid container spacing={3}>
           <Grid item xs={12} md={6}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
-                  Recent Restaurants
-                </Typography>
-                {restaurantsLoading ? (
-                  <Box>
-                    {[...Array(3)].map((_, index) => (
-                      <Box key={index} sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-                        <Skeleton variant="circular" width={32} height={32} />
-                        <Box sx={{ flex: 1 }}>
-                          <Skeleton variant="text" width="60%" />
-                          <Skeleton variant="text" width="40%" />
-                        </Box>
-                      </Box>
-                    ))}
+            <Card sx={{ height: '100%', boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}>
+              <CardContent sx={{ p: 0 }}>
+                <Box sx={{ p: 3, borderBottom: '1px solid', borderColor: 'divider' }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <Box sx={{ 
+                      p: 1.5, 
+                      borderRadius: 2, 
+                      backgroundColor: 'primary.main',
+                      color: 'white'
+                    }}>
+                      <BuildingStorefrontIcon className="h-5 w-5" />
+                    </Box>
+                    <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                      Recent Restaurants
+                    </Typography>
+                    {allRestaurants?.length > 0 && (
+                      <Chip 
+                        label={`${allRestaurants.length} total`} 
+                        size="small" 
+                        variant="outlined" 
+                      />
+                    )}
                   </Box>
-                ) : allRestaurants?.length > 0 ? (
-                  <Box>
-                    {allRestaurants.slice(0, 5).map((restaurant) => (
-                      <Box key={restaurant._id} sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-                        <Avatar sx={{ width: 32, height: 32 }}>
-                          🍽️
-                        </Avatar>
-                        <Box sx={{ flex: 1 }}>
-                          <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                            {restaurant.name}
-                          </Typography>
-                          <Typography variant="caption" color="text.secondary">
-                            {restaurant.address?.city} • {new Date(restaurant.createdAt).toLocaleDateString()}
-                          </Typography>
+                </Box>
+                <Box sx={{ p: 3 }}>
+                  {restaurantsLoading ? (
+                    <Box>
+                      {[...Array(5)].map((_, index) => (
+                        <Box key={index} sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+                          <Skeleton variant="circular" width={40} height={40} />
+                          <Box sx={{ flex: 1 }}>
+                            <Skeleton variant="text" width="70%" height={20} />
+                            <Skeleton variant="text" width="50%" height={16} />
+                          </Box>
+                          <Skeleton variant="rectangular" width={60} height={24} />
                         </Box>
-                        <Chip 
-                          label={restaurant.status} 
-                          size="small" 
-                          color={restaurant.status === 'approved' ? 'success' : 'warning'}
-                          variant="outlined"
-                        />
+                      ))}
+                    </Box>
+                  ) : allRestaurants?.length > 0 ? (
+                    <Box>
+                      {allRestaurants.slice(0, 6).map((restaurant, index) => (
+                        <Box key={restaurant._id} sx={{ 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          gap: 2, 
+                          mb: index < 5 ? 3 : 0,
+                          p: 1.5,
+                          borderRadius: 2,
+                          '&:hover': { backgroundColor: 'grey.50' }
+                        }}>
+                          <Avatar sx={{ width: 40, height: 40 }}>
+                            🍽️
+                          </Avatar>
+                          <Box sx={{ flex: 1 }}>
+                            <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5 }}>
+                              {restaurant.name}
+                            </Typography>
+                            <Typography variant="caption" color="text.secondary">
+                              {restaurant.address?.city} • {new Date(restaurant.createdAt).toLocaleDateString()}
+                            </Typography>
+                          </Box>
+                          <Chip 
+                            label={restaurant.status} 
+                            size="small" 
+                            color={restaurant.status === 'approved' ? 'success' : 'warning'}
+                            variant="filled"
+                            sx={{ fontWeight: 500 }}
+                          />
+                        </Box>
+                      ))}
+                    </Box>
+                  ) : (
+                    <Box sx={{ textAlign: 'center', py: 4 }}>
+                      <Box sx={{ 
+                        width: 60, 
+                        height: 60, 
+                        borderRadius: '50%', 
+                        backgroundColor: 'grey.100',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        mx: 'auto',
+                        mb: 2
+                      }}>
+                        <BuildingStorefrontIcon className="h-6 w-6 text-gray-400" />
                       </Box>
-                    ))}
-                  </Box>
-                ) : (
-                  <Typography variant="body2" color="text.secondary">
-                    No restaurants found
-                  </Typography>
-                )}
+                      <Typography variant="body2" color="text.secondary">
+                        No restaurants found
+                      </Typography>
+                    </Box>
+                  )}
+                </Box>
               </CardContent>
             </Card>
           </Grid>
           
           <Grid item xs={12} md={6}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
-                  Recent Users
-                </Typography>
-                {usersLoading ? (
-                  <Box>
-                    {[...Array(3)].map((_, index) => (
-                      <Box key={index} sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-                        <Skeleton variant="circular" width={32} height={32} />
-                        <Box sx={{ flex: 1 }}>
-                          <Skeleton variant="text" width="60%" />
-                          <Skeleton variant="text" width="40%" />
-                        </Box>
-                      </Box>
-                    ))}
+            <Card sx={{ height: '100%', boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}>
+              <CardContent sx={{ p: 0 }}>
+                <Box sx={{ p: 3, borderBottom: '1px solid', borderColor: 'divider' }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <Box sx={{ 
+                      p: 1.5, 
+                      borderRadius: 2, 
+                      backgroundColor: 'success.main',
+                      color: 'white'
+                    }}>
+                      <UsersIcon className="h-5 w-5" />
+                    </Box>
+                    <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                      Recent Users
+                    </Typography>
+                    {allUsers?.length > 0 && (
+                      <Chip 
+                        label={`${allUsers.length} total`} 
+                        size="small" 
+                        variant="outlined" 
+                      />
+                    )}
                   </Box>
-                ) : allUsers?.length > 0 ? (
-                  <Box>
-                    {allUsers.slice(0, 5).map((user) => (
-                      <Box key={user._id} sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-                        <Avatar sx={{ width: 32, height: 32 }}>
-                          {user.name?.charAt(0) || 'U'}
-                        </Avatar>
-                        <Box sx={{ flex: 1 }}>
-                          <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                            {user.name}
-                          </Typography>
-                          <Typography variant="caption" color="text.secondary">
-                            {user.email} • {new Date(user.createdAt).toLocaleDateString()}
-                          </Typography>
+                </Box>
+                <Box sx={{ p: 3 }}>
+                  {usersLoading ? (
+                    <Box>
+                      {[...Array(5)].map((_, index) => (
+                        <Box key={index} sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+                          <Skeleton variant="circular" width={40} height={40} />
+                          <Box sx={{ flex: 1 }}>
+                            <Skeleton variant="text" width="70%" height={20} />
+                            <Skeleton variant="text" width="50%" height={16} />
+                          </Box>
+                          <Skeleton variant="rectangular" width={60} height={24} />
                         </Box>
-                        <Chip 
-                          label={user.role} 
-                          size="small" 
-                          color={user.role === 'admin' ? 'primary' : 'default'}
-                          variant="outlined"
-                        />
+                      ))}
+                    </Box>
+                  ) : allUsers?.length > 0 ? (
+                    <Box>
+                      {allUsers.slice(0, 6).map((user, index) => (
+                        <Box key={user._id} sx={{ 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          gap: 2, 
+                          mb: index < 5 ? 3 : 0,
+                          p: 1.5,
+                          borderRadius: 2,
+                          '&:hover': { backgroundColor: 'grey.50' }
+                        }}>
+                          <Avatar sx={{ width: 40, height: 40 }}>
+                            {user.name?.charAt(0) || 'U'}
+                          </Avatar>
+                          <Box sx={{ flex: 1 }}>
+                            <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5 }}>
+                              {user.name}
+                            </Typography>
+                            <Typography variant="caption" color="text.secondary">
+                              {user.email} • {new Date(user.createdAt).toLocaleDateString()}
+                            </Typography>
+                          </Box>
+                          <Chip 
+                            label={user.role} 
+                            size="small" 
+                            color={user.role === 'admin' ? 'primary' : user.role === 'superadmin' ? 'error' : 'default'}
+                            variant="filled"
+                            sx={{ fontWeight: 500 }}
+                          />
+                        </Box>
+                      ))}
+                    </Box>
+                  ) : (
+                    <Box sx={{ textAlign: 'center', py: 4 }}>
+                      <Box sx={{ 
+                        width: 60, 
+                        height: 60, 
+                        borderRadius: '50%', 
+                        backgroundColor: 'grey.100',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        mx: 'auto',
+                        mb: 2
+                      }}>
+                        <UsersIcon className="h-6 w-6 text-gray-400" />
                       </Box>
-                    ))}
-                  </Box>
-                ) : (
-                  <Typography variant="body2" color="text.secondary">
-                    No users found
-                  </Typography>
-                )}
+                      <Typography variant="body2" color="text.secondary">
+                        No users found
+                      </Typography>
+                    </Box>
+                  )}
+                </Box>
               </CardContent>
             </Card>
           </Grid>
