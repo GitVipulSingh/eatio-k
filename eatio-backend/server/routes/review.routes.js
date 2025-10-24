@@ -26,8 +26,11 @@ router.post('/order/:orderId',
       .withMessage('Comment must be less than 500 characters'),
   ],
   asyncHandler(async (req, res) => {
+    console.log(`📝 [REVIEW_CREATE] Starting review creation for order ${req.params.orderId}`);
+    
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      console.log(`❌ [REVIEW_CREATE] Validation failed:`, errors.array());
       return res.status(400).json({
         message: 'Validation failed',
         errors: errors.array(),
@@ -38,24 +41,40 @@ router.post('/order/:orderId',
     const { rating, comment = '' } = req.body;
     const userId = req.user._id;
 
+    console.log(`📝 [REVIEW_CREATE] Request details:`, { orderId, rating, comment, userId });
+
     // Check if order exists and belongs to user
     const order = await Order.findById(orderId);
     if (!order) {
+      console.log(`❌ [REVIEW_CREATE] Order not found: ${orderId}`);
       return res.status(404).json({ message: 'Order not found' });
     }
 
+    console.log(`📝 [REVIEW_CREATE] Order found:`, { 
+      id: order._id, 
+      status: order.status, 
+      user: order.user, 
+      restaurant: order.restaurant 
+    });
+
     if (order.user.toString() !== userId.toString()) {
+      console.log(`❌ [REVIEW_CREATE] Unauthorized: Order user ${order.user} !== Request user ${userId}`);
       return res.status(403).json({ message: 'Not authorized to review this order' });
     }
 
     // Check if order is delivered
     if (order.status !== 'Delivered') {
+      console.log(`❌ [REVIEW_CREATE] Order not delivered: Status is ${order.status}`);
       return res.status(400).json({ message: 'Can only review delivered orders' });
     }
 
     // Check if review already exists for this order
     const existingReview = await Review.findOne({ order: orderId });
     if (existingReview) {
+      console.log(`❌ [REVIEW_CREATE] Review already exists:`, { 
+        reviewId: existingReview._id, 
+        rating: existingReview.rating 
+      });
       return res.status(400).json({ message: 'Order already reviewed' });
     }
 
@@ -68,34 +87,70 @@ router.post('/order/:orderId',
       comment,
     });
 
-    await review.save();
-
-    // Update restaurant's rating statistics
-    const restaurant = await Restaurant.findById(order.restaurant);
-    if (restaurant) {
-      const oldRating = restaurant.averageRating;
-      restaurant.totalRatingSum += rating;
-      restaurant.totalRatingCount += 1;
-      restaurant.averageRating = restaurant.totalRatingSum / restaurant.totalRatingCount;
-      await restaurant.save();
+    try {
+      await review.save();
+      console.log(`✅ [REVIEW_CREATE] Review created successfully for order ${orderId}`);
+    } catch (saveError) {
+      console.error(`❌ [REVIEW_CREATE] Error saving review:`, saveError);
       
-      console.log(`⭐ [RATING_UPDATE] Restaurant ${restaurant.name} rating updated from ${oldRating} to ${restaurant.averageRating}`);
-      
-      // Emit real-time update for restaurant rating
-      const io = req.app.get('socketio');
-      if (io) {
-        io.emit('restaurant_rating_updated', {
-          restaurantId: restaurant._id,
-          restaurantName: restaurant.name,
-          oldRating,
-          newRating: restaurant.averageRating,
-          totalReviews: restaurant.totalRatingCount,
-          timestamp: new Date()
-        });
-        console.log(`📡 [RATING_UPDATE] Socket event emitted for rating update`);
+      // Handle duplicate key error (E11000)
+      if (saveError.code === 11000) {
+        return res.status(400).json({ message: 'Order already reviewed' });
       }
+      
+      // Re-throw other errors
+      throw saveError;
     }
 
+    // Update restaurant's rating statistics
+    try {
+      const restaurant = await Restaurant.findById(order.restaurant);
+      if (restaurant) {
+        const oldRating = restaurant.averageRating;
+        
+        // Get all reviews for this restaurant to calculate accurate rating
+        const allReviews = await Review.find({ restaurant: order.restaurant });
+        const actualSum = allReviews.reduce((sum, review) => sum + review.rating, 0);
+        const actualCount = allReviews.length;
+        const newAverageRating = actualCount > 0 ? actualSum / actualCount : 0;
+        
+        // Update restaurant with accurate values
+        await Restaurant.updateOne(
+          { _id: order.restaurant },
+          {
+            $set: {
+              totalRatingSum: actualSum,
+              totalRatingCount: actualCount,
+              averageRating: newAverageRating
+            }
+          }
+        );
+        
+        console.log(`⭐ [RATING_UPDATE] Restaurant ${restaurant.name} rating updated from ${oldRating} to ${newAverageRating} (${actualCount} reviews, sum: ${actualSum})`);
+        
+        // Emit real-time update for restaurant rating
+        const io = req.app.get('socketio');
+        if (io) {
+          io.emit('restaurant_rating_updated', {
+            restaurantId: restaurant._id,
+            restaurantName: restaurant.name,
+            oldRating,
+            newRating: newAverageRating,
+            totalReviews: actualCount,
+            timestamp: new Date()
+          });
+          console.log(`📡 [RATING_UPDATE] Socket event emitted for rating update`);
+        }
+      } else {
+        console.log(`⚠️  [RATING_UPDATE] Restaurant not found: ${order.restaurant}`);
+      }
+    } catch (restaurantUpdateError) {
+      console.error(`❌ [RATING_UPDATE] Error updating restaurant rating:`, restaurantUpdateError);
+      // Don't fail the review creation if restaurant update fails
+    }
+
+    console.log(`✅ [REVIEW_CREATE] Review creation completed successfully for order ${orderId}`);
+    
     res.status(201).json({
       message: 'Review created successfully',
       review: {
