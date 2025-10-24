@@ -17,7 +17,6 @@ import {
   TableRow,
   Chip,
   Avatar,
-  LinearProgress,
   Alert,
   IconButton,
   Switch,
@@ -27,6 +26,7 @@ import {
   DialogContent,
   DialogActions,
   TextField,
+  Divider,
 } from '@mui/material'
 import {
   PlusIcon,
@@ -36,6 +36,8 @@ import {
   StarIcon,
   ShoppingBagIcon,
   BuildingStorefrontIcon,
+  ChartBarIcon,
+  CogIcon,
 } from '@heroicons/react/24/outline'
 import { toast } from 'react-hot-toast'
 
@@ -119,177 +121,280 @@ const AdminDashboard = () => {
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
+    <Container maxWidth="xl" sx={{ py: 4 }}>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        {/* Header */}
-        <Box sx={{ mb: 4 }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-            <Box>
-              <Typography variant="h4" component="h1" sx={{ fontWeight: 600, mb: 1 }}>
-                {restaurant.name}
-              </Typography>
-              <Typography variant="body1" color="text.secondary">
-                {restaurant.address?.street}, {restaurant.address?.city} - {restaurant.address?.pincode}
-              </Typography>
-              <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
-                {restaurant.cuisine?.map((cuisine) => (
-                  <Chip key={cuisine} label={cuisine} size="small" variant="outlined" />
-                ))}
-              </Box>
-            </Box>
-            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 1 }}>
-              <Chip
-                label={restaurant.status === 'approved' ? 'Live' : restaurant.status}
-                color={restaurant.status === 'approved' ? 'success' : 'warning'}
-                variant="filled"
-              />
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <BuildingStorefrontIcon className="h-4 w-4" />
-                <Chip
-                  label={restaurant.isOpen ? 'Open' : 'Closed'}
-                  color={restaurant.isOpen ? 'success' : 'error'}
-                  variant="filled"
-                  size="small"
-                />
-              </Box>
-            </Box>
-          </Box>
-        </Box>
-
-        {/* Restaurant Status Control */}
+        {/* Row 1: Restaurant Profile Card (Full Width) */}
         <Card sx={{ mb: 4, border: restaurant.isOpen ? '2px solid #4caf50' : '2px solid #f44336' }}>
-          <CardContent>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Box>
-                <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
-                  Restaurant Status
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {restaurant.isOpen 
-                    ? `Currently open • Operating hours: ${restaurant.operatingHours?.open || '09:00'} - ${restaurant.operatingHours?.close || '22:00'}`
-                    : 'Currently closed • Customers cannot place orders'
-                  }
-                </Typography>
-              </Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <Button
-                  variant="outlined"
-                  size="small"
-                  onClick={() => {
-                    setOperatingHours(restaurant.operatingHours || { open: '09:00', close: '22:00' })
-                    setHoursDialogOpen(true)
-                  }}
-                >
-                  Set Hours
-                </Button>
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={restaurant.isOpen || false}
-                      onChange={(e) => handleStatusToggle(e.target.checked)}
-                      disabled={updateRestaurantStatusMutation.isPending}
+          <CardContent sx={{ p: 4 }}>
+            <Grid container spacing={4} alignItems="center">
+              <Grid item xs={12} md={8}>
+                <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 3 }}>
+                  <Box
+                    sx={{
+                      width: 80,
+                      height: 80,
+                      borderRadius: 2,
+                      background: 'linear-gradient(135deg, #f97316, #ea580c)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '2rem',
+                      flexShrink: 0,
+                    }}
+                  >
+                    🍽️
+                  </Box>
+                  <Box sx={{ flex: 1 }}>
+                    <Typography variant="h4" component="h1" sx={{ fontWeight: 700, mb: 1 }}>
+                      {restaurant.name}
+                    </Typography>
+                    <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
+                      {restaurant.address?.street}, {restaurant.address?.city} - {restaurant.address?.pincode}
+                    </Typography>
+                    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                      {restaurant.cuisine?.map((cuisine) => (
+                        <Chip key={cuisine} label={cuisine} size="small" variant="outlined" />
+                      ))}
+                    </Box>
+                  </Box>
+                </Box>
+              </Grid>
+              <Grid item xs={12} md={4}>
+                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 2 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <Chip
+                      label={restaurant.status === 'approved' ? 'Live' : restaurant.status}
+                      color={restaurant.status === 'approved' ? 'success' : 'warning'}
+                      variant="filled"
+                      sx={{ fontSize: '0.875rem', px: 2, py: 1 }}
                     />
-                  }
-                  label={restaurant.isOpen ? 'Open' : 'Closed'}
-                  labelPlacement="start"
-                />
-              </Box>
-            </Box>
+                    <Chip
+                      icon={<BuildingStorefrontIcon className="h-4 w-4" />}
+                      label={restaurant.isOpen ? 'Open' : 'Closed'}
+                      color={restaurant.isOpen ? 'success' : 'error'}
+                      variant="filled"
+                      sx={{ fontSize: '0.875rem', px: 2, py: 1 }}
+                    />
+                  </Box>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      startIcon={<ClockIcon className="h-4 w-4" />}
+                      onClick={() => {
+                        setOperatingHours(restaurant.operatingHours || { open: '09:00', close: '22:00' })
+                        setHoursDialogOpen(true)
+                      }}
+                    >
+                      Set Hours
+                    </Button>
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          checked={restaurant.isOpen || false}
+                          onChange={(e) => handleStatusToggle(e.target.checked)}
+                          disabled={updateRestaurantStatusMutation.isPending}
+                        />
+                      }
+                      label={restaurant.isOpen ? 'Open' : 'Closed'}
+                      labelPlacement="start"
+                    />
+                  </Box>
+                  <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'right' }}>
+                    Operating hours: {restaurant.operatingHours?.open || '09:00'} - {restaurant.operatingHours?.close || '22:00'}
+                  </Typography>
+                </Box>
+              </Grid>
+            </Grid>
           </CardContent>
         </Card>
 
-        {/* Stats Cards */}
+        {/* Row 2: Professional Stats Cards */}
         <Grid container spacing={3} sx={{ mb: 4 }}>
           <Grid item xs={12} sm={6} md={3}>
-            <Card>
-              <CardContent sx={{ textAlign: 'center' }}>
-                <Box sx={{ display: 'flex', justifyContent: 'center', mb: 1 }}>
-                  <ShoppingBagIcon className="h-8 w-8 text-blue-500" />
+            <Card sx={{ 
+              height: '100%',
+              background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+              color: 'white',
+              position: 'relative',
+              overflow: 'hidden'
+            }}>
+              <CardContent sx={{ p: 3 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                  <Box>
+                    <Typography variant="body2" sx={{ opacity: 0.9, mb: 1, fontWeight: 500 }}>
+                      Orders Today
+                    </Typography>
+                    <Typography variant="h3" sx={{ fontWeight: 800, lineHeight: 1 }}>
+                      {todayOrders.length}
+                    </Typography>
+                  </Box>
+                  <Box sx={{ 
+                    p: 1.5, 
+                    borderRadius: 2, 
+                    backgroundColor: 'rgba(255,255,255,0.2)',
+                    backdropFilter: 'blur(10px)'
+                  }}>
+                    <ShoppingBagIcon className="h-5 w-5" />
+                  </Box>
                 </Box>
-                <Typography variant="h4" sx={{ fontWeight: 700, color: 'primary.main' }}>
-                  {todayOrders.length}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Orders Today
+                <Typography variant="body2" sx={{ opacity: 0.8 }}>
+                  {todayOrders.length > 0 ? '+' + Math.round((todayOrders.length / (orders?.length || 1)) * 100) + '% of total' : 'No orders yet today'}
                 </Typography>
               </CardContent>
             </Card>
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
-            <Card>
-              <CardContent sx={{ textAlign: 'center' }}>
-                <Box sx={{ display: 'flex', justifyContent: 'center', mb: 1 }}>
-                  <CurrencyRupeeIcon className="h-8 w-8 text-green-500" />
+            <Card sx={{ 
+              height: '100%',
+              background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+              color: 'white',
+              position: 'relative',
+              overflow: 'hidden'
+            }}>
+              <CardContent sx={{ p: 3 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                  <Box>
+                    <Typography variant="body2" sx={{ opacity: 0.9, mb: 1, fontWeight: 500 }}>
+                      Revenue Today
+                    </Typography>
+                    <Typography variant="h3" sx={{ fontWeight: 800, lineHeight: 1 }}>
+                      ₹{todayRevenue.toLocaleString()}
+                    </Typography>
+                  </Box>
+                  <Box sx={{ 
+                    p: 1.5, 
+                    borderRadius: 2, 
+                    backgroundColor: 'rgba(255,255,255,0.2)',
+                    backdropFilter: 'blur(10px)'
+                  }}>
+                    <CurrencyRupeeIcon className="h-5 w-5" />
+                  </Box>
                 </Box>
-                <Typography variant="h4" sx={{ fontWeight: 700, color: 'success.main' }}>
-                  ₹{todayRevenue.toLocaleString()}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Revenue Today
+                <Typography variant="body2" sx={{ opacity: 0.8 }}>
+                  {todayRevenue > 0 ? 'Avg ₹' + Math.round(todayRevenue / todayOrders.length) + ' per order' : 'No revenue today'}
                 </Typography>
               </CardContent>
             </Card>
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
-            <Card>
-              <CardContent sx={{ textAlign: 'center' }}>
-                <Box sx={{ display: 'flex', justifyContent: 'center', mb: 1 }}>
-                  <ClockIcon className="h-8 w-8 text-orange-500" />
+            <Card sx={{ 
+              height: '100%',
+              background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+              color: 'white',
+              position: 'relative',
+              overflow: 'hidden'
+            }}>
+              <CardContent sx={{ p: 3 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                  <Box>
+                    <Typography variant="body2" sx={{ opacity: 0.9, mb: 1, fontWeight: 500 }}>
+                      Pending Orders
+                    </Typography>
+                    <Typography variant="h3" sx={{ fontWeight: 800, lineHeight: 1, color: pendingOrders.length > 0 ? '#fff' : 'rgba(255,255,255,0.8)' }}>
+                      {pendingOrders.length}
+                    </Typography>
+                  </Box>
+                  <Box sx={{ 
+                    p: 1.5, 
+                    borderRadius: 2, 
+                    backgroundColor: pendingOrders.length > 0 ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.2)',
+                    backdropFilter: 'blur(10px)'
+                  }}>
+                    <ClockIcon className="h-5 w-5" />
+                  </Box>
                 </Box>
-                <Typography variant="h4" sx={{ fontWeight: 700, color: 'warning.main' }}>
-                  {pendingOrders.length}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Pending Orders
+                <Typography variant="body2" sx={{ opacity: 0.8 }}>
+                  {pendingOrders.length > 0 ? 'Requires attention' : 'All orders processed'}
                 </Typography>
               </CardContent>
             </Card>
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
-            <Card>
-              <CardContent sx={{ textAlign: 'center' }}>
-                <Box sx={{ display: 'flex', justifyContent: 'center', mb: 1 }}>
-                  <StarIcon className="h-8 w-8 text-yellow-500" />
+            <Card sx={{ 
+              height: '100%',
+              background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
+              color: 'white',
+              position: 'relative',
+              overflow: 'hidden'
+            }}>
+              <CardContent sx={{ p: 3 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                  <Box>
+                    <Typography variant="body2" sx={{ opacity: 0.9, mb: 1, fontWeight: 500 }}>
+                      Average Rating
+                    </Typography>
+                    <Typography variant="h3" sx={{ fontWeight: 800, lineHeight: 1 }}>
+                      {restaurant.averageRating?.toFixed(1) || '0.0'}
+                    </Typography>
+                  </Box>
+                  <Box sx={{ 
+                    p: 1.5, 
+                    borderRadius: 2, 
+                    backgroundColor: 'rgba(255,255,255,0.2)',
+                    backdropFilter: 'blur(10px)'
+                  }}>
+                    <StarIcon className="h-5 w-5" />
+                  </Box>
                 </Box>
-                <Typography variant="h4" sx={{ fontWeight: 700, color: 'info.main' }}>
-                  {restaurant.averageRating?.toFixed(1) || '0.0'}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Average Rating
+                <Typography variant="body2" sx={{ opacity: 0.8 }}>
+                  {restaurant.totalReviews ? `Based on ${restaurant.totalReviews} reviews` : 'No reviews yet'}
                 </Typography>
               </CardContent>
             </Card>
           </Grid>
         </Grid>
 
-        {/* Quick Actions */}
+        {/* Row 3: Quick Actions & Restaurant Insights */}
         <Grid container spacing={3} sx={{ mb: 4 }}>
           <Grid item xs={12} md={6}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
-                  Quick Actions
-                </Typography>
+            <Card sx={{ height: '100%' }}>
+              <CardContent sx={{ p: 3 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+                  <Box sx={{ 
+                    p: 1.5, 
+                    borderRadius: 2, 
+                    backgroundColor: 'primary.main',
+                    color: 'white'
+                  }}>
+                    <CogIcon className="h-5 w-5" />
+                  </Box>
+                  <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                    Quick Actions
+                  </Typography>
+                </Box>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                   <Button
                     component={Link}
                     to="/admin/menu"
                     variant="contained"
-                    startIcon={<PlusIcon className="h-4 w-4" />}
+                    startIcon={<PlusIcon className="h-5 w-5" />}
                     fullWidth
+                    sx={{ 
+                      py: 1.5,
+                      fontSize: '1rem',
+                      fontWeight: 600,
+                      textTransform: 'none'
+                    }}
                   >
-                    Manage Menu
+                    Manage Menu Items
                   </Button>
                   <Button
                     component={Link}
                     to="/admin/orders"
                     variant="outlined"
-                    startIcon={<EyeIcon className="h-4 w-4" />}
+                    startIcon={<EyeIcon className="h-5 w-5" />}
                     fullWidth
+                    sx={{ 
+                      py: 1.5,
+                      fontSize: '1rem',
+                      fontWeight: 600,
+                      textTransform: 'none'
+                    }}
                   >
                     View All Orders
                   </Button>
@@ -298,95 +403,149 @@ const AdminDashboard = () => {
             </Card>
           </Grid>
           <Grid item xs={12} md={6}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
-                  Restaurant Status
-                </Typography>
-                <Box sx={{ mb: 2 }}>
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                    Menu Items: {restaurant.menuItems?.length || 0}
+            <Card sx={{ height: '100%' }}>
+              <CardContent sx={{ p: 3 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+                  <Box sx={{ 
+                    p: 1.5, 
+                    borderRadius: 2, 
+                    backgroundColor: 'success.main',
+                    color: 'white'
+                  }}>
+                    <ChartBarIcon className="h-5 w-5" />
+                  </Box>
+                  <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                    Restaurant Insights
                   </Typography>
-                  <LinearProgress
-                    variant="determinate"
-                    value={Math.min((restaurant.menuItems?.length || 0) * 10, 100)}
-                    sx={{ mb: 2 }}
-                  />
                 </Box>
-                <Box sx={{ mb: 2 }}>
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                    Total Orders: {orders?.length || 0}
-                  </Typography>
-                  <LinearProgress
-                    variant="determinate"
-                    value={Math.min((orders?.length || 0) * 2, 100)}
-                    color="success"
-                  />
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                  <Box>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                      <Typography variant="body2" color="text.secondary">
+                        Menu Items
+                      </Typography>
+                      <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                        {restaurant.menuItems?.length || 0}
+                      </Typography>
+                    </Box>
+                    <Typography variant="body2" color="text.secondary">
+                      {restaurant.menuItems?.length > 10 ? 'Great variety!' : restaurant.menuItems?.length > 5 ? 'Good selection' : 'Consider adding more items'}
+                    </Typography>
+                  </Box>
+                  <Divider />
+                  <Box>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                      <Typography variant="body2" color="text.secondary">
+                        Total Orders
+                      </Typography>
+                      <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                        {orders?.length || 0}
+                      </Typography>
+                    </Box>
+                    <Typography variant="body2" color="text.secondary">
+                      {orders?.length > 50 ? 'Excellent performance!' : orders?.length > 10 ? 'Growing steadily' : 'Just getting started'}
+                    </Typography>
+                  </Box>
                 </Box>
               </CardContent>
             </Card>
           </Grid>
         </Grid>
 
-        {/* Recent Orders */}
-        <Card>
-          <CardContent>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-              <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                Recent Orders
-              </Typography>
-              <Button
-                component={Link}
-                to="/admin/orders"
-                variant="outlined"
-                size="small"
-              >
-                View All
-              </Button>
+        {/* Row 4: Recent Orders Table (Full Width) */}
+        <Card sx={{ boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}>
+          <CardContent sx={{ p: 0 }}>
+            <Box sx={{ p: 3, borderBottom: '1px solid', borderColor: 'divider' }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                  <Box sx={{ 
+                    p: 1.5, 
+                    borderRadius: 2, 
+                    backgroundColor: 'info.main',
+                    color: 'white'
+                  }}>
+                    <ShoppingBagIcon className="h-5 w-5" />
+                  </Box>
+                  <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                    Recent Orders
+                  </Typography>
+                  {orders?.length > 0 && (
+                    <Chip 
+                      label={`${orders.length} total`} 
+                      size="small" 
+                      variant="outlined" 
+                    />
+                  )}
+                </Box>
+                <Button
+                  component={Link}
+                  to="/admin/orders"
+                  variant="contained"
+                  size="small"
+                  startIcon={<EyeIcon className="h-4 w-4" />}
+                  sx={{ textTransform: 'none' }}
+                >
+                  View All Orders
+                </Button>
+              </Box>
             </Box>
 
             {ordersLoading ? (
-              <LoadingSpinner />
+              <Box sx={{ p: 4, textAlign: 'center' }}>
+                <LoadingSpinner />
+              </Box>
             ) : orders?.length > 0 ? (
               <TableContainer>
-                <Table>
+                <Table sx={{ minWidth: 650 }}>
                   <TableHead>
-                    <TableRow>
-                      <TableCell>Order ID</TableCell>
-                      <TableCell>Customer</TableCell>
-                      <TableCell>Items</TableCell>
-                      <TableCell>Amount</TableCell>
-                      <TableCell>Status</TableCell>
-                      <TableCell>Time</TableCell>
-                      <TableCell>Actions</TableCell>
+                    <TableRow sx={{ backgroundColor: 'grey.50' }}>
+                      <TableCell sx={{ fontWeight: 600 }}>Order ID</TableCell>
+                      <TableCell sx={{ fontWeight: 600 }}>Customer</TableCell>
+                      <TableCell sx={{ fontWeight: 600 }}>Items</TableCell>
+                      <TableCell sx={{ fontWeight: 600 }}>Amount</TableCell>
+                      <TableCell sx={{ fontWeight: 600 }}>Status</TableCell>
+                      <TableCell sx={{ fontWeight: 600 }}>Time</TableCell>
+                      <TableCell sx={{ fontWeight: 600 }}>Actions</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {orders.slice(0, 5).map((order) => (
-                      <TableRow key={order._id}>
+                    {orders.slice(0, 8).map((order, index) => (
+                      <TableRow 
+                        key={order._id}
+                        sx={{ 
+                          '&:hover': { backgroundColor: 'grey.50' },
+                          borderLeft: pendingOrders.some(p => p._id === order._id) ? '4px solid' : 'none',
+                          borderLeftColor: 'warning.main'
+                        }}
+                      >
                         <TableCell>
-                          <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
+                          <Typography variant="body2" sx={{ fontFamily: 'monospace', fontWeight: 600 }}>
                             #{order._id.slice(-8).toUpperCase()}
                           </Typography>
                         </TableCell>
                         <TableCell>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <Avatar sx={{ width: 32, height: 32 }}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                            <Avatar sx={{ width: 36, height: 36 }}>
                               {order.user?.name?.charAt(0) || 'U'}
                             </Avatar>
-                            <Typography variant="body2">
-                              {order.user?.name || 'Customer'}
-                            </Typography>
+                            <Box>
+                              <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                                {order.user?.name || 'Customer'}
+                              </Typography>
+                              <Typography variant="caption" color="text.secondary">
+                                {order.user?.email || 'No email'}
+                              </Typography>
+                            </Box>
                           </Box>
                         </TableCell>
                         <TableCell>
-                          <Typography variant="body2">
+                          <Typography variant="body2" sx={{ fontWeight: 500 }}>
                             {order.items?.length} items
                           </Typography>
                         </TableCell>
                         <TableCell>
-                          <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                            ₹{order.totalAmount}
+                          <Typography variant="body2" sx={{ fontWeight: 700, color: 'success.main' }}>
+                            ₹{order.totalAmount?.toLocaleString()}
                           </Typography>
                         </TableCell>
                         <TableCell>
@@ -394,15 +553,28 @@ const AdminDashboard = () => {
                             label={order.status}
                             color={getStatusColor(order.status)}
                             size="small"
+                            sx={{ fontWeight: 500 }}
                           />
                         </TableCell>
                         <TableCell>
-                          <Typography variant="body2" color="text.secondary">
-                            {new Date(order.createdAt).toLocaleTimeString()}
-                          </Typography>
+                          <Box>
+                            <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                              {new Date(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            </Typography>
+                            <Typography variant="caption" color="text.secondary">
+                              {new Date(order.createdAt).toLocaleDateString()}
+                            </Typography>
+                          </Box>
                         </TableCell>
                         <TableCell>
-                          <IconButton size="small">
+                          <IconButton 
+                            size="small"
+                            sx={{ 
+                              backgroundColor: 'primary.main',
+                              color: 'white',
+                              '&:hover': { backgroundColor: 'primary.dark' }
+                            }}
+                          >
                             <EyeIcon className="h-4 w-4" />
                           </IconButton>
                         </TableCell>
@@ -412,9 +584,25 @@ const AdminDashboard = () => {
                 </Table>
               </TableContainer>
             ) : (
-              <Box sx={{ textAlign: 'center', py: 4 }}>
-                <Typography variant="body1" color="text.secondary">
-                  No orders yet. Start promoting your restaurant to get orders!
+              <Box sx={{ textAlign: 'center', py: 8 }}>
+                <Box sx={{ 
+                  width: 80, 
+                  height: 80, 
+                  borderRadius: '50%', 
+                  backgroundColor: 'grey.100',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  mx: 'auto',
+                  mb: 2
+                }}>
+                  <ShoppingBagIcon className="h-8 w-8 text-gray-400" />
+                </Box>
+                <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
+                  No orders yet
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Start promoting your restaurant to get your first orders!
                 </Typography>
               </Box>
             )}

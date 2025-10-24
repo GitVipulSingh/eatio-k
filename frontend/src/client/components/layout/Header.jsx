@@ -327,60 +327,43 @@ const Header = () => {
                 zIndex: 10
               }}
             >
-              {/* Log In Button - IDENTICAL to Sign Up Button */}
-              <Button
-                component={Link}
+              {/* Log In Button - Simple Link Approach (No Material-UI conflicts) */}
+              <Link
                 to="/auth/login"
-                variant="contained"
-                className="login-button-visible"
                 style={{
-                  backgroundColor: '#f97316',
-                  backgroundImage: 'linear-gradient(135deg, #f97316, #ea580c)',
-                  color: '#ffffff',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  minWidth: '80px',
+                  padding: '8px 24px',
+                  fontSize: '0.9rem',
+                  fontWeight: '600',
+                  fontFamily: 'inherit',
+                  textDecoration: 'none',
+                  textTransform: 'none',
+                  borderRadius: '8px',
                   border: 'none',
+                  background: 'linear-gradient(135deg, #f97316, #ea580c)',
+                  color: '#ffffff',
+                  boxShadow: '0 2px 8px rgba(249, 115, 22, 0.3)',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
                   opacity: 1,
                   visibility: 'visible'
                 }}
-                sx={{
-                  fontWeight: '600 !important',
-                  textTransform: 'none !important',
-                  minWidth: { xs: '70px', sm: '80px' },
-                  px: { xs: 2, sm: 3 },
-                  py: { xs: 0.75, sm: 1 },
-                  fontSize: { xs: '0.8rem', sm: '0.9rem' },
-                  borderRadius: '8px !important',
-                  backgroundColor: '#f97316 !important',
-                  backgroundImage: 'linear-gradient(135deg, #f97316, #ea580c) !important',
-                  color: '#ffffff !important',
-                  boxShadow: '0 2px 8px rgba(249, 115, 22, 0.3) !important',
-                  border: 'none !important',
-                  opacity: '1 !important',
-                  visibility: 'visible !important',
-                  display: 'inline-flex !important',
-                  '&.MuiButton-root': {
-                    backgroundColor: '#f97316 !important',
-                    color: '#ffffff !important',
-                  },
-                  '&:hover': {
-                    background: '#ea580c !important',
-                    backgroundImage: 'linear-gradient(135deg, #ea580c, #c2410c) !important',
-                    boxShadow: '0 4px 12px rgba(249, 115, 22, 0.4) !important',
-                    transform: 'translateY(-1px) !important',
-                    color: '#ffffff !important',
-                  },
-                  '&:focus': {
-                    background: '#f97316 !important',
-                    color: '#ffffff !important',
-                  },
-                  '&:active': {
-                    background: '#ea580c !important',
-                    color: '#ffffff !important',
-                  },
-                  transition: 'all 0.2s ease !important'
+                onMouseEnter={(e) => {
+                  e.target.style.background = 'linear-gradient(135deg, #ea580c, #c2410c)'
+                  e.target.style.transform = 'translateY(-1px)'
+                  e.target.style.boxShadow = '0 4px 12px rgba(249, 115, 22, 0.4)'
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.background = 'linear-gradient(135deg, #f97316, #ea580c)'
+                  e.target.style.transform = 'translateY(0)'
+                  e.target.style.boxShadow = '0 2px 8px rgba(249, 115, 22, 0.3)'
                 }}
               >
                 Log In
-              </Button>
+              </Link>
               
               {/* Sign Up Button - BULLETPROOF VISIBILITY STYLING */}
               <Button
