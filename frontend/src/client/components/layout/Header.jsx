@@ -90,37 +90,7 @@ const Header = () => {
 
   return (
     <>
-      {/* FORCE Login Button Visibility - Maximum Specificity */}
-      <style>
-        {`
-          .MuiToolbar-root .auth-buttons .login-button-visible.MuiButton-root.MuiButton-contained {
-            background: #f97316 !important;
-            background-color: #f97316 !important;
-            background-image: linear-gradient(135deg, #f97316, #ea580c) !important;
-            color: #ffffff !important;
-            opacity: 1 !important;
-            visibility: visible !important;
-            border: none !important;
-            box-shadow: 0 2px 8px rgba(249, 115, 22, 0.3) !important;
-          }
-          .MuiToolbar-root .auth-buttons .login-button-visible.MuiButton-root.MuiButton-contained:hover {
-            background: #ea580c !important;
-            background-color: #ea580c !important;
-            background-image: linear-gradient(135deg, #ea580c, #c2410c) !important;
-            color: #ffffff !important;
-          }
-          .MuiToolbar-root .auth-buttons .login-button-visible.MuiButton-root.MuiButton-contained:focus {
-            background: #f97316 !important;
-            background-color: #f97316 !important;
-            color: #ffffff !important;
-          }
-          .MuiToolbar-root .auth-buttons .login-button-visible.MuiButton-root.MuiButton-contained:active {
-            background: #ea580c !important;
-            background-color: #ea580c !important;
-            color: #ffffff !important;
-          }
-        `}
-      </style>
+
       <AppBar 
         position="sticky" 
         elevation={0}
@@ -197,8 +167,8 @@ const Header = () => {
               flexGrow: 1, 
               mx: 4, 
               // LOGGED-IN: Full width search bar (original behavior)
-              // LOGGED-OUT: Constrained search bar to make space for auth buttons
-              maxWidth: isAuthenticated ? 'none' : '500px',
+              // LOGGED-OUT: Constrained search bar to make space for auth button
+              maxWidth: isAuthenticated ? 'none' : '600px',
               display: 'flex',
               justifyContent: isAuthenticated ? 'flex-start' : 'center'
             }}>
@@ -319,7 +289,6 @@ const Header = () => {
               sx={{ 
                 display: 'flex !important', 
                 alignItems: 'center !important', 
-                gap: '16px', // Improved spacing between buttons
                 flexShrink: '0 !important',
                 ml: { xs: 1, sm: 2 },
                 visibility: 'visible !important',
@@ -327,44 +296,6 @@ const Header = () => {
                 zIndex: 10
               }}
             >
-              {/* Log In Button - Simple Link Approach (No Material-UI conflicts) */}
-              <Link
-                to="/auth/login"
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  minWidth: '80px',
-                  padding: '8px 24px',
-                  fontSize: '0.9rem',
-                  fontWeight: '600',
-                  fontFamily: 'inherit',
-                  textDecoration: 'none',
-                  textTransform: 'none',
-                  borderRadius: '8px',
-                  border: 'none',
-                  background: 'linear-gradient(135deg, #f97316, #ea580c)',
-                  color: '#ffffff',
-                  boxShadow: '0 2px 8px rgba(249, 115, 22, 0.3)',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                  opacity: 1,
-                  visibility: 'visible'
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.background = 'linear-gradient(135deg, #ea580c, #c2410c)'
-                  e.target.style.transform = 'translateY(-1px)'
-                  e.target.style.boxShadow = '0 4px 12px rgba(249, 115, 22, 0.4)'
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.background = 'linear-gradient(135deg, #f97316, #ea580c)'
-                  e.target.style.transform = 'translateY(0)'
-                  e.target.style.boxShadow = '0 2px 8px rgba(249, 115, 22, 0.3)'
-                }}
-              >
-                Log In
-              </Link>
-              
               {/* Sign Up Button - BULLETPROOF VISIBILITY STYLING */}
               <Button
                 component={Link}
