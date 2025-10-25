@@ -198,7 +198,13 @@ const SuperAdminDashboard = () => {
                       <Skeleton variant="text" width={80} height={48} sx={{ bgcolor: 'rgba(255,255,255,0.2)' }} />
                     ) : (
                       <Typography variant="h2" sx={{ fontWeight: 800, lineHeight: 1 }}>
-                        ₹{systemStats?.totalRevenue ? (systemStats.totalRevenue / 100000).toFixed(1) + 'L' : '0'}
+                        ₹{systemStats?.totalRevenue ? 
+                          systemStats.totalRevenue >= 100000 
+                            ? (systemStats.totalRevenue / 100000).toFixed(1) + 'L'
+                            : systemStats.totalRevenue >= 1000
+                              ? (systemStats.totalRevenue / 1000).toFixed(1) + 'K'
+                              : systemStats.totalRevenue.toFixed(0)
+                          : '0'}
                       </Typography>
                     )}
                   </Box>
