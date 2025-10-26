@@ -100,16 +100,39 @@ const RestaurantRegisterPage = () => {
         setUploadingFiles(prev => ({ ...prev, [fileType]: true }))
         
         if (fileType === 'restaurantPhoto') {
-          // Upload restaurant photo to Cloudinary
-          const uploadResult = await uploadRestaurantImageMutation.mutateAsync(file)
+          // Upload restaurant photo to Cloudinary using public registration endpoint
+          const formData = new FormData()
+          formData.append('image', file)
+          
+          const { data } = await api.post('/registration-images/restaurant', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          })
+          
           setUploadedFiles(prev => ({
             ...prev,
-            [fileType]: uploadResult.imageUrl
+            [fileType]: data.imageUrl
           }))
           toast.success('Restaurant photo uploaded successfully!')
+        } else if (fileType === 'fssaiLicense') {
+          // Upload FSSAI document to Cloudinary using public registration endpoint
+          const formData = new FormData()
+          formData.append('document', file)
+          
+          const { data } = await api.post('/registration-images/document', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          })
+          
+          setUploadedFiles(prev => ({
+            ...prev,
+            [fileType]: data.documentUrl
+          }))
+          toast.success('FSSAI License uploaded successfully!')
         } else {
-          // For other documents (like FSSAI), store file name for now
-          // In production, you would upload these to a document storage service
+          // For other document types, store file name for now
           setUploadedFiles(prev => ({
             ...prev,
             [fileType]: file.name

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
@@ -45,8 +46,11 @@ import {
 import LoadingSpinner from '../../common/components/LoadingSpinner'
 import { useSuperAdminDashboardUpdates } from '../../hooks/useRealTimeUpdates'
 import SuperAdminLoginPrompt from '../../components/SuperAdminLoginPrompt'
+import DocumentViewer from '../../components/DocumentViewer'
 
 const SuperAdminDashboard = () => {
+  const [documentViewer, setDocumentViewer] = useState({ open: false, url: '', name: '', type: '' })
+  
   const { data: pendingRestaurants, isLoading: pendingLoading, error: pendingError } = usePendingRestaurants()
   const { data: systemStats, isLoading: statsLoading, error: statsError } = useSystemStats()
   const { data: allRestaurants, isLoading: restaurantsLoading, error: restaurantsError } = useAllRestaurants()
@@ -62,11 +66,21 @@ const SuperAdminDashboard = () => {
   const hasAuthError = [pendingError, statsError, restaurantsError, usersError, ordersError]
     .some(error => error?.response?.status === 403)
 
+  // Helper function to open document viewer
+  const openDocumentViewer = (url, name, type) => {
+    setDocumentViewer({ open: true, url, name, type })
+  }
+
+  const closeDocumentViewer = () => {
+    setDocumentViewer({ open: false, url: '', name: '', type: '' })
+  }
+
   if (hasAuthError) {
     return <SuperAdminLoginPrompt />
   }
 
   return (
+    <>
     <Container maxWidth="xl" sx={{ py: 4 }}>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -540,13 +554,17 @@ const SuperAdminDashboard = () => {
                               {restaurant.documents?.fssaiLicense ? (
                                 <Box sx={{ mb: 0.5 }}>
                                   <Chip 
-                                    label="FSSAI License" 
+                                    label={restaurant.documents.fssaiLicense.includes('cloudinary.com') ? "FSSAI License (View)" : "FSSAI License (Legacy)"} 
                                     size="small" 
-                                    color="success" 
+                                    color={restaurant.documents.fssaiLicense.includes('cloudinary.com') ? "success" : "warning"} 
                                     variant="outlined" 
                                     sx={{ mr: 0.5 }}
                                     onClick={() => {
-                                      alert(`FSSAI License: ${restaurant.documents.fssaiLicense}\n\nNote: This is a document filename. In production, you would implement document viewing.`)
+                                      openDocumentViewer(
+                                        restaurant.documents.fssaiLicense,
+                                        `FSSAI License - ${restaurant.name}`,
+                                        'FSSAI License Document'
+                                      )
                                     }}
                                     style={{ cursor: 'pointer' }}
                                   />
@@ -566,12 +584,11 @@ const SuperAdminDashboard = () => {
                                     variant="outlined" 
                                     sx={{ mr: 0.5 }}
                                     onClick={() => {
-                                      if (restaurant.documents.restaurantPhoto.includes('cloudinary.com')) {
-                                        // Open Cloudinary image in new tab
-                                        window.open(restaurant.documents.restaurantPhoto, '_blank')
-                                      } else {
-                                        alert(`Restaurant Photo: ${restaurant.documents.restaurantPhoto}\n\nNote: This appears to be a filename. Cloudinary images will open in a new tab.`)
-                                      }
+                                      openDocumentViewer(
+                                        restaurant.documents.restaurantPhoto,
+                                        `Restaurant Photo - ${restaurant.name}`,
+                                        'Restaurant Photo'
+                                      )
                                     }}
                                     style={{ cursor: 'pointer' }}
                                   />
@@ -816,6 +833,16 @@ const SuperAdminDashboard = () => {
         </Grid>
       </motion.div>
     </Container>
+    
+    {/* Document Viewer Modal */}
+    <DocumentViewer
+      open={documentViewer.open}
+      onClose={closeDocumentViewer}
+      documentUrl={documentViewer.url}
+      documentName={documentViewer.name}
+      documentType={documentViewer.type}
+    />
+    </>
   )
 }
 

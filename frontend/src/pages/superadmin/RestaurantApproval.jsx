@@ -43,12 +43,14 @@ import { toast } from 'react-hot-toast'
 
 import { usePendingRestaurants, useApproveRestaurant, useRejectRestaurant } from '../../client/api/queries'
 import LoadingSpinner from '../../common/components/LoadingSpinner'
+import DocumentViewer from '../../components/DocumentViewer'
 
 const RestaurantApproval = () => {
   const [selectedRestaurant, setSelectedRestaurant] = useState(null)
   const [detailsDialogOpen, setDetailsDialogOpen] = useState(false)
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false)
   const [rejectionReason, setRejectionReason] = useState('')
+  const [documentViewer, setDocumentViewer] = useState({ open: false, url: '', name: '', type: '' })
 
   const { data: pendingRestaurants, isLoading, refetch } = usePendingRestaurants()
   const approveRestaurantMutation = useApproveRestaurant()
@@ -57,6 +59,15 @@ const RestaurantApproval = () => {
   const handleViewDetails = (restaurant) => {
     setSelectedRestaurant(restaurant)
     setDetailsDialogOpen(true)
+  }
+
+  // Helper function to open document viewer
+  const openDocumentViewer = (url, name, type) => {
+    setDocumentViewer({ open: true, url, name, type })
+  }
+
+  const closeDocumentViewer = () => {
+    setDocumentViewer({ open: false, url: '', name: '', type: '' })
   }
 
   const handleApprove = async (restaurantId) => {
@@ -100,6 +111,7 @@ const RestaurantApproval = () => {
   }
 
   return (
+    <>
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -366,7 +378,11 @@ const RestaurantApproval = () => {
                                   size="small"
                                   variant="outlined"
                                   onClick={() => {
-                                    alert(`FSSAI License Document: ${selectedRestaurant.documents.fssaiLicense}\n\nNote: To view actual files, a file storage service (AWS S3, Cloudinary, etc.) needs to be configured.\n\nCurrently showing filename only.`)
+                                    openDocumentViewer(
+                                      selectedRestaurant.documents.fssaiLicense,
+                                      `FSSAI License - ${selectedRestaurant.name}`,
+                                      'FSSAI License Document'
+                                    )
                                   }}
                                 >
                                   View Document
@@ -401,7 +417,11 @@ const RestaurantApproval = () => {
                                   size="small"
                                   variant="outlined"
                                   onClick={() => {
-                                    alert(`Restaurant Photo: ${selectedRestaurant.documents.restaurantPhoto}\n\nNote: To view actual images, a file storage service (AWS S3, Cloudinary, etc.) needs to be configured.\n\nCurrently showing filename only.`)
+                                    openDocumentViewer(
+                                      selectedRestaurant.documents.restaurantPhoto,
+                                      `Restaurant Photo - ${selectedRestaurant.name}`,
+                                      'Restaurant Photo'
+                                    )
                                   }}
                                 >
                                   View Photo
@@ -493,6 +513,16 @@ const RestaurantApproval = () => {
         </Dialog>
       </motion.div>
     </Container>
+    
+    {/* Document Viewer Modal */}
+    <DocumentViewer
+      open={documentViewer.open}
+      onClose={closeDocumentViewer}
+      documentUrl={documentViewer.url}
+      documentName={documentViewer.name}
+      documentType={documentViewer.type}
+    />
+    </>
   )
 }
 
