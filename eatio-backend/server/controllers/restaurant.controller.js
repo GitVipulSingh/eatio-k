@@ -42,8 +42,12 @@ const addMenuItem = async (req, res) => {
         const newMenuItem = { name, description, price, category, image };
         console.log(`➕ [ADD_MENU] Creating menu item:`, newMenuItem);
         
-        restaurant.menuItems.push(newMenuItem);
-        await restaurant.save();
+        // Use findByIdAndUpdate to add menu item without full validation
+        await Restaurant.findByIdAndUpdate(
+          req.user.restaurant,
+          { $push: { menuItems: newMenuItem } },
+          { runValidators: false }
+        );
         
         console.log(`✅ [ADD_MENU] Menu item added successfully. Total items: ${restaurant.menuItems.length}`);
         res.status(201).json(restaurant);
@@ -80,43 +84,115 @@ const getMyRestaurant = async (req, res) => {
 // --- UPDATED FUNCTION WITH LOCAL STORAGE SUPPORT ---
 const updateMenuItem = async (req, res) => {
   try {
+    console.log(`🔄 [UPDATE_MENU] Starting menu item update for ID: ${req.params.menuItemId}`);
+    console.log(`🔄 [UPDATE_MENU] Update data:`, req.body);
+    
     const { menuItemId } = req.params;
     const updateData = req.body;
 
     const restaurant = await Restaurant.findById(req.user.restaurant);
     if (!restaurant) {
+      console.log(`❌ [UPDATE_MENU] Restaurant not found for user: ${req.user.restaurant}`);
       return res.status(404).json({ message: 'Restaurant not found.' });
     }
 
     const menuItem = restaurant.menuItems.id(menuItemId);
     if (!menuItem) {
+      console.log(`❌ [UPDATE_MENU] Menu item not found: ${menuItemId}`);
       return res.status(404).json({ message: 'Menu item not found.' });
     }
 
+    console.log(`🔄 [UPDATE_MENU] Current menu item:`, {
+      name: menuItem.name,
+      currentImage: menuItem.image,
+      newImage: updateData.image
+    });
+
     // Handle image deletion if a new image is being set
     if (updateData.image && menuItem.image && updateData.image !== menuItem.image) {
+      console.log(`🗑️ [UPDATE_MENU] Image change detected, checking old image for deletion`);
+      
       // Check if old image is a Cloudinary URL
       if (menuItem.image.includes('cloudinary.com')) {
-        // Cloudinary file - delete from Cloudinary
-        const oldPublicId = getPublicIdFromUrl(menuItem.image);
-        if (oldPublicId) {
-          await deleteFromCloudinary(oldPublicId);
+        console.log(`🗑️ [UPDATE_MENU] Old image is Cloudinary URL: ${menuItem.image}`);
+        
+        try {
+          // Cloudinary file - delete from Cloudinary
+          const oldPublicId = getPublicIdFromUrl(menuItem.image);
+          console.log(`🗑️ [UPDATE_MENU] Extracted public ID: ${oldPublicId}`);
+          
+          if (oldPublicId) {
+            const deleteResult = await deleteFromCloudinary(oldPublicId);
+            console.log(`🗑️ [UPDATE_MENU] Cloudinary deletion result:`, deleteResult);
+          } else {
+            console.log(`⚠️ [UPDATE_MENU] Could not extract public ID from URL: ${menuItem.image}`);
+          }
+        } catch (deleteError) {
+          console.error(`❌ [UPDATE_MENU] Error deleting old image from Cloudinary:`, deleteError);
+          // Don't fail the update if image deletion fails
+          console.log(`⚠️ [UPDATE_MENU] Continuing with update despite image deletion failure`);
         }
+      } else {
+        console.log(`ℹ️ [UPDATE_MENU] Old image is not a Cloudinary URL: ${menuItem.image}`);
       }
-      // Note: Legacy local files are no longer supported for deletion since we've migrated to Cloudinary
+    } else {
+      console.log(`ℹ️ [UPDATE_MENU] No image change detected or no existing image`);
     }
 
     // Apply all updates from the request body to the menu item
-    menuItem.set(updateData);
+    console.log(`🔄 [UPDATE_MENU] Applying updates to menu item`);
     
-    await restaurant.save();
+    // Remove menuItemId from updateData if it exists (it should only be in params)
+    const { menuItemId: _, ...cleanUpdateData } = updateData;
+    console.log(`🔄 [UPDATE_MENU] Clean update data:`, cleanUpdateData);
+    
+    // Validate and sanitize the update data
+    const validatedData = {};
+    if (cleanUpdateData.name !== undefined) validatedData.name = String(cleanUpdateData.name);
+    if (cleanUpdateData.description !== undefined) validatedData.description = String(cleanUpdateData.description);
+    if (cleanUpdateData.price !== undefined) validatedData.price = Number(cleanUpdateData.price);
+    if (cleanUpdateData.category !== undefined) validatedData.category = String(cleanUpdateData.category);
+    if (cleanUpdateData.image !== undefined) validatedData.image = String(cleanUpdateData.image);
+    if (cleanUpdateData.isAvailable !== undefined) validatedData.isAvailable = Boolean(cleanUpdateData.isAvailable);
+    
+    console.log(`🔄 [UPDATE_MENU] Validated data:`, validatedData);
+    
+    // Apply updates individually to avoid any issues with the set method
+    Object.keys(validatedData).forEach(key => {
+      menuItem[key] = validatedData[key];
+      console.log(`🔄 [UPDATE_MENU] Set ${key} = ${validatedData[key]}`);
+    });
+    
+    console.log(`💾 [UPDATE_MENU] Saving restaurant with updated menu item`);
+    
+    // Use findByIdAndUpdate to update specific menu item without full validation
+    await Restaurant.findOneAndUpdate(
+      { 
+        _id: req.user.restaurant,
+        'menuItems._id': menuItemId 
+      },
+      {
+        $set: {
+          'menuItems.$.name': validatedData.name,
+          'menuItems.$.description': validatedData.description,
+          'menuItems.$.price': validatedData.price,
+          'menuItems.$.category': validatedData.category,
+          'menuItems.$.image': validatedData.image,
+          'menuItems.$.isAvailable': validatedData.isAvailable
+        }
+      },
+      { runValidators: false }
+    );
+    
+    console.log(`✅ [UPDATE_MENU] Menu item updated successfully: ${menuItem.name}`);
     res.json({ 
       message: 'Menu item updated successfully.',
       menuItem: menuItem
     });
 
   } catch (error) {
-    console.error("Update Menu Item Error:", error);
+    console.error("❌ [UPDATE_MENU] Update Menu Item Error:", error);
+    console.error("❌ [UPDATE_MENU] Error stack:", error.stack);
     res.status(500).json({ message: 'Server error updating menu item.' });
   }
 };
@@ -144,8 +220,12 @@ const deleteMenuItem = async (req, res) => {
             // Note: Legacy local files are no longer supported for deletion since we've migrated to Cloudinary
         }
 
-        restaurant.menuItems.pull({ _id: menuItemId });
-        await restaurant.save();
+        // Use findByIdAndUpdate to remove menu item without full validation
+        await Restaurant.findByIdAndUpdate(
+          req.user.restaurant,
+          { $pull: { menuItems: { _id: menuItemId } } },
+          { runValidators: false }
+        );
         res.json({ message: 'Menu item removed successfully.' });
     } catch (error) {
         console.error("Delete Menu Item Error:", error);

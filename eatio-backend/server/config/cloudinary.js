@@ -67,29 +67,66 @@ const uploadProfileImage = multer({ storage: profileImageStorage });
 // Helper function to delete image from Cloudinary
 const deleteFromCloudinary = async (publicId) => {
   try {
+    const isDebug = process.env.NODE_ENV === 'development';
+    if (isDebug) console.log(`🗑️ [CLOUDINARY] Attempting to delete image with public ID: ${publicId}`);
+    
     const result = await cloudinary.uploader.destroy(publicId);
+    
+    if (result.result === 'ok') {
+      console.log(`✅ [CLOUDINARY] Successfully deleted image: ${publicId}`);
+    } else if (result.result === 'not found') {
+      console.log(`⚠️ [CLOUDINARY] Image not found (may have been already deleted): ${publicId}`);
+    } else {
+      console.log(`⚠️ [CLOUDINARY] Unexpected deletion result for ${publicId}: ${result.result}`);
+    }
+    
     return result;
   } catch (error) {
-    console.error('Error deleting from Cloudinary:', error);
+    console.error(`❌ [CLOUDINARY] Error deleting from Cloudinary:`, error);
     throw error;
   }
 };
 
 // Helper function to extract public ID from Cloudinary URL
 const getPublicIdFromUrl = (url) => {
-  if (!url || !url.includes('cloudinary.com')) return null;
-  
-  const parts = url.split('/');
-  const uploadIndex = parts.findIndex(part => part === 'upload');
-  if (uploadIndex === -1) return null;
-  
-  // Get everything after version (v1234567890)
-  const afterVersion = parts.slice(uploadIndex + 2);
-  const publicIdWithExtension = afterVersion.join('/');
-  
-  // Remove file extension
-  const publicId = publicIdWithExtension.replace(/\.[^/.]+$/, '');
-  return publicId;
+  try {
+    const isDebug = process.env.NODE_ENV === 'development';
+    if (isDebug) console.log(`🔍 [CLOUDINARY] Extracting public ID from URL: ${url}`);
+    
+    if (!url || !url.includes('cloudinary.com')) {
+      if (isDebug) console.log(`❌ [CLOUDINARY] Invalid URL or not a Cloudinary URL`);
+      return null;
+    }
+    
+    const parts = url.split('/');
+    if (isDebug) console.log(`🔍 [CLOUDINARY] URL parts:`, parts);
+    
+    const uploadIndex = parts.findIndex(part => part === 'upload');
+    if (uploadIndex === -1) {
+      if (isDebug) console.log(`❌ [CLOUDINARY] 'upload' not found in URL parts`);
+      return null;
+    }
+    
+    // Get everything after 'upload', handling both versioned and non-versioned URLs
+    let afterUpload = parts.slice(uploadIndex + 1);
+    
+    // If the first part after upload starts with 'v' followed by numbers, it's a version - skip it
+    if (afterUpload.length > 0 && /^v\d+$/.test(afterUpload[0])) {
+      afterUpload = afterUpload.slice(1);
+    }
+    
+    const publicIdWithExtension = afterUpload.join('/');
+    
+    // Remove file extension
+    const publicId = publicIdWithExtension.replace(/\.[^/.]+$/, '');
+    
+    if (isDebug) console.log(`🔍 [CLOUDINARY] Extracted public ID: ${publicId}`);
+    
+    return publicId;
+  } catch (error) {
+    console.error(`❌ [CLOUDINARY] Error extracting public ID:`, error);
+    return null;
+  }
 };
 
 module.exports = {

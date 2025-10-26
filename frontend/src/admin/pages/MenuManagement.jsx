@@ -144,18 +144,8 @@ const MenuManagement = () => {
       // Upload new image if selected
       if (selectedFile) {
         console.log('Uploading new image...')
-        // Delete old image if it exists and is a local file
-        if (selectedItem.image && selectedItem.image.startsWith('/api/uploads/')) {
-          const filename = selectedItem.image.split('/').pop()
-          try {
-            console.log('Deleting old image:', filename)
-            await deleteImageMutation.mutateAsync(filename)
-          } catch (error) {
-            console.warn('Failed to delete old image:', error)
-          }
-        }
-
-        // Upload new image
+        
+        // Upload new image (backend will handle old image deletion)
         const uploadResult = await uploadImageMutation.mutateAsync(selectedFile)
         imageUrl = uploadResult.imageUrl
         console.log('New image uploaded:', imageUrl)

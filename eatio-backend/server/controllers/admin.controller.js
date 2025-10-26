@@ -153,8 +153,13 @@ const updateRestaurantStatus = async (req, res) => {
     
     if (restaurant) {
       const oldStatus = restaurant.status;
-      restaurant.status = status;
-      await restaurant.save();
+      
+      // Use findByIdAndUpdate to avoid full document validation
+      await Restaurant.findByIdAndUpdate(
+        req.params.id,
+        { status: status },
+        { runValidators: false }
+      );
       
       console.log(`🏪 [RESTAURANT_STATUS] Updated restaurant ${restaurant.name} from ${oldStatus} to ${status}`);
       
@@ -297,18 +302,27 @@ const getRestaurantOrders = async (req, res) => {
 const updateRestaurantOpenStatus = async (req, res) => {
   try {
     const { isOpen, operatingHours } = req.body;
-    const restaurant = await Restaurant.findById(req.user.restaurant);
+    
+    // Build update object
+    const updateData = { isOpen };
+    if (operatingHours) {
+      updateData.operatingHours = operatingHours;
+    }
+    
+    // Use findByIdAndUpdate to avoid full document validation
+    const restaurant = await Restaurant.findByIdAndUpdate(
+      req.user.restaurant,
+      updateData,
+      { 
+        new: true, 
+        runValidators: false, // Skip validation to avoid address.state requirement
+        select: 'isOpen operatingHours name' // Only select needed fields
+      }
+    );
     
     if (!restaurant) {
       return res.status(404).json({ message: 'Restaurant not found.' });
     }
-    
-    restaurant.isOpen = isOpen;
-    if (operatingHours) {
-      restaurant.operatingHours = operatingHours;
-    }
-    
-    await restaurant.save();
     
     res.json({ 
       message: `Restaurant is now ${isOpen ? 'open' : 'closed'}`,
@@ -327,7 +341,9 @@ const updateRestaurantOpenStatus = async (req, res) => {
 const updateRestaurantPhoto = async (req, res) => {
   try {
     const { imageUrl } = req.body;
-    const restaurant = await Restaurant.findById(req.user.restaurant);
+    
+    // First get the restaurant to check for old photo
+    const restaurant = await Restaurant.findById(req.user.restaurant).select('documents name');
     
     if (!restaurant) {
       return res.status(404).json({ message: 'Restaurant not found.' });
@@ -338,27 +354,37 @@ const updateRestaurantPhoto = async (req, res) => {
       const { deleteFromCloudinary, getPublicIdFromUrl } = require('../config/cloudinary');
       const oldPublicId = getPublicIdFromUrl(restaurant.documents.restaurantPhoto);
       if (oldPublicId) {
-        await deleteFromCloudinary(oldPublicId);
-        console.log(`🗑️ [UPDATE_PHOTO] Deleted old restaurant photo: ${oldPublicId}`);
+        try {
+          await deleteFromCloudinary(oldPublicId);
+          console.log(`🗑️ [UPDATE_PHOTO] Deleted old restaurant photo: ${oldPublicId}`);
+        } catch (deleteError) {
+          console.warn(`⚠️ [UPDATE_PHOTO] Failed to delete old photo: ${deleteError.message}`);
+          // Continue with update even if deletion fails
+        }
       }
     }
 
-    // Update restaurant photo
-    if (!restaurant.documents) {
-      restaurant.documents = {};
-    }
-    restaurant.documents.restaurantPhoto = imageUrl;
+    // Use findByIdAndUpdate to avoid full document validation
+    const updatedRestaurant = await Restaurant.findByIdAndUpdate(
+      req.user.restaurant,
+      { 
+        'documents.restaurantPhoto': imageUrl 
+      },
+      { 
+        new: true, 
+        runValidators: false, // Skip validation to avoid address.state requirement
+        select: '_id name documents' // Only select needed fields
+      }
+    );
     
-    await restaurant.save();
-    
-    console.log(`✅ [UPDATE_PHOTO] Restaurant photo updated for: ${restaurant.name}`);
+    console.log(`✅ [UPDATE_PHOTO] Restaurant photo updated for: ${updatedRestaurant.name}`);
     
     res.json({ 
       message: 'Restaurant photo updated successfully',
       restaurant: {
-        _id: restaurant._id,
-        name: restaurant.name,
-        documents: restaurant.documents
+        _id: updatedRestaurant._id,
+        name: updatedRestaurant.name,
+        documents: updatedRestaurant.documents
       }
     });
   } catch (error) {

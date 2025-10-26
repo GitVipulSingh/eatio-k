@@ -34,10 +34,27 @@ const registerUser = asyncHandler(async (req, res) => {
       }
     }
 
+    // Validate address fields
+    if (!restaurantDetails.address || !restaurantDetails.address.street || 
+        !restaurantDetails.address.city || !restaurantDetails.address.state || 
+        !restaurantDetails.address.pincode) {
+      res.status(400);
+      throw new Error('Complete address (street, city, state, pincode) is required for restaurant registration.');
+    }
+
     const newRestaurant = new Restaurant({
       name: restaurantDetails.name,
       description: restaurantDetails.description || '',
-      address: restaurantDetails.address,
+      address: {
+        street: restaurantDetails.address.street,
+        city: restaurantDetails.address.city,
+        state: restaurantDetails.address.state,
+        pincode: restaurantDetails.address.pincode,
+        location: restaurantDetails.address.location || {
+          type: 'Point',
+          coordinates: [0, 0]
+        }
+      },
       cuisine: restaurantDetails.cuisine,
       averageRating: restaurantDetails.averageRating || 0,
       fssaiLicenseNumber: restaurantDetails.fssaiLicenseNumber,
