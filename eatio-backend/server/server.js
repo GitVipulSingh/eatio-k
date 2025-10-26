@@ -24,35 +24,15 @@ const uploadRoutes = require('./routes/upload.routes');
 const paymentRoutes = require('./routes/payment.routes');
 const adminRoutes = require('./routes/admin.routes');
 const menuImageRoutes = require('./routes/menuImage.routes');
-const staticRoutes = require('./routes/static.routes');
+const restaurantImageRoutes = require('./routes/restaurantImage.routes');
+const profileImageRoutes = require('./routes/profileImage.routes');
 // NEW ADDITIVE ROUTE - RATING SYSTEM
 const reviewRoutes = require('./routes/review.routes');
 
 const app = express();
 const server = http.createServer(app);
 
-// --- Static File Serving FIRST (before other middleware) ---
-app.use('/api/uploads', (req, res, next) => {
-  console.log(`🖼️  [STATIC] Image request: ${req.method} ${req.url}`);
-  console.log(`🖼️  [STATIC] Full path requested: /api/uploads${req.url}`);
-  console.log(`🖼️  [STATIC] Serving from directory: ${path.join(__dirname, 'uploads')}`);
-  console.log(`🖼️  [STATIC] Request origin: ${req.headers.origin}`);
-
-  // Set comprehensive CORS headers for static file requests
-  res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
-
-  // Handle preflight requests
-  if (req.method === 'OPTIONS') {
-    console.log(`🖼️  [STATIC] Handling OPTIONS preflight request`);
-    return res.status(200).end();
-  }
-
-  next();
-}, express.static(path.join(__dirname, 'uploads')));
+// Note: Static file serving removed - all images now served via Cloudinary CDN
 
 // --- Global Middleware ---
 app.use(helmet({
@@ -122,10 +102,11 @@ app.use('/api/upload', uploadRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/menu-images', menuImageRoutes);
+app.use('/api/restaurant-images', restaurantImageRoutes);
+app.use('/api/profile-images', profileImageRoutes);
 // NEW ADDITIVE ROUTE - RATING SYSTEM
 app.use('/api/reviews', reviewRoutes);
-// Keep the custom static routes as fallback
-app.use('/api/uploads', staticRoutes);
+// Note: Static file routes removed - all images now served via Cloudinary CDN
 
 // --- Centralized Error Handler ---
 app.use((err, req, res, next) => {

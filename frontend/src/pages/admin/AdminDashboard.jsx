@@ -118,7 +118,8 @@ const AdminDashboard = () => {
     return (
       <Container maxWidth="lg" sx={{ py: 4 }}>
         <Alert severity="warning">
-          Restaurant not found. Please contact support if this issue persists.
+          Your application has been submitted successfully.
+We’re currently waiting for restaurant approval. Please check back soon or contact support if the approval takes longer than expected.
         </Alert>
       </Container>
     )

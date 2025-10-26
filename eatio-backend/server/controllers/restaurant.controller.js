@@ -1,8 +1,7 @@
 // server/controllers/restaurant.controller.js
 
 const Restaurant = require('../models/restaurant.model');
-const cloudinary = require('cloudinary').v2; // Import Cloudinary
-const { deleteLocalFile, getLocalFilePath } = require('../config/localStorage');
+const { deleteFromCloudinary, getPublicIdFromUrl } = require('../config/cloudinary');
 const path = require('path');
 
 const getAllRestaurants = async (req, res) => { 
@@ -96,17 +95,15 @@ const updateMenuItem = async (req, res) => {
 
     // Handle image deletion if a new image is being set
     if (updateData.image && menuItem.image && updateData.image !== menuItem.image) {
-      // Check if old image is a local file or Cloudinary URL
-      if (menuItem.image.startsWith('/api/uploads/')) {
-        // Local file - extract filename and delete
-        const filename = path.basename(menuItem.image);
-        const filePath = getLocalFilePath(filename);
-        deleteLocalFile(filePath);
-      } else if (menuItem.image.includes('cloudinary.com')) {
+      // Check if old image is a Cloudinary URL
+      if (menuItem.image.includes('cloudinary.com')) {
         // Cloudinary file - delete from Cloudinary
-        const oldPublicId = menuItem.image.split('/').slice(-2).join('/').split('.')[0];
-        await cloudinary.uploader.destroy(oldPublicId);
+        const oldPublicId = getPublicIdFromUrl(menuItem.image);
+        if (oldPublicId) {
+          await deleteFromCloudinary(oldPublicId);
+        }
       }
+      // Note: Legacy local files are no longer supported for deletion since we've migrated to Cloudinary
     }
 
     // Apply all updates from the request body to the menu item
@@ -136,17 +133,15 @@ const deleteMenuItem = async (req, res) => {
         // Before deleting the item from our DB, delete its image
         const menuItem = restaurant.menuItems.id(menuItemId);
         if (menuItem && menuItem.image) {
-            // Check if it's a local file or Cloudinary URL
-            if (menuItem.image.startsWith('/api/uploads/')) {
-                // Local file - extract filename and delete
-                const filename = path.basename(menuItem.image);
-                const filePath = getLocalFilePath(filename);
-                deleteLocalFile(filePath);
-            } else if (menuItem.image.includes('cloudinary.com')) {
+            // Check if it's a Cloudinary URL
+            if (menuItem.image.includes('cloudinary.com')) {
                 // Cloudinary file - delete from Cloudinary
-                const publicId = menuItem.image.split('/').slice(-2).join('/').split('.')[0];
-                await cloudinary.uploader.destroy(publicId);
+                const publicId = getPublicIdFromUrl(menuItem.image);
+                if (publicId) {
+                    await deleteFromCloudinary(publicId);
+                }
             }
+            // Note: Legacy local files are no longer supported for deletion since we've migrated to Cloudinary
         }
 
         restaurant.menuItems.pull({ _id: menuItemId });

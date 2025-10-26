@@ -11,25 +11,30 @@
 export const getMenuItemImageUrl = (imageUrl, itemName = '', category = '', cuisine = []) => {
   console.log(`🖼️  [IMAGE_UTILS] Processing image for item: "${itemName}"`);
   console.log(`🖼️  [IMAGE_UTILS] Input imageUrl: "${imageUrl}"`);
-  console.log(`🖼️  [IMAGE_UTILS] Environment VITE_API_URL: "${import.meta.env.VITE_API_URL}"`);
   
   // If we have an uploaded image, use it
   if (imageUrl) {
     console.log(`🖼️  [IMAGE_UTILS] Image URL exists, processing...`);
     
+    // If it's a Cloudinary URL, return as is
+    if (imageUrl.includes('cloudinary.com') || imageUrl.includes('res.cloudinary.com')) {
+      console.log(`🖼️  [IMAGE_UTILS] Cloudinary URL detected, returning as-is: ${imageUrl}`);
+      return imageUrl;
+    }
+    
     // If it's already a full URL (http/https), return as is
     if (imageUrl.startsWith('http')) {
       console.log(`🖼️  [IMAGE_UTILS] Full URL detected, returning as-is: ${imageUrl}`);
-      return imageUrl
+      return imageUrl;
     }
     
-    // If it's a local path starting with /api/uploads/, construct the full URL
+    // Legacy support: If it's a local path starting with /api/uploads/, construct the full URL
     if (imageUrl.startsWith('/api/uploads/')) {
       const envUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
       const baseUrl = envUrl.replace('/api', '');
       const fullUrl = `${baseUrl}${imageUrl}`;
       
-      console.log(`🖼️  [IMAGE_UTILS] Local path detected:`);
+      console.log(`🖼️  [IMAGE_UTILS] Legacy local path detected:`);
       console.log(`🖼️  [IMAGE_UTILS] - Original env URL: ${envUrl}`);
       console.log(`🖼️  [IMAGE_UTILS] - Base URL after removing /api: ${baseUrl}`);
       console.log(`🖼️  [IMAGE_UTILS] - Image path: ${imageUrl}`);
@@ -38,18 +43,24 @@ export const getMenuItemImageUrl = (imageUrl, itemName = '', category = '', cuis
       return fullUrl;
     }
     
-    // If it's just a filename, construct the full path
-    const envUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-    const baseUrl = envUrl.replace('/api', '');
-    const fullUrl = `${baseUrl}/api/uploads/menu_images/${imageUrl}`;
+    // Legacy support: If it's just a filename, construct the full path
+    if (!imageUrl.includes('/') && !imageUrl.includes('http')) {
+      const envUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+      const baseUrl = envUrl.replace('/api', '');
+      const fullUrl = `${baseUrl}/api/uploads/menu_images/${imageUrl}`;
+      
+      console.log(`🖼️  [IMAGE_UTILS] Legacy filename detected:`);
+      console.log(`🖼️  [IMAGE_UTILS] - Original env URL: ${envUrl}`);
+      console.log(`🖼️  [IMAGE_UTILS] - Base URL after removing /api: ${baseUrl}`);
+      console.log(`🖼️  [IMAGE_UTILS] - Filename: ${imageUrl}`);
+      console.log(`🖼️  [IMAGE_UTILS] - Final constructed URL: ${fullUrl}`);
+      
+      return fullUrl;
+    }
     
-    console.log(`🖼️  [IMAGE_UTILS] Filename detected:`);
-    console.log(`🖼️  [IMAGE_UTILS] - Original env URL: ${envUrl}`);
-    console.log(`🖼️  [IMAGE_UTILS] - Base URL after removing /api: ${baseUrl}`);
-    console.log(`🖼️  [IMAGE_UTILS] - Filename: ${imageUrl}`);
-    console.log(`🖼️  [IMAGE_UTILS] - Final constructed URL: ${fullUrl}`);
-    
-    return fullUrl;
+    // If none of the above, assume it's a valid URL and return as is
+    console.log(`🖼️  [IMAGE_UTILS] Unknown format, returning as-is: ${imageUrl}`);
+    return imageUrl;
   }
   
   // Fallback to generated image if no uploaded image
@@ -170,3 +181,84 @@ export const getMenuItemImage = (itemName, category, cuisine) => {
 
   return cuisineImageMap[primaryCuisine] || cuisineImageMap['Indian']
 }
+/**
+ *
+ Get the correct URL for a restaurant image
+ * @param {string} imageUrl - The image URL from the database
+ * @param {string} restaurantName - Restaurant name (fallback)
+ * @param {string[]} cuisine - Restaurant cuisine (fallback)
+ * @returns {string} - The correct image URL to display
+ */
+export const getRestaurantImageUrl = (imageUrl, restaurantName = '', cuisine = []) => {
+  console.log(`🖼️  [RESTAURANT_IMAGE] Processing image for restaurant: "${restaurantName}"`);
+  
+  // If we have an uploaded image, use it
+  if (imageUrl) {
+    // If it's a Cloudinary URL, return as is
+    if (imageUrl.includes('cloudinary.com') || imageUrl.includes('res.cloudinary.com')) {
+      console.log(`🖼️  [RESTAURANT_IMAGE] Cloudinary URL detected: ${imageUrl}`);
+      return imageUrl;
+    }
+    
+    // If it's already a full URL, return as is
+    if (imageUrl.startsWith('http')) {
+      console.log(`🖼️  [RESTAURANT_IMAGE] Full URL detected: ${imageUrl}`);
+      return imageUrl;
+    }
+  }
+  
+  // Fallback to generated image based on cuisine
+  const primaryCuisine = Array.isArray(cuisine) ? cuisine[0] : cuisine || 'Indian';
+  const fallbackUrl = getRestaurantImage(primaryCuisine);
+  console.log(`🖼️  [RESTAURANT_IMAGE] Using fallback for ${restaurantName}: ${fallbackUrl}`);
+  return fallbackUrl;
+};
+
+/**
+ * Get the correct URL for a profile image
+ * @param {string} imageUrl - The image URL from the database
+ * @param {string} userName - User name (fallback)
+ * @returns {string} - The correct image URL to display
+ */
+export const getProfileImageUrl = (imageUrl, userName = '') => {
+  console.log(`🖼️  [PROFILE_IMAGE] Processing image for user: "${userName}"`);
+  
+  // If we have an uploaded image, use it
+  if (imageUrl) {
+    // If it's a Cloudinary URL, return as is
+    if (imageUrl.includes('cloudinary.com') || imageUrl.includes('res.cloudinary.com')) {
+      console.log(`🖼️  [PROFILE_IMAGE] Cloudinary URL detected: ${imageUrl}`);
+      return imageUrl;
+    }
+    
+    // If it's already a full URL, return as is
+    if (imageUrl.startsWith('http')) {
+      console.log(`🖼️  [PROFILE_IMAGE] Full URL detected: ${imageUrl}`);
+      return imageUrl;
+    }
+  }
+  
+  // Fallback to avatar placeholder
+  const fallbackUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=random&color=fff&size=400`;
+  console.log(`🖼️  [PROFILE_IMAGE] Using fallback for ${userName}: ${fallbackUrl}`);
+  return fallbackUrl;
+};
+
+/**
+ * Get a fallback image for restaurants based on cuisine
+ */
+export const getRestaurantImage = (cuisine) => {
+  const cuisineImageMap = {
+    'Indian': 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+    'Chinese': 'https://images.unsplash.com/photo-1526318896980-cf78c088247c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+    'Italian': 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+    'Mexican': 'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+    'American': 'https://images.unsplash.com/photo-1571091718767-18b5b1457add?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+    'Thai': 'https://images.unsplash.com/photo-1559314809-0f31657def5e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+    'Japanese': 'https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+    'Mediterranean': 'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+    'Fast Food': 'https://images.unsplash.com/photo-1571091718767-18b5b1457add?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+  };
+
+  return cuisineImageMap[cuisine] || cuisineImageMap['Indian'];
+};

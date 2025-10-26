@@ -456,8 +456,84 @@ export const useUploadMenuImage = () => {
 // Delete Menu Item Image
 export const useDeleteMenuImage = () => {
   return useMutation({
-    mutationFn: async (filename) => {
-      const { data } = await api.delete(`/menu-images/${filename}`)
+    mutationFn: async (publicId) => {
+      // Handle both old filename format and new publicId format
+      const encodedPublicId = encodeURIComponent(publicId);
+      const { data } = await api.delete(`/menu-images/${encodedPublicId}`)
+      return data
+    },
+  })
+}
+
+// Restaurant Image Upload
+export const useUploadRestaurantImage = () => {
+  return useMutation({
+    mutationFn: async (file) => {
+      console.log(`📤 [API] Starting restaurant image upload for file:`, {
+        name: file.name,
+        size: file.size,
+        type: file.type
+      });
+      
+      const formData = new FormData()
+      formData.append('image', file)
+      
+      console.log(`📤 [API] Sending POST request to /restaurant-images/upload`);
+      const { data } = await api.post('/restaurant-images/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      
+      console.log(`✅ [API] Restaurant image upload response received:`, data);
+      return data
+    },
+  })
+}
+
+// Delete Restaurant Image
+export const useDeleteRestaurantImage = () => {
+  return useMutation({
+    mutationFn: async (publicId) => {
+      const encodedPublicId = encodeURIComponent(publicId);
+      const { data } = await api.delete(`/restaurant-images/${encodedPublicId}`)
+      return data
+    },
+  })
+}
+
+// Profile Image Upload
+export const useUploadProfileImage = () => {
+  return useMutation({
+    mutationFn: async (file) => {
+      console.log(`📤 [API] Starting profile image upload for file:`, {
+        name: file.name,
+        size: file.size,
+        type: file.type
+      });
+      
+      const formData = new FormData()
+      formData.append('image', file)
+      
+      console.log(`📤 [API] Sending POST request to /profile-images/upload`);
+      const { data } = await api.post('/profile-images/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      
+      console.log(`✅ [API] Profile image upload response received:`, data);
+      return data
+    },
+  })
+}
+
+// Delete Profile Image
+export const useDeleteProfileImage = () => {
+  return useMutation({
+    mutationFn: async (publicId) => {
+      const encodedPublicId = encodeURIComponent(publicId);
+      const { data } = await api.delete(`/profile-images/${encodedPublicId}`)
       return data
     },
   })

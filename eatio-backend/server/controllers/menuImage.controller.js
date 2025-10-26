@@ -1,75 +1,84 @@
 // server/controllers/menuImage.controller.js
 
-const path = require('path');
-const { deleteLocalFile, getImageUrl } = require('../config/localStorage');
+const { deleteFromCloudinary, getPublicIdFromUrl } = require('../config/cloudinary');
 
-// Upload menu item image
-const uploadMenuImage = async (req, res) => {
+// Upload menu item image to Cloudinary
+const uploadMenuImageController = async (req, res) => {
   try {
-    console.log(`📤 [UPLOAD] Starting image upload process`);
-    console.log(`📤 [UPLOAD] Request file:`, req.file ? 'Present' : 'Missing');
+    console.log(`📤 [CLOUDINARY_UPLOAD] Starting image upload process`);
+    console.log(`📤 [CLOUDINARY_UPLOAD] Request file:`, req.file ? 'Present' : 'Missing');
     
     if (!req.file) {
-      console.log(`❌ [UPLOAD] No file in request`);
+      console.log(`❌ [CLOUDINARY_UPLOAD] No file in request`);
       return res.status(400).json({ message: 'No image file uploaded.' });
     }
 
-    console.log(`📤 [UPLOAD] File details:`, {
+    console.log(`📤 [CLOUDINARY_UPLOAD] File details:`, {
       filename: req.file.filename,
       originalname: req.file.originalname,
       size: req.file.size,
-      path: req.file.path
+      path: req.file.path,
+      publicId: req.file.public_id
     });
 
-    // Generate the URL for the uploaded image
-    const imageUrl = getImageUrl(req.file.filename);
-    console.log(`📤 [UPLOAD] Generated image URL: ${imageUrl}`);
-
     const response = {
-      message: 'Menu item image uploaded successfully.',
-      imageUrl: imageUrl,
-      filename: req.file.filename,
+      message: 'Menu item image uploaded successfully to Cloudinary.',
+      imageUrl: req.file.path, // Cloudinary secure URL
+      publicId: req.file.public_id,
       originalName: req.file.originalname,
       size: req.file.size
     };
 
-    console.log(`✅ [UPLOAD] Upload successful, response:`, response);
+    console.log(`✅ [CLOUDINARY_UPLOAD] Upload successful, response:`, response);
     res.status(200).json(response);
 
   } catch (error) {
-    console.error('❌ [UPLOAD] Upload menu image error:', error);
-    res.status(500).json({ message: 'Server error uploading image.' });
+    console.error('❌ [CLOUDINARY_UPLOAD] Upload menu image error:', error);
+    res.status(500).json({ message: 'Server error uploading image to Cloudinary.' });
   }
 };
 
-// Delete menu item image
-const deleteMenuImage = async (req, res) => {
+// Delete menu item image from Cloudinary
+const deleteMenuImageController = async (req, res) => {
   try {
-    const { filename } = req.params;
+    // Handle both single publicId and folder/publicId patterns
+    let publicId;
+    if (req.params.folder && req.params.publicId) {
+      publicId = `${req.params.folder}/${req.params.publicId}`;
+    } else {
+      publicId = req.params.publicId;
+    }
     
-    if (!filename) {
-      return res.status(400).json({ message: 'Filename is required.' });
+    if (!publicId) {
+      return res.status(400).json({ message: 'Public ID is required.' });
     }
 
-    // Get the full file path
-    const filePath = path.join(__dirname, '../uploads/menu_images', filename);
+    console.log(`🗑️ [CLOUDINARY_DELETE] Attempting to delete image with public ID: ${publicId}`);
+
+    // Delete from Cloudinary
+    const result = await deleteFromCloudinary(publicId);
     
-    // Delete the file
-    const deleted = deleteLocalFile(filePath);
-    
-    if (deleted) {
-      res.status(200).json({ message: 'Image deleted successfully.' });
+    console.log(`🗑️ [CLOUDINARY_DELETE] Cloudinary deletion result:`, result);
+
+    if (result.result === 'ok') {
+      res.status(200).json({ 
+        message: 'Image deleted successfully from Cloudinary.',
+        result: result
+      });
     } else {
-      res.status(404).json({ message: 'Image file not found.' });
+      res.status(404).json({ 
+        message: 'Image not found in Cloudinary.',
+        result: result
+      });
     }
 
   } catch (error) {
-    console.error('Delete menu image error:', error);
-    res.status(500).json({ message: 'Server error deleting image.' });
+    console.error('❌ [CLOUDINARY_DELETE] Delete menu image error:', error);
+    res.status(500).json({ message: 'Server error deleting image from Cloudinary.' });
   }
 };
 
 module.exports = {
-  uploadMenuImage,
-  deleteMenuImage
+  uploadMenuImageController,
+  deleteMenuImageController
 };

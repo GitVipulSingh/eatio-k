@@ -109,10 +109,13 @@ const RestaurantDetailPage = () => {
   const getMenuCategories = () => {
     if (!restaurant?.menuItems) return []
     const categories = [...new Set(restaurant.menuItems.map(item => item.category))]
-    return categories
+    return ['All Items', ...categories] // Add "All Items" as first category
   }
 
   const getItemsByCategory = (category) => {
+    if (category === 'All Items') {
+      return restaurant?.menuItems || [] // Return all items for "All Items" tab
+    }
     return restaurant?.menuItems?.filter(item => item.category === category) || []
   }
 
@@ -254,7 +257,10 @@ const RestaurantDetailPage = () => {
                       <Tab
                         key={category}
                         label={category}
-                        sx={{ textTransform: 'capitalize' }}
+                        sx={{ 
+                          textTransform: category === 'All Items' ? 'none' : 'capitalize',
+                          fontWeight: category === 'All Items' ? 600 : 400
+                        }}
                       />
                     ))}
                   </Tabs>
@@ -270,7 +276,11 @@ const RestaurantDetailPage = () => {
                       display: selectedTab === categoryIndex || categories.length === 1 ? 'block' : 'none'
                     }}
                   >
-                    <Typography variant="h5" sx={{ fontWeight: 600, mb: 3, textTransform: 'capitalize' }}>
+                    <Typography variant="h5" sx={{ 
+                      fontWeight: 600, 
+                      mb: 3, 
+                      textTransform: category === 'All Items' ? 'none' : 'capitalize' 
+                    }}>
                       {category}
                     </Typography>
 
