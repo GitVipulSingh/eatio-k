@@ -344,27 +344,7 @@ const RestaurantDetailPage = () => {
                                         {item.name}
                                       </Typography>
 
-                                      {/* Rating */}
-                                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                                        <Box sx={{ 
-                                          display: 'flex', 
-                                          alignItems: 'center', 
-                                          gap: 0.5,
-                                          backgroundColor: 'success.main',
-                                          color: 'white',
-                                          px: 1,
-                                          py: 0.2,
-                                          borderRadius: 1,
-                                          fontSize: '0.75rem',
-                                          fontWeight: 600,
-                                        }}>
-                                          <StarIcon className="h-3 w-3" />
-                                          {(Math.random() * 1.5 + 3.5).toFixed(1)}
-                                        </Box>
-                                        <Typography variant="caption" color="text.secondary">
-                                          ({Math.floor(Math.random() * 200) + 50} reviews)
-                                        </Typography>
-                                      </Box>
+
 
                                       <Typography 
                                         variant="body2" 
@@ -400,18 +380,6 @@ const RestaurantDetailPage = () => {
                                         >
                                           ₹{item.price}
                                         </Typography>
-                                        {Math.random() > 0.6 && (
-                                          <Typography 
-                                            variant="caption" 
-                                            sx={{ 
-                                              textDecoration: 'line-through',
-                                              color: 'text.secondary',
-                                              mr: 1
-                                            }}
-                                          >
-                                            ₹{item.price + Math.floor(Math.random() * 50) + 20}
-                                          </Typography>
-                                        )}
                                       </Box>
 
                                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>

@@ -123,24 +123,67 @@ const CartPage = () => {
                           </Grid>
 
                           <Grid item xs={12} sm={3}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                              <IconButton
+                            <Box sx={{ 
+                              display: 'flex', 
+                              alignItems: 'center', 
+                              backgroundColor: 'white',
+                              border: '2px solid',
+                              borderColor: 'primary.main',
+                              borderRadius: 2,
+                              overflow: 'hidden',
+                              width: 'fit-content'
+                            }}>
+                              <Button
                                 size="small"
                                 onClick={() => handleQuantityChange(item._id, item.quantity - 1)}
-                                sx={{ border: 1, borderColor: 'primary.main' }}
+                                sx={{ 
+                                  minWidth: 40,
+                                  height: 40,
+                                  borderRadius: 0,
+                                  backgroundColor: 'primary.main',
+                                  color: 'white',
+                                  fontWeight: 700,
+                                  fontSize: '1.2rem',
+                                  '&:hover': { 
+                                    backgroundColor: 'primary.dark'
+                                  }
+                                }}
                               >
-                                <MinusIcon className="h-4 w-4" />
-                              </IconButton>
-                              <Typography sx={{ minWidth: 30, textAlign: 'center', fontWeight: 600 }}>
+                                −
+                              </Button>
+                              
+                              <Typography 
+                                sx={{ 
+                                  minWidth: 50, 
+                                  textAlign: 'center',
+                                  fontWeight: 700,
+                                  color: 'primary.main',
+                                  py: 1,
+                                  backgroundColor: 'primary.light',
+                                  fontSize: '1rem',
+                                }}
+                              >
                                 {item.quantity}
                               </Typography>
-                              <IconButton
+                              
+                              <Button
                                 size="small"
                                 onClick={() => handleQuantityChange(item._id, item.quantity + 1)}
-                                sx={{ border: 1, borderColor: 'primary.main' }}
+                                sx={{ 
+                                  minWidth: 40,
+                                  height: 40,
+                                  borderRadius: 0,
+                                  backgroundColor: 'primary.main',
+                                  color: 'white',
+                                  fontWeight: 700,
+                                  fontSize: '1.2rem',
+                                  '&:hover': { 
+                                    backgroundColor: 'primary.dark'
+                                  }
+                                }}
                               >
-                                <PlusIcon className="h-4 w-4" />
-                              </IconButton>
+                                +
+                              </Button>
                             </Box>
                           </Grid>
 

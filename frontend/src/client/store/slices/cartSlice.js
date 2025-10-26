@@ -26,6 +26,7 @@ const cartSlice = createSlice({
   reducers: {
     addToCart: (state, action) => {
       const { item, restaurantId } = action.payload
+      const quantityToAdd = item.quantity || 1
       
       // If cart has items from different restaurant, clear cart
       if (state.restaurantId && state.restaurantId !== restaurantId) {
@@ -39,13 +40,13 @@ const cartSlice = createSlice({
       const existingItem = state.items.find(cartItem => cartItem._id === item._id)
       
       if (existingItem) {
-        existingItem.quantity += 1
+        existingItem.quantity += quantityToAdd
         existingItem.totalPrice = existingItem.quantity * existingItem.price
       } else {
         state.items.push({
           ...item,
-          quantity: 1,
-          totalPrice: item.price
+          quantity: quantityToAdd,
+          totalPrice: item.price * quantityToAdd
         })
       }
       
