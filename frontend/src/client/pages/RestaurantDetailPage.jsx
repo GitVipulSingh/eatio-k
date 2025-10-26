@@ -220,9 +220,7 @@ const RestaurantDetailPage = () => {
               <Typography variant="body2">28-35 mins</Typography>
             </Box>
 
-            <Typography variant="body2" sx={{ fontWeight: 600 }}>
-              ₹{Math.floor(Math.random() * 200) + 200} for two
-            </Typography>
+
           </Box>
 
           <Box sx={{ 

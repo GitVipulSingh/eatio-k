@@ -29,6 +29,17 @@ const RestaurantCard = ({ restaurant }) => {
     setIsFavorite(!isFavorite)
   }
 
+  // Generate consistent review count based on restaurant ID to prevent changes on re-render
+  const getConsistentReviewCount = (restaurantId) => {
+    if (!restaurantId) return 100
+    // Use restaurant ID to generate a consistent "random" number
+    const hash = restaurantId.split('').reduce((a, b) => {
+      a = ((a << 5) - a) + b.charCodeAt(0)
+      return a & a
+    }, 0)
+    return Math.abs(hash % 900) + 100 // 100-999 reviews
+  }
+
 
 
   // Calculate estimated delivery time based on location (mock calculation)
@@ -276,7 +287,7 @@ const RestaurantCard = ({ restaurant }) => {
                 display: { xs: 'none', sm: 'block' }
               }}
             >
-              {Math.floor(Math.random() * 1000) + 100}+ reviews
+              {getConsistentReviewCount(restaurant._id)}+ reviews
             </Typography>
           </Box>
 
@@ -302,25 +313,15 @@ const RestaurantCard = ({ restaurant }) => {
             </Typography>
           </Box>
 
-          {/* Price and Delivery Info */}
+          {/* Delivery Info */}
           <Box sx={{ 
             display: 'flex', 
-            justifyContent: 'space-between', 
+            justifyContent: 'center',
             alignItems: 'center',
             pt: { xs: 1, sm: 1.5 },
             borderTop: '1px solid',
             borderColor: 'grey.100',
           }}>
-            <Typography 
-              variant="body2" 
-              sx={{ 
-                fontWeight: 600, 
-                color: 'text.primary', 
-                fontSize: { xs: '0.8rem', sm: '0.85rem' }
-              }}
-            >
-              ₹{Math.floor(Math.random() * 200) + 200} for two
-            </Typography>
             <Typography 
               variant="caption" 
               sx={{ 
