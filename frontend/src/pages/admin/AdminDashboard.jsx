@@ -38,13 +38,16 @@ import {
   BuildingStorefrontIcon,
   ChartBarIcon,
   CogIcon,
+  CameraIcon,
 } from '@heroicons/react/24/outline'
 import { toast } from 'react-hot-toast'
 
 import { 
   useMyRestaurant, 
   useRestaurantOrders, 
-  useUpdateRestaurantOpenStatus 
+  useUpdateRestaurantOpenStatus,
+  useUploadRestaurantImage,
+  useUpdateRestaurantPhoto
 } from '../../client/api/queries'
 import LoadingSpinner from '../../common/components/LoadingSpinner'
 import { useAdminDashboardUpdates } from '../../hooks/useRealTimeUpdates'
@@ -52,10 +55,15 @@ import { useAdminDashboardUpdates } from '../../hooks/useRealTimeUpdates'
 const AdminDashboard = () => {
   const [hoursDialogOpen, setHoursDialogOpen] = useState(false)
   const [operatingHours, setOperatingHours] = useState({ open: '09:00', close: '22:00' })
+  const [photoDialogOpen, setPhotoDialogOpen] = useState(false)
+  const [selectedFile, setSelectedFile] = useState(null)
+  const [previewUrl, setPreviewUrl] = useState('')
 
   const { data: restaurant, isLoading: restaurantLoading, refetch } = useMyRestaurant()
   const { data: orders, isLoading: ordersLoading } = useRestaurantOrders()
   const updateRestaurantStatusMutation = useUpdateRestaurantOpenStatus()
+  const uploadRestaurantImageMutation = useUploadRestaurantImage()
+  const updateRestaurantPhotoMutation = useUpdateRestaurantPhoto()
 
   // Enable real-time updates for restaurant admin dashboard
   useAdminDashboardUpdates(restaurant?._id)
@@ -110,6 +118,61 @@ const AdminDashboard = () => {
     }
   }
 
+  const handleFileSelect = (event) => {
+    const file = event.target.files[0]
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        toast.error('Please select an image file')
+        return
+      }
+      
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('Image size should be less than 5MB')
+        return
+      }
+      
+      setSelectedFile(file)
+      
+      // Create preview URL
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        setPreviewUrl(e.target.result)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const handlePhotoUpdate = async () => {
+    if (!selectedFile) {
+      toast.error('Please select an image')
+      return
+    }
+
+    try {
+      // First upload the image to Cloudinary
+      const uploadResult = await uploadRestaurantImageMutation.mutateAsync(selectedFile)
+      
+      // Then update the restaurant photo in the database
+      await updateRestaurantPhotoMutation.mutateAsync(uploadResult.imageUrl)
+      
+      toast.success('Restaurant photo updated successfully')
+      setPhotoDialogOpen(false)
+      setSelectedFile(null)
+      setPreviewUrl('')
+      refetch()
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to update restaurant photo')
+    }
+  }
+
+  const handlePhotoDialogClose = () => {
+    setPhotoDialogOpen(false)
+    setSelectedFile(null)
+    setPreviewUrl('')
+  }
+
   if (restaurantLoading) {
     return <LoadingSpinner message="Loading restaurant dashboard..." />
   }
@@ -143,15 +206,60 @@ We’re currently waiting for restaurant approval. Please check back soon or con
                       width: 80,
                       height: 80,
                       borderRadius: 2,
-                      background: 'linear-gradient(135deg, #f97316, #ea580c)',
+                      position: 'relative',
+                      overflow: 'hidden',
+                      flexShrink: 0,
+                      background: restaurant.documents?.restaurantPhoto ? 'transparent' : 'linear-gradient(135deg, #f97316, #ea580c)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       fontSize: '2rem',
-                      flexShrink: 0,
+                      '&:hover .photo-update-overlay': {
+                        opacity: 1,
+                      },
                     }}
                   >
-                    🍽️
+                    {restaurant.documents?.restaurantPhoto ? (
+                      <img
+                        src={restaurant.documents.restaurantPhoto}
+                        alt={restaurant.name}
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                        }}
+                      />
+                    ) : (
+                      '🍽️'
+                    )}
+                    
+                    {/* Update Photo Overlay */}
+                    <Box
+                      className="photo-update-overlay"
+                      sx={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        opacity: 0,
+                        transition: 'opacity 0.2s ease',
+                        cursor: 'pointer',
+                      }}
+                      onClick={() => setPhotoDialogOpen(true)}
+                    >
+                      <CameraIcon 
+                        style={{ 
+                          width: 24, 
+                          height: 24, 
+                          color: 'white' 
+                        }} 
+                      />
+                    </Box>
                   </Box>
                   <Box sx={{ flex: 1 }}>
                     <Typography variant="h4" component="h1" sx={{ fontWeight: 700, mb: 1 }}>
@@ -613,6 +721,105 @@ We’re currently waiting for restaurant approval. Please check back soon or con
             )}
           </CardContent>
         </Card>
+
+        {/* Photo Update Dialog */}
+        <Dialog open={photoDialogOpen} onClose={handlePhotoDialogClose} maxWidth="sm" fullWidth>
+          <DialogTitle>Update Restaurant Photo</DialogTitle>
+          <DialogContent>
+            <Box sx={{ pt: 2 }}>
+              {/* Current Photo */}
+              {restaurant.documents?.restaurantPhoto && (
+                <Box sx={{ mb: 3 }}>
+                  <Typography variant="subtitle2" sx={{ mb: 1 }}>Current Photo:</Typography>
+                  <Box
+                    sx={{
+                      width: '100%',
+                      height: 200,
+                      borderRadius: 2,
+                      overflow: 'hidden',
+                      border: '1px solid',
+                      borderColor: 'grey.300',
+                    }}
+                  >
+                    <img
+                      src={restaurant.documents.restaurantPhoto}
+                      alt="Current restaurant"
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                      }}
+                    />
+                  </Box>
+                </Box>
+              )}
+
+              {/* File Upload */}
+              <Box sx={{ mb: 2 }}>
+                <Typography variant="subtitle2" sx={{ mb: 1 }}>
+                  {restaurant.documents?.restaurantPhoto ? 'Upload New Photo:' : 'Upload Restaurant Photo:'}
+                </Typography>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileSelect}
+                  style={{ width: '100%', padding: '8px' }}
+                />
+              </Box>
+
+              {/* Preview */}
+              {previewUrl && (
+                <Box sx={{ mb: 2 }}>
+                  <Typography variant="subtitle2" sx={{ mb: 1 }}>Preview:</Typography>
+                  <Box
+                    sx={{
+                      width: '100%',
+                      height: 200,
+                      borderRadius: 2,
+                      overflow: 'hidden',
+                      border: '1px solid',
+                      borderColor: 'grey.300',
+                    }}
+                  >
+                    <img
+                      src={previewUrl}
+                      alt="Preview"
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                      }}
+                    />
+                  </Box>
+                </Box>
+              )}
+
+              <Alert severity="info" sx={{ mt: 2 }}>
+                Upload a high-quality photo of your restaurant. This will be displayed on your restaurant card to attract customers.
+                {restaurant.documents?.restaurantPhoto && (
+                  <>
+                    <br />
+                    <strong>Note:</strong> The old photo will be automatically deleted when you upload a new one.
+                  </>
+                )}
+              </Alert>
+            </Box>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handlePhotoDialogClose}>Cancel</Button>
+            <Button
+              variant="contained"
+              onClick={handlePhotoUpdate}
+              disabled={!selectedFile || uploadRestaurantImageMutation.isPending || updateRestaurantPhotoMutation.isPending}
+            >
+              {uploadRestaurantImageMutation.isPending || updateRestaurantPhotoMutation.isPending ? (
+                <LoadingSpinner size={20} />
+              ) : (
+                'Update Photo'
+              )}
+            </Button>
+          </DialogActions>
+        </Dialog>
 
         {/* Operating Hours Dialog */}
         <Dialog open={hoursDialogOpen} onClose={() => setHoursDialogOpen(false)} maxWidth="sm" fullWidth>

@@ -12,6 +12,7 @@ const {
   getAllUsers,
   getAllOrders,
   updateRestaurantOpenStatus,
+  updateRestaurantPhoto,
 } = require('../controllers/admin.controller');
 
 const {
@@ -43,5 +44,8 @@ router.put('/orders/:id/status', isAuthenticated, isRestaurantAdmin, updateOrder
 
 // Route to update restaurant open/closed status
 router.put('/restaurant/status', isAuthenticated, isRestaurantAdmin, updateRestaurantOpenStatus);
+
+// Route to update restaurant photo
+router.put('/restaurant/photo', isAuthenticated, isRestaurantAdmin, updateRestaurantPhoto);
 
 module.exports = router;

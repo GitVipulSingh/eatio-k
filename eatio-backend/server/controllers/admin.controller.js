@@ -323,6 +323,50 @@ const updateRestaurantOpenStatus = async (req, res) => {
   }
 };
 
+// Update restaurant photo
+const updateRestaurantPhoto = async (req, res) => {
+  try {
+    const { imageUrl } = req.body;
+    const restaurant = await Restaurant.findById(req.user.restaurant);
+    
+    if (!restaurant) {
+      return res.status(404).json({ message: 'Restaurant not found.' });
+    }
+
+    // Delete old photo from Cloudinary if it exists
+    if (restaurant.documents?.restaurantPhoto && restaurant.documents.restaurantPhoto.includes('cloudinary.com')) {
+      const { deleteFromCloudinary, getPublicIdFromUrl } = require('../config/cloudinary');
+      const oldPublicId = getPublicIdFromUrl(restaurant.documents.restaurantPhoto);
+      if (oldPublicId) {
+        await deleteFromCloudinary(oldPublicId);
+        console.log(`🗑️ [UPDATE_PHOTO] Deleted old restaurant photo: ${oldPublicId}`);
+      }
+    }
+
+    // Update restaurant photo
+    if (!restaurant.documents) {
+      restaurant.documents = {};
+    }
+    restaurant.documents.restaurantPhoto = imageUrl;
+    
+    await restaurant.save();
+    
+    console.log(`✅ [UPDATE_PHOTO] Restaurant photo updated for: ${restaurant.name}`);
+    
+    res.json({ 
+      message: 'Restaurant photo updated successfully',
+      restaurant: {
+        _id: restaurant._id,
+        name: restaurant.name,
+        documents: restaurant.documents
+      }
+    });
+  } catch (error) {
+    console.error("Update Restaurant Photo Error:", error);
+    res.status(500).json({ message: 'Server error updating restaurant photo.' });
+  }
+};
+
 module.exports = {
   getPendingRestaurants,
   updateRestaurantStatus,
@@ -333,4 +377,5 @@ module.exports = {
   getAllUsers,
   getAllOrders,
   updateRestaurantOpenStatus,
+  updateRestaurantPhoto,
 };

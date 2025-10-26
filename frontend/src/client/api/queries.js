@@ -427,6 +427,24 @@ export const useUpdateRestaurantOpenStatus = () => {
   })
 }
 
+// Update Restaurant Photo
+export const useUpdateRestaurantPhoto = () => {
+  const queryClient = useQueryClient()
+  
+  return useMutation({
+    mutationFn: async (imageUrl) => {
+      const { data } = await api.put('/admin/restaurant/photo', { 
+        imageUrl 
+      })
+      return data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['myRestaurant'])
+      queryClient.invalidateQueries([QUERY_KEYS.restaurants])
+    },
+  })
+}
+
 // Menu Item Image Upload
 export const useUploadMenuImage = () => {
   return useMutation({
