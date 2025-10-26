@@ -48,13 +48,16 @@ A full-stack food delivery application inspired by Zomato, built with React, Nod
         ```bash
         cp .env.example .env
         ```
-    *   Edit the `.env` file and configure your MongoDB connection string, Cloudinary credentials, and JWT secret.
+    *   Edit the `.env` file and configure all required environment variables. See `.env.example` for all required variables including:
         ```
-        MONGODB_URL=your_mongodb_connection_string
+        MONGO_URI=your_mongodb_connection_string
         JWT_SECRET=your_jwt_secret
         CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
         CLOUDINARY_API_KEY=your_cloudinary_api_key
         CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+        SUPERADMIN_EMAIL=your_superadmin_email
+        SUPERADMIN_PASSWORD=your_secure_password
+        # ... and other required variables
         ```
 
 3.  **Set up the Client:**
@@ -68,7 +71,15 @@ A full-stack food delivery application inspired by Zomato, built with React, Nod
         ```
     *   (Optional) If there are client-specific environment variables, create a `.env` file in the `client/` directory.
 
-4.  **Set up the Admin Panel:**
+4.  **Create Super Admin User:**
+    *   After setting up the server environment variables, create the super admin user:
+        ```bash
+        cd server
+        node scripts/create-superadmin.js
+        ```
+    *   This will create a super admin user with the credentials from your `.env` file.
+
+5.  **Set up the Admin Panel:**
     *   Navigate to the admin directory:
         ```bash
         cd ../admin

@@ -323,6 +323,26 @@ The application is fully responsive with breakpoints:
 - **CORS**: Configured for specific origins
 - **Helmet**: Security headers
 - **Password Hashing**: bcrypt for secure password storage
+- **Environment Security**: All credentials stored in environment variables
+- **File Upload Security**: Cloudinary integration prevents local file vulnerabilities
+
+### Security Best Practices
+
+⚠️ **IMPORTANT**: Never commit credentials to Git!
+
+1. **Environment Variables**: All sensitive data is stored in `.env` files
+2. **Security Check**: Run `npm run security-check` to validate your setup
+3. **Strong Passwords**: Use the password generator: `npm run generate-credentials`
+4. **Production Setup**: See [SECURITY.md](SECURITY.md) for deployment guidelines
+
+```bash
+# Check your security setup
+cd eatio-backend/server
+node scripts/check-security.js
+
+# Generate secure credentials
+node scripts/check-security.js --generate
+```
 
 ## 🚀 Performance Optimizations
 

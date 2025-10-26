@@ -1,7 +1,6 @@
 // server/scripts/create-superadmin.js
 
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
 require('dotenv').config();
 
 // Import models
@@ -23,13 +22,26 @@ const createSuperAdmin = async () => {
   try {
     console.log('👑 Setting up Super Admin user...');
     
+    // Get superadmin credentials from environment variables
     const superAdminData = {
-      name: 'Super Admin',
-      email: 'superadmin@eatio.com',
-      phone: '9999999999',
-      password: 'superadmin123', // Change this to a secure password
+      name: process.env.SUPERADMIN_NAME || 'Super Admin',
+      email: process.env.SUPERADMIN_EMAIL,
+      phone: process.env.SUPERADMIN_PHONE,
+      password: process.env.SUPERADMIN_PASSWORD,
       role: 'superadmin'
     };
+
+    // Validate required environment variables
+    if (!superAdminData.email || !superAdminData.phone || !superAdminData.password) {
+      console.error('❌ Missing required environment variables:');
+      console.error('   SUPERADMIN_EMAIL - Super admin email address');
+      console.error('   SUPERADMIN_PHONE - Super admin phone number');
+      console.error('   SUPERADMIN_PASSWORD - Super admin password');
+      console.error('   SUPERADMIN_NAME (optional) - Super admin name');
+      console.error('');
+      console.error('💡 Please set these in your .env file before running this script.');
+      process.exit(1);
+    }
     
     // Check if superadmin already exists
     const existingSuperAdmin = await User.findOne({ 
@@ -68,9 +80,9 @@ const createSuperAdmin = async () => {
     console.log('');
     console.log('🔑 Login Credentials:');
     console.log(`   Email: ${superAdminData.email}`);
-    console.log(`   Password: ${superAdminData.password}`);
+    console.log(`   Password: [HIDDEN - Check your .env file]`);
     console.log('');
-    console.log('⚠️  IMPORTANT: Change the default password after first login!');
+    console.log('⚠️  IMPORTANT: Keep your credentials secure!');
     
     return superAdmin;
     
