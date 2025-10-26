@@ -45,6 +45,29 @@ const RestaurantDetailPage = () => {
 
   const { data: restaurant, isLoading, error } = useRestaurant(id)
 
+  // Generate consistent review count based on restaurant ID to prevent changes on re-render
+  const getConsistentReviewCount = (restaurantId) => {
+    if (!restaurantId) return 500
+    // Use restaurant ID to generate a consistent "random" number
+    const hash = restaurantId.split('').reduce((a, b) => {
+      a = ((a << 5) - a) + b.charCodeAt(0)
+      return a & a
+    }, 0)
+    return Math.abs(hash % 1000) + 500
+  }
+
+  // Generate consistent original price (10-15% higher) for discounted price display
+  const getOriginalPrice = (currentPrice, itemId) => {
+    if (!itemId) return currentPrice
+    // Use item ID to generate consistent discount percentage between 10-15%
+    const hash = itemId.split('').reduce((a, b) => {
+      a = ((a << 5) - a) + b.charCodeAt(0)
+      return a & a
+    }, 0)
+    const discountPercent = (Math.abs(hash % 6) + 10) / 100 // 10-15%
+    return Math.round(currentPrice / (1 - discountPercent))
+  }
+
   // Get high-quality hero image for restaurant detail page
   const getRestaurantHeroImage = (cuisine) => {
     const heroImageMap = {
@@ -188,7 +211,7 @@ const RestaurantDetailPage = () => {
                 {restaurant.averageRating?.toFixed(1) || '4.2'}
               </Box>
               <Typography variant="body2" color="text.secondary">
-                ({Math.floor(Math.random() * 1000) + 500}+ reviews)
+                ({getConsistentReviewCount(restaurant._id)}+ reviews)
               </Typography>
             </Box>
 
@@ -370,16 +393,28 @@ const RestaurantDetailPage = () => {
                                       mt: 'auto'
                                     }}>
                                       <Box>
-                                        <Typography 
-                                          variant="h6" 
-                                          sx={{ 
-                                            fontWeight: 700,
-                                            color: 'text.primary',
-                                            fontSize: { xs: '1rem', sm: '1.1rem' }
-                                          }}
-                                        >
-                                          ₹{item.price}
-                                        </Typography>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                          <Typography 
+                                            variant="h6" 
+                                            sx={{ 
+                                              fontWeight: 700,
+                                              color: 'text.primary',
+                                              fontSize: { xs: '1rem', sm: '1.1rem' }
+                                            }}
+                                          >
+                                            ₹{item.price}
+                                          </Typography>
+                                          <Typography 
+                                            variant="body2" 
+                                            sx={{ 
+                                              textDecoration: 'line-through',
+                                              color: 'text.secondary',
+                                              fontSize: { xs: '0.8rem', sm: '0.9rem' }
+                                            }}
+                                          >
+                                            ₹{getOriginalPrice(item.price, item._id)}
+                                          </Typography>
+                                        </Box>
                                       </Box>
 
                                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
