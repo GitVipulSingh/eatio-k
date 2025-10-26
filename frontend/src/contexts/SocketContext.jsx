@@ -15,12 +15,41 @@ export const useSocket = () => {
 export const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null)
   const [isConnected, setIsConnected] = useState(false)
+  const [shouldConnect, setShouldConnect] = useState(false)
+
+  // Check if we should connect based on current path
+  useEffect(() => {
+    const checkPath = () => {
+      const isAuthPage = window.location.pathname.includes('/auth/')
+      setShouldConnect(!isAuthPage)
+      
+      if (isAuthPage) {
+        console.log('🔒 Auth page detected - socket connection disabled')
+      }
+    }
+    
+    checkPath()
+    
+    // Listen for route changes
+    const handlePopState = () => checkPath()
+    window.addEventListener('popstate', handlePopState)
+    
+    return () => window.removeEventListener('popstate', handlePopState)
+  }, [])
 
   useEffect(() => {
+    if (!shouldConnect) {
+      console.log('🔒 Skipping socket connection on auth page')
+      return
+    }
+
     // Initialize socket connection
     const socketInstance = io(import.meta.env.VITE_API_URL || 'http://localhost:5000', {
       withCredentials: true,
-      transports: ['websocket', 'polling']
+      transports: ['websocket', 'polling'],
+      timeout: 5000,
+      forceNew: false,
+      autoConnect: true
     })
 
     socketInstance.on('connect', () => {
@@ -36,6 +65,10 @@ export const SocketProvider = ({ children }) => {
     socketInstance.on('connect_error', (error) => {
       console.error('❌ Socket connection error:', error)
       setIsConnected(false)
+      // Don't show error toast for connection issues during registration/auth flows
+      if (!window.location.pathname.includes('/auth/')) {
+        console.warn('Socket connection failed, but continuing without real-time features')
+      }
     })
 
     // Global event listeners for system-wide updates
@@ -73,17 +106,17 @@ export const SocketProvider = ({ children }) => {
     return () => {
       socketInstance.disconnect()
     }
-  }, [])
+  }, [shouldConnect])
 
   const joinOrderRoom = (orderId) => {
-    if (socket) {
+    if (socket && isConnected && shouldConnect) {
       socket.emit('join_order_room', orderId)
       console.log(`🏠 Joined order room: ${orderId}`)
     }
   }
 
   const leaveOrderRoom = (orderId) => {
-    if (socket) {
+    if (socket && isConnected && shouldConnect) {
       socket.emit('leave_order_room', orderId)
       console.log(`🚪 Left order room: ${orderId}`)
     }

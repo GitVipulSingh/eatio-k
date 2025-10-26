@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useForm } from 'react-hook-form'
@@ -45,16 +45,27 @@ import {
 } from '@heroicons/react/24/outline'
 import { toast } from 'react-hot-toast'
 
-import { useRegister } from '../../client/api/queries'
+import { useRegister, useUploadRestaurantImage } from '../../client/api/queries'
 import LoadingSpinner from '../../common/components/LoadingSpinner'
 
 const RestaurantRegisterPage = () => {
   const navigate = useNavigate()
   const [showPassword, setShowPassword] = useState(false)
+  
+  // Debug log to track page behavior
+  useEffect(() => {
+    console.log('🏪 Restaurant Registration Page mounted')
+    console.log('📍 Current path:', window.location.pathname)
+    
+    return () => {
+      console.log('🏪 Restaurant Registration Page unmounted')
+    }
+  }, [])
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [cuisines, setCuisines] = useState([])
   const [activeStep, setActiveStep] = useState(0)
   const [uploadedFiles, setUploadedFiles] = useState({})
+  const [uploadingFiles, setUploadingFiles] = useState({})
   const [successDialogOpen, setSuccessDialogOpen] = useState(false)
 
   const {
@@ -66,6 +77,7 @@ const RestaurantRegisterPage = () => {
   } = useForm()
 
   const registerMutation = useRegister()
+  const uploadRestaurantImageMutation = useUploadRestaurantImage()
   const password = watch('password')
 
   const steps = ['Owner Details', 'Restaurant Info', 'Documents', 'Review & Submit']
@@ -81,16 +93,35 @@ const RestaurantRegisterPage = () => {
     setCuisines(typeof value === 'string' ? value.split(',') : value)
   }
 
-  const handleFileUpload = (event, fileType) => {
+  const handleFileUpload = async (event, fileType) => {
     const file = event.target.files[0]
     if (file) {
-      // For now, just store the file name as a string
-      // In production, you would upload to a file storage service
-      setUploadedFiles(prev => ({
-        ...prev,
-        [fileType]: file.name
-      }))
-      toast.success(`${fileType} uploaded successfully!`)
+      try {
+        setUploadingFiles(prev => ({ ...prev, [fileType]: true }))
+        
+        if (fileType === 'restaurantPhoto') {
+          // Upload restaurant photo to Cloudinary
+          const uploadResult = await uploadRestaurantImageMutation.mutateAsync(file)
+          setUploadedFiles(prev => ({
+            ...prev,
+            [fileType]: uploadResult.imageUrl
+          }))
+          toast.success('Restaurant photo uploaded successfully!')
+        } else {
+          // For other documents (like FSSAI), store file name for now
+          // In production, you would upload these to a document storage service
+          setUploadedFiles(prev => ({
+            ...prev,
+            [fileType]: file.name
+          }))
+          toast.success(`${fileType} uploaded successfully!`)
+        }
+      } catch (error) {
+        toast.error(`Failed to upload ${fileType}`)
+        console.error('Upload error:', error)
+      } finally {
+        setUploadingFiles(prev => ({ ...prev, [fileType]: false }))
+      }
     }
   }
 
@@ -481,14 +512,35 @@ const RestaurantRegisterPage = () => {
                         onChange={(e) => handleFileUpload(e, 'restaurantPhoto')}
                       />
                       <label htmlFor="photo-upload">
-                        <Button variant="outlined" component="span" startIcon={<CloudArrowUpIcon className="h-4 w-4" />}>
-                          Upload Photo
+                        <Button 
+                          variant="outlined" 
+                          component="span" 
+                          startIcon={uploadingFiles.restaurantPhoto ? <LoadingSpinner size={16} /> : <CloudArrowUpIcon className="h-4 w-4" />}
+                          disabled={uploadingFiles.restaurantPhoto}
+                        >
+                          {uploadingFiles.restaurantPhoto ? 'Uploading...' : 'Upload Photo'}
                         </Button>
                       </label>
                       {uploadedFiles.restaurantPhoto && (
-                        <Typography variant="caption" color="success.main" sx={{ display: 'block', mt: 1 }}>
-                          ✓ {uploadedFiles.restaurantPhoto}
-                        </Typography>
+                        <Box sx={{ mt: 1 }}>
+                          <Typography variant="caption" color="success.main" sx={{ display: 'block' }}>
+                            ✓ Photo uploaded successfully
+                          </Typography>
+                          <Box 
+                            component="img" 
+                            src={uploadedFiles.restaurantPhoto} 
+                            alt="Restaurant preview"
+                            sx={{ 
+                              width: 60, 
+                              height: 60, 
+                              objectFit: 'cover', 
+                              borderRadius: 1, 
+                              mt: 1,
+                              border: '2px solid',
+                              borderColor: 'success.main'
+                            }}
+                          />
+                        </Box>
                       )}
                     </Box>
                   </Grid>

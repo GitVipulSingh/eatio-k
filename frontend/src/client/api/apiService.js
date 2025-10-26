@@ -45,9 +45,10 @@ api.interceptors.response.use(
       // Clear user data on unauthorized access
       localStorage.removeItem('userInfo')
       
-      // Only redirect if not already on login page
-      if (!window.location.pathname.includes('/login')) {
-        window.location.href = '/login'
+      // Only redirect if not already on auth pages (login, register, etc.)
+      if (!window.location.pathname.includes('/auth/')) {
+        console.log('🔒 Unauthorized access, redirecting to login')
+        window.location.href = '/auth/login'
       }
     } else if (error.response?.status === 403) {
       // Handle forbidden access

@@ -18,7 +18,7 @@ import {
   StarIcon,
 } from '@heroicons/react/24/outline'
 import { HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid'
-import { getRestaurantImage } from '../../../common/utils/foodImages'
+import { getRestaurantImageUrl } from '../../../common/utils/imageUtils'
 
 const RestaurantCard = ({ restaurant }) => {
   const [isFavorite, setIsFavorite] = React.useState(false)
@@ -159,7 +159,7 @@ const RestaurantCard = ({ restaurant }) => {
           <CardMedia
             component="img"
             height="180"
-            image={getRestaurantImage(restaurant.cuisine)}
+            image={getRestaurantImageUrl(restaurant.documents?.restaurantPhoto, restaurant.name, restaurant.cuisine)}
             alt={restaurant.name}
             sx={{
               objectFit: 'cover',

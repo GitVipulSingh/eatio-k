@@ -10,7 +10,7 @@ import LoadingSpinner from './common/components/LoadingSpinner'
 import AppRoutes from './routes'
 
 // Contexts
-import { SocketProvider } from './contexts/SocketContext'
+import ConditionalSocketProvider from './components/ConditionalSocketProvider'
 
 // Hooks
 import { useUserProfile } from './client/api/queries'
@@ -46,7 +46,7 @@ function App() {
 
   return (
     <Router>
-      <SocketProvider>
+      <ConditionalSocketProvider>
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
           <AnimatePresence mode="wait">
             <motion.div
@@ -59,7 +59,7 @@ function App() {
             </motion.div>
           </AnimatePresence>
         </div>
-      </SocketProvider>
+      </ConditionalSocketProvider>
     </Router>
   )
 }

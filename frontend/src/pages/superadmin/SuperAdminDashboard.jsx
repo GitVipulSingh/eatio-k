@@ -44,18 +44,27 @@ import {
 } from '../../client/api/queries'
 import LoadingSpinner from '../../common/components/LoadingSpinner'
 import { useSuperAdminDashboardUpdates } from '../../hooks/useRealTimeUpdates'
+import SuperAdminLoginPrompt from '../../components/SuperAdminLoginPrompt'
 
 const SuperAdminDashboard = () => {
-  const { data: pendingRestaurants, isLoading: pendingLoading } = usePendingRestaurants()
-  const { data: systemStats, isLoading: statsLoading } = useSystemStats()
-  const { data: allRestaurants, isLoading: restaurantsLoading } = useAllRestaurants()
-  const { data: allUsers, isLoading: usersLoading } = useAllUsers()
-  const { data: allOrders, isLoading: ordersLoading } = useAllOrders()
+  const { data: pendingRestaurants, isLoading: pendingLoading, error: pendingError } = usePendingRestaurants()
+  const { data: systemStats, isLoading: statsLoading, error: statsError } = useSystemStats()
+  const { data: allRestaurants, isLoading: restaurantsLoading, error: restaurantsError } = useAllRestaurants()
+  const { data: allUsers, isLoading: usersLoading, error: usersError } = useAllUsers()
+  const { data: allOrders, isLoading: ordersLoading, error: ordersError } = useAllOrders()
 
   // Enable real-time updates for Super Admin dashboard
   useSuperAdminDashboardUpdates()
 
   const isLoading = statsLoading || pendingLoading
+
+  // Check for 403 errors (not authorized as superadmin)
+  const hasAuthError = [pendingError, statsError, restaurantsError, usersError, ordersError]
+    .some(error => error?.response?.status === 403)
+
+  if (hasAuthError) {
+    return <SuperAdminLoginPrompt />
+  }
 
   return (
     <Container maxWidth="xl" sx={{ py: 4 }}>
@@ -462,8 +471,11 @@ const SuperAdminDashboard = () => {
                         >
                           <TableCell>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                              <Avatar sx={{ width: 36, height: 36 }}>
-                                🍽️
+                              <Avatar 
+                                sx={{ width: 36, height: 36 }}
+                                src={restaurant.documents?.restaurantPhoto?.includes('cloudinary.com') ? restaurant.documents.restaurantPhoto : undefined}
+                              >
+                                {!restaurant.documents?.restaurantPhoto?.includes('cloudinary.com') && '🍽️'}
                               </Avatar>
                               <Box>
                                 <Typography variant="body2" sx={{ fontWeight: 600 }}>
@@ -534,7 +546,7 @@ const SuperAdminDashboard = () => {
                                     variant="outlined" 
                                     sx={{ mr: 0.5 }}
                                     onClick={() => {
-                                      alert(`FSSAI License: ${restaurant.documents.fssaiLicense}\n\nNote: File viewing requires file storage service setup.`)
+                                      alert(`FSSAI License: ${restaurant.documents.fssaiLicense}\n\nNote: This is a document filename. In production, you would implement document viewing.`)
                                     }}
                                     style={{ cursor: 'pointer' }}
                                   />
@@ -554,10 +566,31 @@ const SuperAdminDashboard = () => {
                                     variant="outlined" 
                                     sx={{ mr: 0.5 }}
                                     onClick={() => {
-                                      alert(`Restaurant Photo: ${restaurant.documents.restaurantPhoto}\n\nNote: File viewing requires file storage service setup.`)
+                                      if (restaurant.documents.restaurantPhoto.includes('cloudinary.com')) {
+                                        // Open Cloudinary image in new tab
+                                        window.open(restaurant.documents.restaurantPhoto, '_blank')
+                                      } else {
+                                        alert(`Restaurant Photo: ${restaurant.documents.restaurantPhoto}\n\nNote: This appears to be a filename. Cloudinary images will open in a new tab.`)
+                                      }
                                     }}
                                     style={{ cursor: 'pointer' }}
                                   />
+                                  {restaurant.documents.restaurantPhoto.includes('cloudinary.com') && (
+                                    <Box 
+                                      component="img" 
+                                      src={restaurant.documents.restaurantPhoto} 
+                                      alt="Restaurant"
+                                      sx={{ 
+                                        width: 40, 
+                                        height: 40, 
+                                        objectFit: 'cover', 
+                                        borderRadius: 1, 
+                                        mt: 0.5,
+                                        border: '1px solid',
+                                        borderColor: 'grey.300'
+                                      }}
+                                    />
+                                  )}
                                 </Box>
                               ) : (
                                 <Typography variant="caption" color="error.main" sx={{ display: 'block', mb: 0.5 }}>
@@ -635,8 +668,11 @@ const SuperAdminDashboard = () => {
                           borderRadius: 2,
                           '&:hover': { backgroundColor: 'grey.50' }
                         }}>
-                          <Avatar sx={{ width: 40, height: 40 }}>
-                            🍽️
+                          <Avatar 
+                            sx={{ width: 40, height: 40 }}
+                            src={restaurant.documents?.restaurantPhoto?.includes('cloudinary.com') ? restaurant.documents.restaurantPhoto : undefined}
+                          >
+                            {!restaurant.documents?.restaurantPhoto?.includes('cloudinary.com') && '🍽️'}
                           </Avatar>
                           <Box sx={{ flex: 1 }}>
                             <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5 }}>
