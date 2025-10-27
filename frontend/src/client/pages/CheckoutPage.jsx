@@ -111,38 +111,35 @@ const CheckoutPage = () => {
 
   const handlePayment = async () => {
     try {
-      // Create order in backend
-      const orderData = {
-        restaurantId: restaurantId,
-        items: items.map(item => ({
-          menuItemId: item._id,
-          quantity: item.quantity
-        })),
-        totalAmount: finalTotal,
-        deliveryAddress: addresses[selectedAddress]
-      }
-
-      const order = await createOrderMutation.mutateAsync(orderData)
-
       if (paymentMethod === 'cod') {
-        // Cash on Delivery
+        // Cash on Delivery - Create order directly
+        const orderData = {
+          restaurantId: restaurantId,
+          items: items.map(item => ({
+            menuItemId: item._id,
+            quantity: item.quantity
+          })),
+          totalAmount: finalTotal,
+          deliveryAddress: addresses[selectedAddress]
+        }
+
+        await createOrderMutation.mutateAsync(orderData)
         dispatch(clearCart())
         navigate('/profile/orders')
         toast.success('Order placed successfully! Check your order status in order history.')
         return
       }
 
-      // Razorpay Payment
+      // Razorpay Payment - Don't create order yet, only create payment order
       const scriptLoaded = await loadRazorpayScript()
       if (!scriptLoaded) {
         toast.error('Razorpay SDK failed to load')
         return
       }
 
-      // Create Razorpay order
+      // Create Razorpay order (no backend order creation yet)
       const paymentOrder = await createPaymentMutation.mutateAsync({
-        amount: finalTotal,
-        orderId: order._id
+        amount: finalTotal
       })
 
       const options = {
@@ -154,7 +151,7 @@ const CheckoutPage = () => {
         order_id: paymentOrder.id,
         handler: async (response) => {
           try {
-            // Verify payment
+            // Verify payment and create order in one step
             await verifyPaymentMutation.mutateAsync({
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
