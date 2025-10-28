@@ -3,38 +3,12 @@
  */
 
 /**
- * Force scroll to top using multiple methods for maximum compatibility
+ * Force scroll to top using optimized method for smooth performance
  */
 export const forceScrollToTop = () => {
-  console.log('🔝 forceScrollToTop: Manually scrolling to top')
-  
-  // Method 1: Standard scrollTo with instant behavior
-  window.scrollTo({
-    top: 0,
-    left: 0,
-    behavior: 'instant'
-  })
-  
-  // Method 2: Direct property setting
-  window.scrollTo(0, 0)
-  
-  // Method 3: Set scroll position on document elements
-  if (document.documentElement) {
-    document.documentElement.scrollTop = 0
-  }
-  if (document.body) {
-    document.body.scrollTop = 0
-  }
-  
-  // Method 4: Force using requestAnimationFrame
+  // Use requestAnimationFrame for smooth, non-blocking scroll
   requestAnimationFrame(() => {
     window.scrollTo(0, 0)
-    if (document.documentElement) {
-      document.documentElement.scrollTop = 0
-    }
-    if (document.body) {
-      document.body.scrollTop = 0
-    }
   })
 }
 
@@ -63,9 +37,46 @@ export const isPageScrolled = () => {
   return getCurrentScrollPosition() > 0
 }
 
+/**
+ * Throttle scroll events for better performance
+ */
+export const throttleScroll = (callback, delay = 16) => {
+  let timeoutId
+  let lastExecTime = 0
+  
+  return function (...args) {
+    const currentTime = Date.now()
+    
+    if (currentTime - lastExecTime > delay) {
+      callback.apply(this, args)
+      lastExecTime = currentTime
+    } else {
+      clearTimeout(timeoutId)
+      timeoutId = setTimeout(() => {
+        callback.apply(this, args)
+        lastExecTime = Date.now()
+      }, delay - (currentTime - lastExecTime))
+    }
+  }
+}
+
+/**
+ * Debounce scroll events
+ */
+export const debounceScroll = (callback, delay = 100) => {
+  let timeoutId
+  
+  return function (...args) {
+    clearTimeout(timeoutId)
+    timeoutId = setTimeout(() => callback.apply(this, args), delay)
+  }
+}
+
 export default {
   forceScrollToTop,
   smoothScrollToTop,
   getCurrentScrollPosition,
-  isPageScrolled
+  isPageScrolled,
+  throttleScroll,
+  debounceScroll
 }

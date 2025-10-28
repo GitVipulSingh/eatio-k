@@ -59,10 +59,17 @@ function App() {
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
           <AnimatePresence mode="wait">
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ 
+                duration: 0.2,
+                ease: "easeOut"
+              }}
+              style={{
+                willChange: 'opacity',
+                backfaceVisibility: 'hidden'
+              }}
             >
               <AppRoutes />
             </motion.div>

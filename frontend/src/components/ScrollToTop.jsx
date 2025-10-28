@@ -11,44 +11,17 @@ const ScrollToTop = () => {
   const { pathname } = useLocation()
 
   useEffect(() => {
-    // Log for debugging
-    console.log('🔝 ScrollToTop: Route changed to:', pathname)
-    
-    // Multiple approaches to ensure scroll to top works reliably
+    // Single, optimized scroll to top operation
     const scrollToTop = () => {
-      const currentScroll = window.pageYOffset || document.documentElement.scrollTop
-      console.log('🔝 ScrollToTop: Current scroll position:', currentScroll)
-      
-      // Method 1: Standard scrollTo
-      window.scrollTo({
-        top: 0,
-        left: 0,
-        behavior: 'instant'
+      // Use requestAnimationFrame for smooth, non-blocking scroll
+      requestAnimationFrame(() => {
+        // Single scroll operation to prevent conflicts
+        window.scrollTo(0, 0)
       })
-      
-      // Method 2: Fallback for older browsers
-      window.scrollTo(0, 0)
-      
-      // Method 3: Set scroll position on document elements
-      if (document.documentElement) {
-        document.documentElement.scrollTop = 0
-      }
-      if (document.body) {
-        document.body.scrollTop = 0
-      }
-      
-      // Verify scroll position after setting
-      setTimeout(() => {
-        const newScroll = window.pageYOffset || document.documentElement.scrollTop
-        console.log('🔝 ScrollToTop: New scroll position:', newScroll)
-      }, 10)
     }
 
-    // Execute immediately
-    scrollToTop()
-    
-    // Also execute after a small delay to handle any async rendering
-    const timeoutId = setTimeout(scrollToTop, 100)
+    // Execute with minimal delay to avoid conflicts with page transitions
+    const timeoutId = setTimeout(scrollToTop, 50)
     
     return () => clearTimeout(timeoutId)
   }, [pathname])

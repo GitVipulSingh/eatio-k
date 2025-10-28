@@ -4,16 +4,29 @@
 
 @layer base {
   html {
-    scroll-behavior: smooth;
+    /* Removed scroll-behavior: smooth to prevent conflicts with ScrollToTop component */
+    /* scroll-behavior: smooth; */
   }
   
   body {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     line-height: 1.6;
+    /* Optimize scrolling performance */
+    -webkit-overflow-scrolling: touch;
+    overflow-x: hidden;
   }
 
   * {
     box-sizing: border-box;
+  }
+
+  /* Optimize performance for elements with transforms and filters */
+  *[style*="transform"],
+  *[style*="backdrop-filter"],
+  .backdrop-blur {
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
   }
 
   /* Focus styles for accessibility */
@@ -66,5 +79,24 @@
   
   .animate-pulse-slow {
     animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  /* Smooth scrolling utilities that don't conflict with ScrollToTop */
+  .scroll-smooth {
+    scroll-behavior: smooth;
+  }
+
+  .scroll-auto {
+    scroll-behavior: auto;
+  }
+
+  /* Performance optimizations */
+  .gpu-accelerated {
+    transform: translateZ(0);
+    will-change: transform;
+  }
+
+  .no-scroll-smooth {
+    scroll-behavior: auto !important;
   }
 }
