@@ -13,6 +13,7 @@ import RestaurantRegisterPage from '../pages/auth/RestaurantRegisterPage'
 
 // Landing Pages
 import LandingPage from '../pages/LandingPage'
+import AboutPage from '../pages/AboutPage'
 
 // Customer Pages
 import HomePage from '../pages/customer/HomePage'
@@ -48,11 +49,11 @@ const AppRoutes = () => {
       <Route path="/auth/login" element={<LoginPage />} />
       <Route path="/auth/register/customer" element={<CustomerRegisterPage />} />
       <Route path="/auth/register/restaurant" element={<RestaurantRegisterPage />} />
-      
+
       {/* Legacy redirects */}
       <Route path="/login" element={<Navigate to="/auth/login" replace />} />
       <Route path="/register" element={<Navigate to="/auth/register/customer" replace />} />
-      
+
       {/* Unauthorized page */}
       <Route path="/unauthorized" element={<UnauthorizedPage />} />
 
@@ -62,6 +63,7 @@ const AppRoutes = () => {
           <CustomerLayout>
             <Routes>
               <Route path="/" element={<HomePage />} />
+              <Route path="/about" element={<AboutPage />} />
               <Route path="/restaurants/:id" element={<RestaurantDetailPage />} />
               <Route path="/cart" element={<CartPage />} />
               <Route path="/checkout" element={<CheckoutPage />} />
@@ -81,6 +83,7 @@ const AppRoutes = () => {
         <Route path="/*" element={
           <AdminLayout>
             <Routes>
+              <Route path="/about" element={<AboutPage />} />
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
               <Route path="/admin/menu" element={<MenuManagement />} />
               <Route path="/admin/orders" element={<OrderManagement />} />
@@ -97,6 +100,7 @@ const AppRoutes = () => {
         <Route path="/*" element={
           <AdminLayout>
             <Routes>
+              <Route path="/about" element={<AboutPage />} />
               <Route path="/super-admin/dashboard" element={<SuperAdminDashboard />} />
               <Route path="/super-admin/restaurants" element={<RestaurantApproval />} />
               <Route path="/super-admin/*" element={<Navigate to="/super-admin/dashboard" replace />} />
@@ -113,6 +117,7 @@ const AppRoutes = () => {
           <LandingLayout>
             <Routes>
               <Route path="/" element={<LandingPage />} />
+              <Route path="/about" element={<AboutPage />} />
               <Route path="/restaurants/:id" element={<RestaurantDetailPage />} />
               <Route path="/search" element={<SearchResultsPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
