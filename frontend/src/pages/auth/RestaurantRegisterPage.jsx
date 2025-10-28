@@ -371,11 +371,14 @@ const RestaurantRegisterPage = () => {
 
               <Grid item xs={12}>
                 <FormControl fullWidth>
-                  <InputLabel>Cuisine Types *</InputLabel>
+                  <InputLabel id="cuisine-types-label">Cuisine Types *</InputLabel>
                   <Select
+                    labelId="cuisine-types-label"
+                    id="cuisine-types-select"
                     multiple
                     value={cuisines}
                     onChange={handleCuisineChange}
+                    label="Cuisine Types *"
                     renderValue={(selected) => (
                       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                         {selected.map((value) => (
