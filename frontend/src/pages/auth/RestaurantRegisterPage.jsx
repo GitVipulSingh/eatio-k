@@ -46,6 +46,7 @@ import {
 import { toast } from 'react-hot-toast'
 
 import { useRegister, useUploadRestaurantImage } from '../../client/api/queries'
+import api from '../../client/api/apiService'
 import LoadingSpinner from '../../common/components/LoadingSpinner'
 
 const RestaurantRegisterPage = () => {
@@ -175,6 +176,12 @@ const RestaurantRegisterPage = () => {
   }
 
   const onSubmit = async (data) => {
+    // Only allow submission on the final step (Review & Submit)
+    if (activeStep !== steps.length - 1) {
+      console.log('Form submission prevented - not on final step. Current step:', activeStep)
+      return
+    }
+
     try {
       // Prepare the restaurant data according to the specified format
       const restaurantData = {
@@ -512,7 +519,7 @@ const RestaurantRegisterPage = () => {
                         onChange={(e) => handleFileUpload(e, 'fssaiLicense')}
                       />
                       <label htmlFor="fssai-upload">
-                        <Button variant="outlined" component="span" startIcon={<CloudArrowUpIcon className="h-4 w-4" />}>
+                        <Button type="button" variant="outlined" component="span" startIcon={<CloudArrowUpIcon className="h-4 w-4" />}>
                           Upload FSSAI License
                         </Button>
                       </label>
@@ -539,6 +546,7 @@ const RestaurantRegisterPage = () => {
                       />
                       <label htmlFor="photo-upload">
                         <Button 
+                          type="button"
                           variant="outlined" 
                           component="span" 
                           startIcon={uploadingFiles.restaurantPhoto ? <LoadingSpinner size={16} /> : <CloudArrowUpIcon className="h-4 w-4" />}
@@ -798,7 +806,25 @@ const RestaurantRegisterPage = () => {
           </Stepper>
 
           {/* Form Content */}
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form 
+            onSubmit={(e) => {
+              // Prevent form submission if not on the final step
+              if (activeStep !== steps.length - 1) {
+                e.preventDefault()
+                console.log('Form submission prevented - not on Review & Submit step')
+                return false
+              }
+              // Allow submission only on final step
+              handleSubmit(onSubmit)(e)
+            }}
+            onKeyDown={(e) => {
+              // Prevent Enter key from submitting form unless on final step
+              if (e.key === 'Enter' && activeStep !== steps.length - 1) {
+                e.preventDefault()
+                console.log('Enter key submission prevented - not on Review & Submit step')
+              }
+            }}
+          >
             <Box sx={{ mb: 4 }}>
               {renderStepContent(activeStep)}
             </Box>
@@ -806,6 +832,7 @@ const RestaurantRegisterPage = () => {
             {/* Navigation Buttons */}
             <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
               <Button
+                type="button"
                 disabled={activeStep === 0}
                 onClick={handleBack}
                 variant="outlined"
@@ -830,6 +857,7 @@ const RestaurantRegisterPage = () => {
                 </Button>
               ) : (
                 <Button
+                  type="button"
                   onClick={handleNext}
                   variant="contained"
                   disabled={activeStep === 1 && cuisines.length === 0}
