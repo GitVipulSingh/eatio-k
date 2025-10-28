@@ -1,13 +1,21 @@
 import { configureStore } from '@reduxjs/toolkit'
 import authReducer from './slices/authSlice'
-import cartReducer, { clearCartOnLogout } from './slices/cartSlice'
+import cartReducer, { clearCartOnLogout, loadUserCart } from './slices/cartSlice'
 import uiReducer from './slices/uiSlice'
 
-// Middleware to clear cart when user logs out
-const cartClearMiddleware = (store) => (next) => (action) => {
+// Middleware to handle cart operations on auth changes
+const cartSyncMiddleware = (store) => (next) => (action) => {
   const result = next(action)
   
-  // Clear cart when user logs out
+  // Load user's cart when they log in
+  if (action.type === 'auth/loginSuccess') {
+    const userId = action.payload?.user?._id
+    if (userId) {
+      store.dispatch(loadUserCart(userId))
+    }
+  }
+  
+  // Clear local cart state when user logs out (but preserve in localStorage)
   if (action.type === 'auth/logout') {
     store.dispatch(clearCartOnLogout())
   }
@@ -26,6 +34,6 @@ export const store = configureStore({
       serializableCheck: {
         ignoredActions: ['persist/PERSIST'],
       },
-    }).concat(cartClearMiddleware),
+    }).concat(cartSyncMiddleware),
   devTools: process.env.NODE_ENV !== 'production',
 })

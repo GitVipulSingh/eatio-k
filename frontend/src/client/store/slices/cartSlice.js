@@ -13,6 +13,49 @@ const isUserAuthenticated = () => {
   }
 }
 
+// Helper function to get current user ID
+const getCurrentUserId = () => {
+  const userInfo = localStorage.getItem('userInfo')
+  if (!userInfo) return null
+  
+  try {
+    const parsed = JSON.parse(userInfo)
+    return parsed.user?._id || parsed._id || null
+  } catch {
+    return null
+  }
+}
+
+// Helper function to get user-specific cart key
+const getUserCartKey = (userId) => {
+  return userId ? `eatio-cart-${userId}` : 'eatio-cart'
+}
+
+// Helper function to load user-specific cart
+const loadUserCartFromStorage = (userId) => {
+  if (!userId) return null
+  
+  const cartKey = getUserCartKey(userId)
+  const savedCart = localStorage.getItem(cartKey)
+  
+  if (savedCart) {
+    try {
+      return JSON.parse(savedCart)
+    } catch (error) {
+      localStorage.removeItem(cartKey)
+    }
+  }
+  return null
+}
+
+// Helper function to save user-specific cart
+const saveUserCart = (userId, cartState) => {
+  if (!userId) return
+  
+  const cartKey = getUserCartKey(userId)
+  localStorage.setItem(cartKey, JSON.stringify(cartState))
+}
+
 const initialState = {
   items: [],
   totalAmount: 0,
@@ -22,14 +65,12 @@ const initialState = {
   taxRate: 0.18, // 18% GST
 }
 
-// Load cart from localStorage
-const savedCart = localStorage.getItem('eatio-cart')
-if (savedCart) {
-  try {
-    const parsed = JSON.parse(savedCart)
-    Object.assign(initialState, parsed)
-  } catch (error) {
-    localStorage.removeItem('eatio-cart')
+// Load user-specific cart from localStorage if user is authenticated
+const currentUserId = getCurrentUserId()
+if (currentUserId) {
+  const userCart = loadUserCartFromStorage(currentUserId)
+  if (userCart) {
+    Object.assign(initialState, userCart)
   }
 }
 
@@ -70,7 +111,12 @@ const cartSlice = createSlice({
       }
       
       cartSlice.caseReducers.calculateTotals(state)
-      localStorage.setItem('eatio-cart', JSON.stringify(state))
+      
+      // Save to user-specific cart
+      const userId = getCurrentUserId()
+      if (userId) {
+        saveUserCart(userId, state)
+      }
     },
     
     removeFromCart: (state, action) => {
@@ -82,7 +128,12 @@ const cartSlice = createSlice({
       }
       
       cartSlice.caseReducers.calculateTotals(state)
-      localStorage.setItem('eatio-cart', JSON.stringify(state))
+      
+      // Save to user-specific cart
+      const userId = getCurrentUserId()
+      if (userId) {
+        saveUserCart(userId, state)
+      }
     },
     
     updateQuantity: (state, action) => {
@@ -109,7 +160,12 @@ const cartSlice = createSlice({
       }
       
       cartSlice.caseReducers.calculateTotals(state)
-      localStorage.setItem('eatio-cart', JSON.stringify(state))
+      
+      // Save to user-specific cart
+      const userId = getCurrentUserId()
+      if (userId) {
+        saveUserCart(userId, state)
+      }
     },
     
     clearCart: (state) => {
@@ -117,16 +173,38 @@ const cartSlice = createSlice({
       state.totalAmount = 0
       state.totalItems = 0
       state.restaurantId = null
-      localStorage.removeItem('eatio-cart')
+      
+      // Clear user-specific cart
+      const userId = getCurrentUserId()
+      if (userId) {
+        const cartKey = getUserCartKey(userId)
+        localStorage.removeItem(cartKey)
+      }
+    },
+
+    // Load user cart when user logs in
+    loadUserCart: (state, action) => {
+      const userId = action.payload
+      if (userId) {
+        const userCart = loadUserCartFromStorage(userId)
+        if (userCart) {
+          state.items = userCart.items || []
+          state.totalAmount = userCart.totalAmount || 0
+          state.totalItems = userCart.totalItems || 0
+          state.restaurantId = userCart.restaurantId || null
+          state.deliveryFee = userCart.deliveryFee || 30
+          state.taxRate = userCart.taxRate || 0.18
+        }
+      }
     },
 
     // Clear cart when user logs out (called from auth slice)
     clearCartOnLogout: (state) => {
+      // Don't remove from localStorage on logout - keep user's cart for next login
       state.items = []
       state.totalAmount = 0
       state.totalItems = 0
       state.restaurantId = null
-      localStorage.removeItem('eatio-cart')
     },
     
     calculateTotals: (state) => {
@@ -138,5 +216,5 @@ const cartSlice = createSlice({
   },
 })
 
-export const { addToCart, removeFromCart, updateQuantity, clearCart, clearCartOnLogout, calculateTotals } = cartSlice.actions
+export const { addToCart, removeFromCart, updateQuantity, clearCart, loadUserCart, clearCartOnLogout, calculateTotals } = cartSlice.actions
 export default cartSlice.reducer

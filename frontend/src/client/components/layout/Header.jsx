@@ -34,14 +34,14 @@ const Header = () => {
   const dispatch = useDispatch()
   const muiTheme = useMuiTheme()
   const isMobile = useMediaQuery(muiTheme.breakpoints.down('md'))
-  
+
   const { isDarkMode, toggleTheme } = useTheme()
   const { user, isAuthenticated } = useSelector(state => state.auth)
   const { totalItems } = useSelector(state => state.cart)
-  
+
   const [anchorEl, setAnchorEl] = useState(null)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  
+
   const logoutMutation = useLogout()
 
   const handleProfileMenuOpen = (event) => {
@@ -65,7 +65,7 @@ const Header = () => {
 
   const getMenuItems = () => {
     const baseItems = [{ label: 'Profile', path: '/profile' }]
-    
+
     if (user?.role === 'customer') {
       return [
         ...baseItems,
@@ -82,7 +82,7 @@ const Header = () => {
         { label: 'Super Admin', path: '/super-admin' },
       ]
     }
-    
+
     return baseItems
   }
 
@@ -91,10 +91,10 @@ const Header = () => {
   return (
     <>
 
-      <AppBar 
-        position="sticky" 
+      <AppBar
+        position="sticky"
         elevation={0}
-        sx={{ 
+        sx={{
           backgroundColor: 'rgba(255, 255, 255, 0.95)',
           borderBottom: '1px solid',
           borderColor: 'grey.100',
@@ -102,10 +102,10 @@ const Header = () => {
           boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
         }}
       >
-        <Toolbar sx={{ 
-          px: { xs: isAuthenticated ? 2 : 1, sm: 2, lg: 4 }, 
-          minHeight: { xs: 60, sm: 70 }, 
-          gap: { xs: isAuthenticated ? 1 : 0.5, sm: isAuthenticated ? 2 : 1 } 
+        <Toolbar sx={{
+          px: { xs: isAuthenticated ? 2 : 1, sm: 2, lg: 4 },
+          minHeight: { xs: 60, sm: 70 },
+          gap: { xs: isAuthenticated ? 1 : 0.5, sm: isAuthenticated ? 2 : 1 }
         }}>
           {/* Mobile Menu Button */}
           {isMobile && (
@@ -163,9 +163,9 @@ const Header = () => {
 
           {/* Search Bar - Desktop - Conditional Layout Based on Auth Status */}
           {!isMobile && (
-            <Box sx={{ 
-              flexGrow: 1, 
-              mx: 4, 
+            <Box sx={{
+              flexGrow: 1,
+              mx: 4,
               // LOGGED-IN: Full width search bar (original behavior)
               // LOGGED-OUT: Constrained search bar to make space for auth button
               maxWidth: isAuthenticated ? 'none' : '600px',
@@ -183,7 +183,7 @@ const Header = () => {
             onClick={toggleTheme}
             color="inherit"
             aria-label="toggle theme"
-            sx={{ 
+            sx={{
               mr: { xs: isAuthenticated ? 1 : 0.5, sm: isAuthenticated ? 2 : 1 },
               width: { xs: isAuthenticated ? 44 : 36, sm: 44 },
               height: { xs: isAuthenticated ? 44 : 36, sm: 44 },
@@ -202,7 +202,7 @@ const Header = () => {
             component={Link}
             to="/cart"
             aria-label="shopping cart"
-            sx={{ 
+            sx={{
               mr: { xs: isAuthenticated ? 1 : 0.5, sm: isAuthenticated ? 2 : 1 },
               backgroundColor: totalItems > 0 ? 'primary.main' : 'grey.100',
               color: totalItems > 0 ? 'white' : 'grey.600',
@@ -216,8 +216,8 @@ const Header = () => {
               transition: 'all 0.2s ease'
             }}
           >
-            <Badge 
-              badgeContent={totalItems || 0} 
+            <Badge
+              badgeContent={totalItems || 0}
               color="error"
               sx={{
                 '& .MuiBadge-badge': {
@@ -228,12 +228,12 @@ const Header = () => {
                 }
               }}
             >
-              <ShoppingCartIcon 
-                style={{ 
-                  width: isMobile ? '18px' : '20px', 
+              <ShoppingCartIcon
+                style={{
+                  width: isMobile ? '18px' : '20px',
                   height: isMobile ? '18px' : '20px',
                   display: 'block'
-                }} 
+                }}
               />
             </Badge>
           </IconButton>
@@ -284,11 +284,11 @@ const Header = () => {
             </div>
           ) : (
             /* Professional Auth Buttons Container - Clean Styling */
-            <Box 
+            <Box
               className="auth-buttons"
-              sx={{ 
-                display: 'flex !important', 
-                alignItems: 'center !important', 
+              sx={{
+                display: 'flex !important',
+                alignItems: 'center !important',
                 flexShrink: '0 !important',
                 ml: { xs: 1, sm: 2 },
                 visibility: 'visible !important',
