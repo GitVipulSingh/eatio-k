@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 
 // Common components
 import LoadingSpinner from './common/components/LoadingSpinner'
+import ScrollToTop from './components/ScrollToTop'
 
 // Centralized routing
 import AppRoutes from './routes'
@@ -19,6 +20,13 @@ import { loginSuccess, logout } from './client/store/slices/authSlice'
 function App() {
   const dispatch = useDispatch()
   const { isAuthenticated } = useSelector(state => state.auth)
+  
+  // Disable browser's automatic scroll restoration
+  useEffect(() => {
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual'
+    }
+  }, [])
   
   // Only fetch user profile if we have stored user info (indicating previous authentication)
   const hasStoredAuth = !!localStorage.getItem('userInfo')
@@ -46,6 +54,7 @@ function App() {
 
   return (
     <Router>
+      <ScrollToTop />
       <ConditionalSocketProvider>
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
           <AnimatePresence mode="wait">
