@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { motion } from 'framer-motion'
 import {
   Container,
@@ -36,12 +36,15 @@ import { useRestaurant } from '../api/queries'
 import { addToCart } from '../store/slices/cartSlice'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
 import { getMenuItemImageUrl } from '../../common/utils/imageUtils'
+import LoginPrompt from '../../components/LoginPrompt'
 
 const RestaurantDetailPage = () => {
   const { id } = useParams()
   const dispatch = useDispatch()
+  const { isAuthenticated } = useSelector(state => state.auth)
   const [selectedTab, setSelectedTab] = useState(0)
   const [quantities, setQuantities] = useState({})
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false)
 
   const { data: restaurant, isLoading, error } = useRestaurant(id)
 
@@ -86,6 +89,12 @@ const RestaurantDetailPage = () => {
   }
 
   const handleQuantityChange = (itemId, change) => {
+    // Check authentication before allowing quantity changes
+    if (!isAuthenticated) {
+      setShowLoginPrompt(true)
+      return
+    }
+
     setQuantities(prev => ({
       ...prev,
       [itemId]: Math.max(0, (prev[itemId] || 0) + change)
@@ -93,6 +102,12 @@ const RestaurantDetailPage = () => {
   }
 
   const handleAddToCart = (item) => {
+    // Check authentication before adding to cart
+    if (!isAuthenticated) {
+      setShowLoginPrompt(true)
+      return
+    }
+
     const quantity = quantities[item._id] || 1
     dispatch(addToCart({
       item: { ...item, quantity },
@@ -545,6 +560,13 @@ const RestaurantDetailPage = () => {
             This restaurant hasn't added their menu yet. Please check back later!
           </Alert>
         )}
+
+        {/* Login Prompt Dialog */}
+        <LoginPrompt
+          open={showLoginPrompt}
+          onClose={() => setShowLoginPrompt(false)}
+          message="Please log in to add items to your cart and enjoy seamless ordering!"
+        />
       </motion.div>
     </Container>
   )

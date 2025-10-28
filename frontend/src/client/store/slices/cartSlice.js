@@ -1,5 +1,18 @@
 import { createSlice } from '@reduxjs/toolkit'
 
+// Helper function to check if user is authenticated
+const isUserAuthenticated = () => {
+  const userInfo = localStorage.getItem('userInfo')
+  if (!userInfo) return false
+  
+  try {
+    const parsed = JSON.parse(userInfo)
+    return !!(parsed.user || parsed)
+  } catch {
+    return false
+  }
+}
+
 const initialState = {
   items: [],
   totalAmount: 0,
@@ -25,6 +38,12 @@ const cartSlice = createSlice({
   initialState,
   reducers: {
     addToCart: (state, action) => {
+      // Prevent adding to cart if user is not authenticated
+      if (!isUserAuthenticated()) {
+        console.warn('Cannot add to cart: User not authenticated')
+        return state
+      }
+
       const { item, restaurantId } = action.payload
       const quantityToAdd = item.quantity || 1
       
@@ -67,6 +86,12 @@ const cartSlice = createSlice({
     },
     
     updateQuantity: (state, action) => {
+      // Prevent updating cart if user is not authenticated
+      if (!isUserAuthenticated()) {
+        console.warn('Cannot update cart: User not authenticated')
+        return state
+      }
+
       const { itemId, quantity } = action.payload
       const item = state.items.find(item => item._id === itemId)
       
@@ -94,6 +119,15 @@ const cartSlice = createSlice({
       state.restaurantId = null
       localStorage.removeItem('eatio-cart')
     },
+
+    // Clear cart when user logs out (called from auth slice)
+    clearCartOnLogout: (state) => {
+      state.items = []
+      state.totalAmount = 0
+      state.totalItems = 0
+      state.restaurantId = null
+      localStorage.removeItem('eatio-cart')
+    },
     
     calculateTotals: (state) => {
       const subtotal = state.items.reduce((total, item) => total + item.totalPrice, 0)
@@ -104,5 +138,5 @@ const cartSlice = createSlice({
   },
 })
 
-export const { addToCart, removeFromCart, updateQuantity, clearCart, calculateTotals } = cartSlice.actions
+export const { addToCart, removeFromCart, updateQuantity, clearCart, clearCartOnLogout, calculateTotals } = cartSlice.actions
 export default cartSlice.reducer
