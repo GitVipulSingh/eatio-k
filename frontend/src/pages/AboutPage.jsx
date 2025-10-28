@@ -51,22 +51,22 @@ const AboutPage = () => {
 
   const team = [
     {
-      name: 'Rajesh Kumar',
+      name: 'Vipul Singh',
       role: 'CEO & Founder',
       description: 'Passionate about connecting people with great food experiences.',
-      avatar: 'RK'
+      avatar: 'VS'
     },
     {
-      name: 'Priya Sharma',
+      name: 'Jag',
       role: 'Head of Operations',
       description: 'Ensuring smooth operations and exceptional service delivery.',
-      avatar: 'PS'
+      avatar: 'JA'
     },
     {
-      name: 'Amit Patel',
+      name: 'Rama',
       role: 'Head of Technology',
       description: 'Building innovative solutions for seamless food ordering.',
-      avatar: 'AP'
+      avatar: 'RM'
     },
   ]
 
