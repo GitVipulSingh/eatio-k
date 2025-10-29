@@ -155,9 +155,17 @@ const LandingPage = () => {
                         fontWeight: 600,
                         backdropFilter: 'blur(10px)',
                         fontSize: { xs: '0.8rem', sm: '0.9rem' },
-                        height: { xs: 32, sm: 36 },
-                        px: 2,
+                        height: { xs: 36, sm: 40 },
+                        px: { xs: 2, sm: 3 },
+                        minWidth: 'fit-content',
+                        maxWidth: 'none',
+                        whiteSpace: 'nowrap',
                         boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                        '& .MuiChip-label': {
+                          overflow: 'visible',
+                          textOverflow: 'unset',
+                          whiteSpace: 'nowrap',
+                        }
                       }}
                     />
                   </Box>
