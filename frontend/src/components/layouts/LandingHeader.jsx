@@ -12,7 +12,6 @@ import {
   IconButton,
 } from '@mui/material'
 import {
-  UserIcon,
   Bars3Icon,
   MoonIcon,
   SunIcon,
@@ -102,14 +101,6 @@ const LandingHeader = () => {
 
         {/* Auth Buttons */}
         <div className="flex items-center space-x-2">
-          <Button
-            component={Link}
-            to="/auth/login"
-            color="inherit"
-            startIcon={<UserIcon className="h-4 w-4" />}
-          >
-            Login
-          </Button>
           <Button
             component={Link}
             to="/auth/register/customer"
