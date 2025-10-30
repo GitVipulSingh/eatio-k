@@ -439,6 +439,12 @@ We’re currently waiting for restaurant approval. Please check back soon or con
                 overflow: 'hidden',
                 textDecoration: 'none',
                 cursor: 'pointer',
+                display: 'block !important',
+                visibility: 'visible !important',
+                opacity: '1 !important',
+                zIndex: 1,
+                border: '1px solid rgba(139, 92, 246, 0.3)',
+                boxShadow: '0 4px 12px rgba(139, 92, 246, 0.2)',
                 '&:hover': {
                   transform: 'translateY(-4px)',
                   boxShadow: '0 12px 40px rgba(139, 92, 246, 0.3)',
@@ -453,20 +459,29 @@ We’re currently waiting for restaurant approval. Please check back soon or con
                       Average Rating
                     </Typography>
                     <Typography variant="h3" sx={{ fontWeight: 800, lineHeight: 1 }}>
-                      {restaurant.averageRating?.toFixed(1) || '0.0'}
+                      {restaurant?.averageRating?.toFixed(1) || '0.0'}
                     </Typography>
                   </Box>
                   <Box sx={{ 
                     p: 1.5, 
                     borderRadius: 2, 
                     backgroundColor: 'rgba(255,255,255,0.2)',
-                    backdropFilter: 'blur(10px)'
+                    backdropFilter: 'blur(10px)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
                   }}>
-                    <StarIcon className="h-5 w-5" />
+                    <StarIcon 
+                      className="h-5 w-5" 
+                      style={{ 
+                        color: 'white',
+                        display: 'block'
+                      }} 
+                    />
                   </Box>
                 </Box>
                 <Typography variant="body2" sx={{ opacity: 0.8 }}>
-                  {restaurant.totalRatingCount ? `Based on ${restaurant.totalRatingCount} reviews` : 'No reviews yet'}
+                  {restaurant?.totalRatingCount ? `Based on ${restaurant.totalRatingCount} reviews` : 'No reviews yet'}
                 </Typography>
                 <Typography variant="caption" sx={{ opacity: 0.7, mt: 1, display: 'block' }}>
                   Click to view all reviews →

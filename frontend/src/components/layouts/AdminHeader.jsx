@@ -139,9 +139,9 @@ const AdminHeader = () => {
                 key={item.path}
                 component={Link}
                 to={item.path}
-                color="inherit"
                 sx={{ 
                   fontWeight: 500,
+                  color: 'text.primary',
                   '&:hover': {
                     backgroundColor: 'primary.light',
                     color: 'primary.contrastText'
@@ -157,9 +157,14 @@ const AdminHeader = () => {
         {/* Theme Toggle */}
         <IconButton
           onClick={toggleTheme}
-          color="inherit"
           aria-label="toggle theme"
-          sx={{ mr: 1 }}
+          sx={{ 
+            mr: 1,
+            color: 'text.primary',
+            '&:hover': {
+              backgroundColor: 'action.hover'
+            }
+          }}
         >
           {isDarkMode ? (
             <SunIcon className="h-5 w-5" />
@@ -172,8 +177,13 @@ const AdminHeader = () => {
         <div>
           <IconButton
             onClick={handleProfileMenuOpen}
-            color="inherit"
             aria-label="account"
+            sx={{
+              color: 'text.primary',
+              '&:hover': {
+                backgroundColor: 'action.hover'
+              }
+            }}
           >
             <Avatar
               sx={{ width: 32, height: 32 }}
