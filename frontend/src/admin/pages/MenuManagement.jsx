@@ -221,12 +221,22 @@ const MenuManagement = () => {
 
   const openEditDialog = (item) => {
     console.log('Opening edit dialog for item:', item)
+    console.log('Item availability:', item.isAvailable)
     setSelectedItem(item)
-    setValue('name', item.name)
-    setValue('description', item.description)
-    setValue('price', item.price)
-    setValue('category', item.category)
-    setValue('isAvailable', item.isAvailable)
+    
+    // Reset form first to clear any previous values
+    reset()
+    
+    // Set form values with a small delay to ensure form is reset
+    setTimeout(() => {
+      setValue('name', item.name)
+      setValue('description', item.description)
+      setValue('price', item.price)
+      setValue('category', item.category)
+      setValue('isAvailable', item.isAvailable)
+      console.log('Form values set, isAvailable:', item.isAvailable)
+    }, 10)
+    
     // Use the image utility function to get the correct URL for preview
     setImagePreview(item.image ? getMenuItemImageUrl(item.image, item.name, item.category, restaurant?.cuisine) : null)
     setSelectedFile(null) // Reset file selection
@@ -825,6 +835,8 @@ const MenuManagement = () => {
                     control={
                       <Switch
                         {...register('isAvailable')}
+                        checked={watch('isAvailable') ?? selectedItem?.isAvailable ?? true}
+                        defaultChecked={selectedItem?.isAvailable ?? true}
                       />
                     }
                     label="Available for order"
