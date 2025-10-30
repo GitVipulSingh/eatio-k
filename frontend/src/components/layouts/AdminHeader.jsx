@@ -65,6 +65,7 @@ const AdminHeader = () => {
         { label: 'Dashboard', path: '/admin/dashboard' },
         { label: 'Menu Management', path: '/admin/menu' },
         { label: 'Orders', path: '/admin/orders' },
+        { label: 'Reviews', path: '/admin/reviews' },
       ]
     } else if (user?.role === 'superadmin') {
       return [

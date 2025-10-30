@@ -40,8 +40,8 @@ export const useSearch = (query, filters = {}) => {
   return useQuery({
     queryKey: [QUERY_KEYS.search, query, filters],
     queryFn: async () => {
-      const { data } = await api.get('/search', { 
-        params: { q: query, ...filters } 
+      const { data } = await api.get('/search', {
+        params: { q: query, ...filters }
       })
       return data
     },
@@ -95,7 +95,7 @@ export const useOrder = (id) => {
 // Auth Mutations
 export const useLogin = () => {
   const queryClient = useQueryClient()
-  
+
   return useMutation({
     mutationFn: async (credentials) => {
       const { data } = await api.post('/auth/login', {
@@ -118,7 +118,7 @@ export const useLogin = () => {
 
 export const useRegister = () => {
   const queryClient = useQueryClient()
-  
+
   return useMutation({
     mutationFn: async (userData) => {
       const { data } = await api.post('/auth/register', userData)
@@ -138,7 +138,7 @@ export const useRegister = () => {
 
 export const useLogout = () => {
   const queryClient = useQueryClient()
-  
+
   return useMutation({
     mutationFn: async () => {
       await api.post('/auth/logout')
@@ -173,7 +173,7 @@ export const useResetPassword = () => {
 // Order Mutations
 export const useCreateOrder = () => {
   const queryClient = useQueryClient()
-  
+
   return useMutation({
     mutationFn: async (orderData) => {
       const { data } = await api.post('/orders', orderData)
@@ -198,7 +198,7 @@ export const useCreatePayment = () => {
 
 export const useVerifyPayment = () => {
   const queryClient = useQueryClient()
-  
+
   return useMutation({
     mutationFn: async (verificationData) => {
       const { data } = await api.post('/payment/verify-payment', verificationData)
@@ -232,12 +232,12 @@ export const useMyRestaurant = () => {
         name: data.name,
         menuItemsCount: data.menuItems?.length || 0
       });
-      
+
       // Log menu items with images
       data.menuItems?.forEach((item, index) => {
         console.log(`🏪 [API] Menu item ${index}: ${item.name}, Image: ${item.image}`);
       });
-      
+
       return data
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
@@ -247,7 +247,7 @@ export const useMyRestaurant = () => {
 // Menu Management Mutations
 export const useAddMenuItem = () => {
   const queryClient = useQueryClient()
-  
+
   return useMutation({
     mutationFn: async (menuItem) => {
       const { data } = await api.post('/restaurants/menu', menuItem)
@@ -261,7 +261,7 @@ export const useAddMenuItem = () => {
 
 export const useUpdateMenuItem = () => {
   const queryClient = useQueryClient()
-  
+
   return useMutation({
     mutationFn: async ({ menuItemId, ...updateData }) => {
       const { data } = await api.put(`/restaurants/menu/${menuItemId}`, updateData)
@@ -275,7 +275,7 @@ export const useUpdateMenuItem = () => {
 
 export const useDeleteMenuItem = () => {
   const queryClient = useQueryClient()
-  
+
   return useMutation({
     mutationFn: async (menuItemId) => {
       const { data } = await api.delete(`/restaurants/menu/${menuItemId}`)
@@ -290,7 +290,7 @@ export const useDeleteMenuItem = () => {
 // Order Status Update
 export const useUpdateOrderStatus = () => {
   const queryClient = useQueryClient()
-  
+
   return useMutation({
     mutationFn: async ({ orderId, status }) => {
       const { data } = await api.put(`/admin/orders/${orderId}/status`, { status })
@@ -316,10 +316,10 @@ export const usePendingRestaurants = () => {
 
 export const useApproveRestaurant = () => {
   const queryClient = useQueryClient()
-  
+
   return useMutation({
     mutationFn: async (restaurantId) => {
-      const { data } = await api.put(`/admin/restaurants/${restaurantId}/status`, { 
+      const { data } = await api.put(`/admin/restaurants/${restaurantId}/status`, {
         status: 'approved'
       })
       return data
@@ -332,10 +332,10 @@ export const useApproveRestaurant = () => {
 
 export const useRejectRestaurant = () => {
   const queryClient = useQueryClient()
-  
+
   return useMutation({
     mutationFn: async ({ restaurantId, reason }) => {
-      const { data } = await api.put(`/admin/restaurants/${restaurantId}/status`, { 
+      const { data } = await api.put(`/admin/restaurants/${restaurantId}/status`, {
         status: 'rejected',
         remarks: reason
       })
@@ -349,12 +349,12 @@ export const useRejectRestaurant = () => {
 
 export const useUpdateRestaurantStatus = () => {
   const queryClient = useQueryClient()
-  
+
   return useMutation({
     mutationFn: async ({ restaurantId, status, remarks }) => {
-      const { data } = await api.put(`/admin/restaurants/${restaurantId}/status`, { 
-        status, 
-        remarks 
+      const { data } = await api.put(`/admin/restaurants/${restaurantId}/status`, {
+        status,
+        remarks
       })
       return data
     },
@@ -435,12 +435,12 @@ export const useAllOrders = () => {
 // Restaurant Open/Closed Status
 export const useUpdateRestaurantOpenStatus = () => {
   const queryClient = useQueryClient()
-  
+
   return useMutation({
     mutationFn: async ({ isOpen, operatingHours }) => {
-      const { data } = await api.put('/admin/restaurant/status', { 
-        isOpen, 
-        operatingHours 
+      const { data } = await api.put('/admin/restaurant/status', {
+        isOpen,
+        operatingHours
       })
       return data
     },
@@ -453,11 +453,11 @@ export const useUpdateRestaurantOpenStatus = () => {
 // Update Restaurant Photo
 export const useUpdateRestaurantPhoto = () => {
   const queryClient = useQueryClient()
-  
+
   return useMutation({
     mutationFn: async (imageUrl) => {
-      const { data } = await api.put('/admin/restaurant/photo', { 
-        imageUrl 
+      const { data } = await api.put('/admin/restaurant/photo', {
+        imageUrl
       })
       return data
     },
@@ -477,17 +477,17 @@ export const useUploadMenuImage = () => {
         size: file.size,
         type: file.type
       });
-      
+
       const formData = new FormData()
       formData.append('image', file)
-      
+
       console.log(`📤 [API] Sending POST request to /menu-images/upload`);
       const { data } = await api.post('/menu-images/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       })
-      
+
       console.log(`✅ [API] Upload response received:`, data);
       return data
     },
@@ -515,17 +515,17 @@ export const useUploadRestaurantImage = () => {
         size: file.size,
         type: file.type
       });
-      
+
       const formData = new FormData()
       formData.append('image', file)
-      
+
       console.log(`📤 [API] Sending POST request to /restaurant-images/upload`);
       const { data } = await api.post('/restaurant-images/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       })
-      
+
       console.log(`✅ [API] Restaurant image upload response received:`, data);
       return data
     },
@@ -552,17 +552,17 @@ export const useUploadProfileImage = () => {
         size: file.size,
         type: file.type
       });
-      
+
       const formData = new FormData()
       formData.append('image', file)
-      
+
       console.log(`📤 [API] Sending POST request to /profile-images/upload`);
       const { data } = await api.post('/profile-images/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       })
-      
+
       console.log(`✅ [API] Profile image upload response received:`, data);
       return data
     },
@@ -602,22 +602,26 @@ export const useCanReviewOrder = (orderId, options = {}) => {
 
 // Get reviews for a restaurant
 export const useRestaurantReviews = (restaurantId, options = {}) => {
+  const { page = 1, limit = 10, ...queryOptions } = options
+
   return useQuery({
-    queryKey: [RATING_QUERY_KEYS.reviews, restaurantId],
+    queryKey: [RATING_QUERY_KEYS.reviews, restaurantId, page, limit],
     queryFn: async () => {
-      const { data } = await api.get(`/reviews/restaurant/${restaurantId}`)
+      const { data } = await api.get(`/reviews/restaurant/${restaurantId}`, {
+        params: { page, limit }
+      })
       return data
     },
     enabled: !!restaurantId,
     staleTime: 2 * 60 * 1000, // 2 minutes
-    ...options,
+    ...queryOptions,
   })
 }
 
 // Submit a review for an order
 export const useSubmitReview = () => {
   const queryClient = useQueryClient()
-  
+
   return useMutation({
     mutationFn: async ({ orderId, rating, comment }) => {
       const { data } = await api.post(`/reviews/order/${orderId}`, {

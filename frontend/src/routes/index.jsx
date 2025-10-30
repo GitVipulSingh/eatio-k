@@ -28,6 +28,7 @@ import SearchResultsPage from '../pages/customer/SearchResultsPage'
 import AdminDashboard from '../pages/admin/AdminDashboard'
 import MenuManagement from '../pages/admin/MenuManagement'
 import OrderManagement from '../pages/admin/OrderManagement'
+import ReviewsManagement from '../admin/pages/ReviewsManagement'
 
 // Super Admin Pages
 import SuperAdminDashboard from '../pages/superadmin/SuperAdminDashboard'
@@ -87,6 +88,7 @@ const AppRoutes = () => {
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
               <Route path="/admin/menu" element={<MenuManagement />} />
               <Route path="/admin/orders" element={<OrderManagement />} />
+              <Route path="/admin/reviews" element={<ReviewsManagement />} />
               <Route path="/admin/*" element={<Navigate to="/admin/dashboard" replace />} />
               <Route path="/restaurant-dashboard" element={<Navigate to="/admin/dashboard" replace />} />
               <Route path="/super-admin/*" element={<Navigate to="/unauthorized" replace />} />

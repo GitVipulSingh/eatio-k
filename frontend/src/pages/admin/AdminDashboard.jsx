@@ -428,13 +428,24 @@ We’re currently waiting for restaurant approval. Please check back soon or con
             </Card>
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
-            <Card sx={{ 
-              height: '100%',
-              background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
-              color: 'white',
-              position: 'relative',
-              overflow: 'hidden'
-            }}>
+            <Card 
+              component={Link}
+              to="/admin/reviews"
+              sx={{ 
+                height: '100%',
+                background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
+                color: 'white',
+                position: 'relative',
+                overflow: 'hidden',
+                textDecoration: 'none',
+                cursor: 'pointer',
+                '&:hover': {
+                  transform: 'translateY(-4px)',
+                  boxShadow: '0 12px 40px rgba(139, 92, 246, 0.3)',
+                },
+                transition: 'all 0.3s ease'
+              }}
+            >
               <CardContent sx={{ p: 3 }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
                   <Box>
@@ -455,7 +466,10 @@ We’re currently waiting for restaurant approval. Please check back soon or con
                   </Box>
                 </Box>
                 <Typography variant="body2" sx={{ opacity: 0.8 }}>
-                  {restaurant.totalReviews ? `Based on ${restaurant.totalReviews} reviews` : 'No reviews yet'}
+                  {restaurant.totalRatingCount ? `Based on ${restaurant.totalRatingCount} reviews` : 'No reviews yet'}
+                </Typography>
+                <Typography variant="caption" sx={{ opacity: 0.7, mt: 1, display: 'block' }}>
+                  Click to view all reviews →
                 </Typography>
               </CardContent>
             </Card>
