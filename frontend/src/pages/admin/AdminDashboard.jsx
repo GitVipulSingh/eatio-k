@@ -395,13 +395,30 @@ We’re currently waiting for restaurant approval. Please check back soon or con
             </Card>
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
-            <Card sx={{ 
-              height: '100%',
-              background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-              color: 'white',
-              position: 'relative',
-              overflow: 'hidden'
-            }}>
+            <Card 
+              component={Link}
+              to="/admin/orders?filter=pending"
+              sx={{ 
+                height: '100%',
+                background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                color: 'white',
+                position: 'relative',
+                overflow: 'hidden',
+                textDecoration: 'none',
+                cursor: 'pointer',
+                display: 'block !important',
+                visibility: 'visible !important',
+                opacity: '1 !important',
+                zIndex: 1,
+                border: '1px solid rgba(245, 158, 11, 0.3)',
+                boxShadow: '0 4px 12px rgba(245, 158, 11, 0.2)',
+                '&:hover': {
+                  transform: 'translateY(-4px)',
+                  boxShadow: '0 12px 40px rgba(245, 158, 11, 0.3)',
+                },
+                transition: 'all 0.3s ease'
+              }}
+            >
               <CardContent sx={{ p: 3 }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
                   <Box>
@@ -416,13 +433,25 @@ We’re currently waiting for restaurant approval. Please check back soon or con
                     p: 1.5, 
                     borderRadius: 2, 
                     backgroundColor: pendingOrders.length > 0 ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.2)',
-                    backdropFilter: 'blur(10px)'
+                    backdropFilter: 'blur(10px)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
                   }}>
-                    <ClockIcon className="h-5 w-5" />
+                    <ClockIcon 
+                      className="h-5 w-5" 
+                      style={{ 
+                        color: 'white',
+                        display: 'block'
+                      }} 
+                    />
                   </Box>
                 </Box>
                 <Typography variant="body2" sx={{ opacity: 0.8 }}>
                   {pendingOrders.length > 0 ? 'Requires attention' : 'All orders processed'}
+                </Typography>
+                <Typography variant="caption" sx={{ opacity: 0.7, mt: 1, display: 'block' }}>
+                  Click to view pending orders →
                 </Typography>
               </CardContent>
             </Card>

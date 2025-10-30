@@ -83,6 +83,30 @@ const OrderManagement = () => {
     refetch()
   }, [])
 
+  // Handle URL parameters for filtering
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search)
+    const filterParam = urlParams.get('filter')
+    
+    if (filterParam) {
+      const filterMap = {
+        'pending': { filter: 'Pending', tab: 1 },
+        'confirmed': { filter: 'Confirmed', tab: 2 },
+        'preparing': { filter: 'Preparing', tab: 3 },
+        'out-for-delivery': { filter: 'Out for Delivery', tab: 4 },
+        'delivered': { filter: 'Delivered', tab: 5 },
+        'cancelled': { filter: 'Cancelled', tab: 6 }
+      }
+      
+      const mapping = filterMap[filterParam.toLowerCase()]
+      if (mapping) {
+        setStatusFilter(mapping.filter)
+        setActiveTab(mapping.tab)
+        console.log(`🔍 [ORDER_MGMT] URL filter applied: ${mapping.filter}`)
+      }
+    }
+  }, [location.search])
+
   // Debug logging
   useEffect(() => {
     console.log('🔍 [ORDER_MGMT] Component mounted/updated')
@@ -425,7 +449,20 @@ const OrderManagement = () => {
             onChange={(e, newValue) => {
               setActiveTab(newValue)
               const statuses = ['all', 'Pending', 'Confirmed', 'Preparing', 'Out for Delivery', 'Delivered', 'Cancelled']
-              setStatusFilter(statuses[newValue])
+              const newFilter = statuses[newValue]
+              setStatusFilter(newFilter)
+              
+              // Update URL without page reload
+              const urlParams = new URLSearchParams(location.search)
+              if (newFilter === 'all') {
+                urlParams.delete('filter')
+              } else {
+                const filterParam = newFilter.toLowerCase().replace(' ', '-')
+                urlParams.set('filter', filterParam)
+              }
+              
+              const newUrl = `${location.pathname}${urlParams.toString() ? '?' + urlParams.toString() : ''}`
+              window.history.replaceState({}, '', newUrl)
             }}
             variant="scrollable"
             scrollButtons="auto"
