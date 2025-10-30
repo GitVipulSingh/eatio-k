@@ -391,10 +391,33 @@ export const useAllUsers = () => {
   return useQuery({
     queryKey: ['allUsers'],
     queryFn: async () => {
-      const { data } = await api.get('/admin/users')
-      return data
+      console.log('🔄 Fetching all users...')
+      try {
+        const { data } = await api.get('/admin/users')
+        console.log('✅ Users fetched successfully:', data?.length, 'users')
+        return data
+      } catch (error) {
+        console.error('❌ Error fetching users:', error.response?.status, error.response?.data)
+        throw error
+      }
     },
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 30 * 1000, // 30 seconds for more frequent updates
+    refetchInterval: 60 * 1000, // Auto-refetch every minute
+    refetchIntervalInBackground: true, // Continue refetching when tab is not active
+    retry: (failureCount, error) => {
+      // Don't retry on 403 (unauthorized)
+      if (error?.response?.status === 403) {
+        console.log('🚫 Access denied - user not authorized as superadmin')
+        return false
+      }
+      return failureCount < 2
+    },
+    onError: (error) => {
+      console.error('🚨 useAllUsers query failed:', error)
+    },
+    onSuccess: (data) => {
+      console.log('📊 useAllUsers query succeeded with', data?.length, 'users')
+    }
   })
 }
 

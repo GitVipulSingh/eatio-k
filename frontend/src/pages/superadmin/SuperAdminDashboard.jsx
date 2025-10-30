@@ -60,6 +60,14 @@ const SuperAdminDashboard = () => {
   // Enable real-time updates for Super Admin dashboard
   useSuperAdminDashboardUpdates()
 
+  // Debug logging
+  console.log('🔍 SuperAdmin Dashboard Debug:', {
+    allUsers: allUsers?.length,
+    usersLoading,
+    usersError: usersError?.response?.status,
+    hasUsers: !!allUsers
+  })
+
   const isLoading = statsLoading || pendingLoading
 
   // Check for 403 errors (not authorized as superadmin)
@@ -738,25 +746,50 @@ const SuperAdminDashboard = () => {
             <Card sx={{ height: '100%', boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}>
               <CardContent sx={{ p: 0 }}>
                 <Box sx={{ p: 3, borderBottom: '1px solid', borderColor: 'divider' }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                    <Box sx={{ 
-                      p: 1.5, 
-                      borderRadius: 2, 
-                      backgroundColor: 'success.main',
-                      color: 'white'
-                    }}>
-                      <UsersIcon className="h-5 w-5" />
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                      <Box sx={{ 
+                        p: 1.5, 
+                        borderRadius: 2, 
+                        backgroundColor: 'success.main',
+                        color: 'white'
+                      }}>
+                        <UsersIcon className="h-5 w-5" />
+                      </Box>
+                      <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                        Recent Users
+                      </Typography>
+                      {allUsers?.length > 0 && (
+                        <Chip 
+                          label={`${allUsers.length} total`} 
+                          size="small" 
+                          variant="outlined" 
+                        />
+                      )}
                     </Box>
-                    <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                      Recent Users
-                    </Typography>
-                    {allUsers?.length > 0 && (
-                      <Chip 
-                        label={`${allUsers.length} total`} 
-                        size="small" 
-                        variant="outlined" 
-                      />
-                    )}
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      {usersLoading && (
+                        <Box sx={{ 
+                          width: 12, 
+                          height: 12, 
+                          borderRadius: '50%', 
+                          backgroundColor: 'success.main',
+                          animation: 'pulse 1.5s ease-in-out infinite'
+                        }} />
+                      )}
+                      <Typography variant="caption" color="text.secondary">
+                        {usersLoading ? 'Refreshing...' : 'Auto-refreshes every minute'}
+                      </Typography>
+                      {/* Debug info */}
+                      {usersError && (
+                        <Chip 
+                          label={`Error: ${usersError?.response?.status || 'Unknown'}`} 
+                          size="small" 
+                          color="error" 
+                          variant="outlined"
+                        />
+                      )}
+                    </Box>
                   </Box>
                 </Box>
                 <Box sx={{ p: 3 }}>
@@ -822,7 +855,14 @@ const SuperAdminDashboard = () => {
                         <UsersIcon className="h-6 w-6 text-gray-400" />
                       </Box>
                       <Typography variant="body2" color="text.secondary">
-                        No users found
+                        {usersError ? 
+                          `Error loading users: ${usersError?.response?.status === 403 ? 'Access denied - not authorized as superadmin' : usersError?.message || 'Unknown error'}` :
+                          'No users found'
+                        }
+                      </Typography>
+                      {/* Debug info */}
+                      <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
+                        Debug: Loading={usersLoading ? 'true' : 'false'}, Error={usersError ? 'true' : 'false'}, Data={allUsers ? 'exists' : 'null'}
                       </Typography>
                     </Box>
                   )}

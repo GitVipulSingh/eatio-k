@@ -12,6 +12,7 @@ export const useRealTimeUpdates = (options = {}) => {
     enableRestaurantUpdates = false,
     enableSystemStatsUpdates = false,
     enableRatingUpdates = false,
+    enableUserUpdates = false,
     restaurantId = null,
     userId = null
   } = options
@@ -141,7 +142,39 @@ export const useRealTimeUpdates = (options = {}) => {
       }
     }
 
-  }, [socket, queryClient, enableOrderUpdates, enableRestaurantUpdates, enableSystemStatsUpdates, enableRatingUpdates, restaurantId, userId])
+    // User updates for super admin
+    if (enableUserUpdates) {
+      const handleUserRegistration = (data) => {
+        console.log('👤 New user registered:', data)
+        
+        // Invalidate user-related queries
+        queryClient.invalidateQueries({ queryKey: ['allUsers'] })
+        queryClient.invalidateQueries({ queryKey: ['system-stats'] })
+        
+        // Show toast notification for new user registrations
+        if (data.role === 'admin') {
+          toast.success(`New restaurant admin registered: ${data.name}`)
+        }
+      }
+
+      const handleUserUpdate = (data) => {
+        console.log('👤 User updated:', data)
+        
+        // Invalidate user-related queries
+        queryClient.invalidateQueries({ queryKey: ['allUsers'] })
+        queryClient.invalidateQueries({ queryKey: ['system-stats'] })
+      }
+
+      socket.on('user_registered', handleUserRegistration)
+      socket.on('user_updated', handleUserUpdate)
+      
+      return () => {
+        socket.off('user_registered', handleUserRegistration)
+        socket.off('user_updated', handleUserUpdate)
+      }
+    }
+
+  }, [socket, queryClient, enableOrderUpdates, enableRestaurantUpdates, enableSystemStatsUpdates, enableRatingUpdates, enableUserUpdates, restaurantId, userId])
 }
 
 // Specific hooks for different dashboard types
@@ -155,7 +188,8 @@ export const useAdminDashboardUpdates = (restaurantId) => {
 export const useSuperAdminDashboardUpdates = () => {
   return useRealTimeUpdates({
     enableRestaurantUpdates: true,
-    enableSystemStatsUpdates: true
+    enableSystemStatsUpdates: true,
+    enableUserUpdates: true
   })
 }
 
