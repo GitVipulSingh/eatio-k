@@ -31,9 +31,9 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    // --- THIS IS THE CHANGE ---
+    
     enum: ['customer', 'admin', 'superadmin'],
-    // --- END OF CHANGE ---
+    
     default: 'customer',
   },
   restaurant: {
