@@ -49,6 +49,7 @@ const userSchema = new mongoose.Schema({
   timestamps: true,
 });
 
+//Password Hashing Middleware
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password') || !this.password) {
     return next();
@@ -58,6 +59,7 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
+//Password Comparison Method
 userSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
