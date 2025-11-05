@@ -11,11 +11,7 @@ const menuItemSchema = new mongoose.Schema({
   isAvailable: { type: Boolean, default: true }, 
 });
 
-const ratingSchema = new mongoose.Schema({
-  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  rating: { type: Number, required: true, min: 1, max: 5 },
-  comment: { type: String },
-}, { timestamps: true });
+
 
 const restaurantSchema = new mongoose.Schema({
   name: {
@@ -53,7 +49,7 @@ const restaurantSchema = new mongoose.Schema({
     required: true,
   },
   menuItems: [menuItemSchema],
-  ratings: [ratingSchema],
+
   averageRating: {
     type: Number,
     default: 0, // Start with 0 rating until actual reviews come in
