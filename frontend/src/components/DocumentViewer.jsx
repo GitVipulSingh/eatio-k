@@ -22,14 +22,46 @@ import {
 const DocumentViewer = ({ open, onClose, documentUrl, documentName, documentType = 'Document' }) => {
   const [imageError, setImageError] = useState(false)
 
+  // Debug logging
+  console.log('DocumentViewer props:', { documentUrl, documentName, documentType })
+
   const isCloudinaryUrl = documentUrl?.includes('cloudinary.com')
   const isImageFile = documentUrl?.match(/\.(jpg|jpeg|png|gif|webp)$/i)
-  const isPdfFile = documentUrl?.match(/\.pdf$/i)
+  const isPdfFile = documentUrl?.match(/\.pdf$/i) || documentUrl?.includes('/image/upload/') && documentUrl?.includes('.pdf')
   const isLegacyFilename = documentUrl && !documentUrl.startsWith('http')
+
+  // Additional check for Cloudinary PDF URLs that might not have .pdf extension
+  const isCloudinaryPdf = isCloudinaryUrl && (
+    isPdfFile || 
+    documentUrl?.includes('fl_attachment') || 
+    documentUrl?.includes('resource_type/raw') ||
+    documentUrl?.includes('/raw/upload/') ||
+    documentName?.toLowerCase().includes('pdf') ||
+    documentType?.toLowerCase().includes('fssai') ||
+    documentType?.toLowerCase().includes('license')
+  )
+
+  console.log('File type detection:', { 
+    isCloudinaryUrl, 
+    isImageFile, 
+    isPdfFile, 
+    isCloudinaryPdf, 
+    isLegacyFilename,
+    documentUrl 
+  })
 
   const handleOpenInNewTab = () => {
     if (isCloudinaryUrl) {
-      window.open(documentUrl, '_blank')
+      let urlToOpen = documentUrl
+      
+      // If it's a PDF but the URL doesn't look right, try to fix it
+      if ((isPdfFile || isCloudinaryPdf) && documentUrl.includes('/image/upload/')) {
+        // Convert image URL to raw URL for PDFs
+        urlToOpen = documentUrl.replace('/image/upload/', '/raw/upload/')
+        console.log('Converted PDF URL:', urlToOpen)
+      }
+      
+      window.open(urlToOpen, '_blank')
     }
   }
 
@@ -81,15 +113,67 @@ const DocumentViewer = ({ open, onClose, documentUrl, documentName, documentType
       )
     }
 
-    if (isPdfFile || imageError) {
+    if (isPdfFile || isCloudinaryPdf || imageError) {
+      // Try to embed PDF first, fallback to open in new tab
+      if ((isPdfFile || isCloudinaryPdf) && isCloudinaryUrl) {
+        return (
+          <Box>
+            <Box sx={{ mb: 2, textAlign: 'center' }}>
+              <Typography variant="h6" sx={{ mb: 1 }}>
+                PDF Document
+              </Typography>
+              <Button
+                variant="outlined"
+                size="small"
+                startIcon={<ArrowTopRightOnSquareIcon className="h-4 w-4" />}
+                onClick={handleOpenInNewTab}
+                sx={{ mb: 2 }}
+              >
+                Open in New Tab
+              </Button>
+            </Box>
+            <Box
+              component="iframe"
+              src={`${documentUrl.includes('/image/upload/') ? documentUrl.replace('/image/upload/', '/raw/upload/') : documentUrl}#toolbar=1&navpanes=1&scrollbar=1`}
+              sx={{
+                width: '100%',
+                height: '60vh',
+                border: '1px solid #ddd',
+                borderRadius: 1,
+              }}
+              title={documentName || 'PDF Document'}
+              onError={(e) => {
+                console.error('PDF iframe failed to load:', e)
+                // Fallback to button-only view
+                e.target.style.display = 'none'
+                e.target.nextSibling.style.display = 'block'
+              }}
+            />
+            <Box sx={{ textAlign: 'center', py: 4, display: 'none' }}>
+              <DocumentIcon className="h-16 w-16 mx-auto mb-3 text-gray-400" />
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                PDF preview not available. Click "Open in New Tab" to view the document.
+              </Typography>
+              <Button
+                variant="contained"
+                startIcon={<ArrowTopRightOnSquareIcon className="h-4 w-4" />}
+                onClick={handleOpenInNewTab}
+              >
+                Open in New Tab
+              </Button>
+            </Box>
+          </Box>
+        )
+      }
+
       return (
         <Box sx={{ textAlign: 'center', py: 4 }}>
           <DocumentIcon className="h-16 w-16 mx-auto mb-3 text-gray-400" />
           <Typography variant="h6" sx={{ mb: 2 }}>
-            {isPdfFile ? 'PDF Document' : 'Document Preview'}
+            {(isPdfFile || isCloudinaryPdf) ? 'PDF Document' : 'Document Preview'}
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-            {isPdfFile 
+            {(isPdfFile || isCloudinaryPdf)
               ? 'Click "Open in New Tab" to view the PDF document'
               : 'Preview not available. Click "Open in New Tab" to view the document'
             }
@@ -163,6 +247,20 @@ const DocumentViewer = ({ open, onClose, documentUrl, documentName, documentType
             {documentName}
           </Typography>
         )}
+        
+        {/* Debug info - remove in production */}
+        {process.env.NODE_ENV === 'development' && (
+          <Alert severity="info" sx={{ mb: 2, fontSize: '0.75rem' }}>
+            <Typography variant="caption" component="div">
+              <strong>Debug Info:</strong><br/>
+              URL: {documentUrl}<br/>
+              Is Cloudinary: {isCloudinaryUrl ? 'Yes' : 'No'}<br/>
+              Is PDF: {(isPdfFile || isCloudinaryPdf) ? 'Yes' : 'No'}<br/>
+              Is Image: {isImageFile ? 'Yes' : 'No'}
+            </Typography>
+          </Alert>
+        )}
+        
         {renderDocumentContent()}
       </DialogContent>
       

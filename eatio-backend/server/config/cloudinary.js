@@ -59,10 +59,26 @@ const profileImageStorage = new CloudinaryStorage({
   },
 });
 
+// Configure multer-storage-cloudinary for registration documents (FSSAI, etc.)
+const registrationDocumentStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'eatio-backend/registration-documents',
+    allowed_formats: ['jpg', 'png', 'jpeg', 'pdf'],
+    resource_type: 'auto', // This allows both images and raw files like PDFs
+  },
+});
+
 const upload = multer({ storage: storage });
 const uploadMenuImage = multer({ storage: menuImageStorage });
 const uploadRestaurantImage = multer({ storage: restaurantImageStorage });
 const uploadProfileImage = multer({ storage: profileImageStorage });
+const uploadRegistrationDocument = multer({ 
+  storage: registrationDocumentStorage,
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB limit for documents
+  },
+});
 
 // Helper function to delete image from Cloudinary
 const deleteFromCloudinary = async (publicId) => {
@@ -134,6 +150,7 @@ module.exports = {
   uploadMenuImage,
   uploadRestaurantImage,
   uploadProfileImage,
+  uploadRegistrationDocument,
   cloudinary,
   deleteFromCloudinary,
   getPublicIdFromUrl

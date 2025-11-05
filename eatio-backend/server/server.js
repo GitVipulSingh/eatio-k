@@ -26,6 +26,7 @@ const adminRoutes = require('./routes/admin.routes');
 const menuImageRoutes = require('./routes/menuImage.routes');
 const restaurantImageRoutes = require('./routes/restaurantImage.routes');
 const profileImageRoutes = require('./routes/profileImage.routes');
+const registrationImageRoutes = require('./routes/registrationImage.routes');
 // NEW ADDITIVE ROUTE - RATING SYSTEM
 const reviewRoutes = require('./routes/review.routes');
 
@@ -104,6 +105,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/menu-images', menuImageRoutes);
 app.use('/api/restaurant-images', restaurantImageRoutes);
 app.use('/api/profile-images', profileImageRoutes);
+app.use('/api/registration-images', registrationImageRoutes);
 // NEW ADDITIVE ROUTE - RATING SYSTEM
 app.use('/api/reviews', reviewRoutes);
 // Note: Static file routes removed - all images now served via Cloudinary CDN
