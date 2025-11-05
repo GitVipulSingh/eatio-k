@@ -99,4 +99,14 @@
   .no-scroll-smooth {
     scroll-behavior: auto !important;
   }
+
+  /* Hide unwanted external elements */
+  svg circle[cx="316.5"][cy="316.5"][r="316.5"] {
+    display: none !important;
+  }
+  
+  /* Hide any element containing the specific gradient */
+  [fill*="a-cl-25"] {
+    display: none !important;
+  }
 }
