@@ -330,7 +330,7 @@ const RestaurantDashboard = () => {
                                     <TableCell>
                                         {order.items?.map(item => item.name).join(', ')}
                                     </TableCell>
-                                    <TableCell>₹{order.totalAmount}</TableCell>
+                                    <TableCell>₹{order.totalAmount.toFixed(2)}</TableCell>
                                     <TableCell>
                                         <Chip
                                             label={order.status}

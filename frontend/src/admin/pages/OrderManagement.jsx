@@ -541,7 +541,7 @@ const OrderManagement = () => {
                     </TableCell>
                     <TableCell>
                       <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                        ₹{order.totalAmount}
+                        ₹{order.totalAmount.toFixed(2)}
                       </Typography>
                     </TableCell>
                     <TableCell>
@@ -666,7 +666,7 @@ const OrderManagement = () => {
                       <ListItem>
                         <ListItemText
                           primary="Total Amount"
-                          secondary={`₹${selectedOrder.totalAmount}`}
+                          secondary={`₹${selectedOrder.totalAmount.toFixed(2)}`}
                         />
                       </ListItem>
                     </List>

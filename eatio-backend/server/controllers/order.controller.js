@@ -27,6 +27,9 @@ const createOrder = async (req, res) => {
       return { name: menuItem.name, price: menuItem.price, quantity: item.quantity };
     });
     
+    // Round to 2 decimal places to avoid floating point precision issues
+    totalAmount = Math.round(totalAmount * 100) / 100;
+    
     const order = new Order({ 
       user: userId, 
       restaurant: restaurantId, 

@@ -221,7 +221,7 @@ const OrderHistoryPage = () => {
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <Box>
                           <Typography variant="h6" sx={{ fontWeight: 600, fontSize: '1.1rem' }}>
-                            ₹{order.totalAmount}
+                            ₹{order.totalAmount.toFixed(2)}
                           </Typography>
                           {order.deliveryAddress && (
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>

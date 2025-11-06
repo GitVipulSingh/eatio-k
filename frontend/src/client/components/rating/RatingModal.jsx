@@ -120,7 +120,7 @@ const RatingModal = ({ open, onClose, order, restaurant }) => {
           {/* Order Details */}
           <Box sx={{ mt: 2, p: 2, backgroundColor: 'grey.50', borderRadius: 2 }}>
             <Typography variant="body2" color="text.secondary">
-              Order #{order?._id?.slice(-6)} • {order?.items?.length} items • ₹{order?.totalAmount}
+              Order #{order?._id?.slice(-6)} • {order?.items?.length} items • ₹{order?.totalAmount?.toFixed(2)}
             </Typography>
           </Box>
         </Box>
