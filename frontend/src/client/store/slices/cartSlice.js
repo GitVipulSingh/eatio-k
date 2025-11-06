@@ -101,7 +101,7 @@ const cartSlice = createSlice({
       
       if (existingItem) {
         existingItem.quantity += quantityToAdd
-        existingItem.totalPrice = existingItem.quantity * existingItem.price
+        existingItem.totalPrice = Math.round(existingItem.quantity * existingItem.price * 100) / 100
       } else {
         state.items.push({
           ...item,
@@ -211,7 +211,7 @@ const cartSlice = createSlice({
       const subtotal = state.items.reduce((total, item) => total + item.totalPrice, 0)
       const tax = subtotal * state.taxRate
       state.totalItems = state.items.reduce((total, item) => total + item.quantity, 0)
-      state.totalAmount = subtotal + tax + (subtotal > 0 ? state.deliveryFee : 0)
+      state.totalAmount = Math.round((subtotal + tax + (subtotal > 0 ? state.deliveryFee : 0)) * 100) / 100
     },
   },
 })
