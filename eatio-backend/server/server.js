@@ -1,6 +1,5 @@
 // server/server.js
 
-// --- DOTENV CONFIG MUST BE THE VERY FIRST THING ---
 const dotenv = require('dotenv');
 dotenv.config();
 

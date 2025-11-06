@@ -106,7 +106,7 @@ const cartSlice = createSlice({
         state.items.push({
           ...item,
           quantity: quantityToAdd,
-          totalPrice: item.price * quantityToAdd
+          totalPrice: Math.round(item.price * quantityToAdd * 100) / 100
         })
       }
       
@@ -151,7 +151,7 @@ const cartSlice = createSlice({
           state.items = state.items.filter(item => item._id !== itemId)
         } else {
           item.quantity = quantity
-          item.totalPrice = item.quantity * item.price
+          item.totalPrice = Math.round(item.quantity * item.price * 100) / 100
         }
       }
       
