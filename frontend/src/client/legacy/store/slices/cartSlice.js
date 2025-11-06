@@ -9,7 +9,7 @@ const updateCart = (state) => {
   state.shippingPrice = state.itemsPrice > 500 ? 0 : 50;
   state.taxPrice = 0.05 * state.itemsPrice;
 
-  state.totalPrice = state.itemsPrice + state.shippingPrice + state.taxPrice;
+  state.totalPrice = Math.round((state.itemsPrice + state.shippingPrice + state.taxPrice) * 100) / 100;
 
   localStorage.setItem('cart', JSON.stringify(state));
   return state; // Ensure the updated state is returned
