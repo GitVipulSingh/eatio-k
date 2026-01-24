@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { io } from 'socket.io-client'
 import { toast } from 'react-hot-toast'
+import { SOCKET_URL, DEBUG_MODE } from '../config/api'
 
 const SocketContext = createContext()
 
@@ -23,7 +24,7 @@ export const SocketProvider = ({ children }) => {
       const isAuthPage = window.location.pathname.includes('/auth/')
       setShouldConnect(!isAuthPage)
       
-      if (isAuthPage) {
+      if (isAuthPage && DEBUG_MODE) {
         console.log('🔒 Auth page detected - socket connection disabled')
       }
     }
@@ -39,12 +40,14 @@ export const SocketProvider = ({ children }) => {
 
   useEffect(() => {
     if (!shouldConnect) {
-      console.log('🔒 Skipping socket connection on auth page')
+      if (DEBUG_MODE) console.log('🔒 Skipping socket connection on auth page')
       return
     }
 
+    if (DEBUG_MODE) console.log('🔌 Connecting to socket:', SOCKET_URL)
+
     // Initialize socket connection
-    const socketInstance = io(import.meta.env.VITE_API_URL || 'http://localhost:5000', {
+    const socketInstance = io(SOCKET_URL, {
       withCredentials: true,
       transports: ['websocket', 'polling'],
       timeout: 5000,

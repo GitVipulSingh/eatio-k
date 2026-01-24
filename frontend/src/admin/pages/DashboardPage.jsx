@@ -3,6 +3,17 @@ import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import axios from 'axios';
 
+// Centralized API configuration
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const apiConfig = { withCredentials: true };
+
+// Create axios instance for admin API calls
+const adminApi = axios.create({
+  baseURL: API_BASE_URL,
+  withCredentials: true,
+  timeout: 15000,
+});
+
 // --- Super Admin Panel for Approving Restaurants ---
 const SuperAdminPanel = () => {
   const [pendingRestaurants, setPendingRestaurants] = useState([]);
@@ -14,7 +25,7 @@ const SuperAdminPanel = () => {
   const fetchPending = async () => {
     setLoading(true);
     try {
-      const { data } = await axios.get('http://localhost:5000/api/admin/restaurants/pending', apiConfig);
+      const { data } = await adminApi.get('/admin/restaurants/pending');
       setPendingRestaurants(data);
     } catch (error) {
       console.error("Failed to fetch pending restaurants", error);
@@ -29,7 +40,7 @@ const SuperAdminPanel = () => {
 
   const handleStatusUpdate = async (id, status) => {
     try {
-      await axios.put(`http://localhost:5000/api/admin/restaurants/${id}/status`, { status }, apiConfig);
+      await adminApi.put(`/admin/restaurants/${id}/status`, { status });
       setIsModalOpen(false);
       fetchPending();
     } catch (error) {
@@ -124,7 +135,7 @@ const AdminDashboard = ({ adminInfo, restaurant, fetchRestaurant }) => {
         if (restaurant?._id) {
             setLoadingOrders(true);
             try {
-                const { data } = await axios.get('http://localhost:5000/api/admin/orders', apiConfig);
+                const { data } = await adminApi.get('/admin/orders');
                 setOrders(data);
             } catch (error) {
                 console.error("Failed to fetch orders", error);
@@ -142,7 +153,7 @@ const AdminDashboard = ({ adminInfo, restaurant, fetchRestaurant }) => {
     const handleOrderStatusChange = async (orderId, newStatus) => {
         try {
             // This is the call that will trigger the Socket.IO broadcast on the backend
-            await axios.put(`http://localhost:5000/api/admin/orders/${orderId}/status`, { status: newStatus }, apiConfig);
+            await adminApi.put(`/admin/orders/${orderId}/status`, { status: newStatus });
             fetchOrders(); // Refetch to update the admin's view
         } catch (error) {
             console.error("Failed to update order status", error);
@@ -154,7 +165,7 @@ const AdminDashboard = ({ adminInfo, restaurant, fetchRestaurant }) => {
     // --- All existing helper functions for menu management ---
     const handleToggleAvailability = async (menuItemId, isAvailable) => {
       try {
-        await axios.put(`http://localhost:5000/api/restaurants/menu/${menuItemId}`, { isAvailable: !isAvailable }, apiConfig);
+        await adminApi.put(`/restaurants/menu/${menuItemId}`, { isAvailable: !isAvailable });
         fetchRestaurant();
       } catch (error) {
         console.error("Failed to toggle availability", error);
@@ -164,7 +175,7 @@ const AdminDashboard = ({ adminInfo, restaurant, fetchRestaurant }) => {
     const handleDelete = async (menuItemId) => {
       if (window.confirm('Are you sure you want to delete this item?')) {
         try {
-          await axios.delete(`http://localhost:5000/api/restaurants/menu/${menuItemId}`, apiConfig);
+          await adminApi.delete(`/restaurants/menu/${menuItemId}`);
           fetchRestaurant();
         } catch (error) {
           console.error("Failed to delete item", error);
@@ -195,9 +206,8 @@ const AdminDashboard = ({ adminInfo, restaurant, fetchRestaurant }) => {
       const formData = new FormData();
       formData.append('image', file);
       try {
-        const { data } = await axios.post('http://localhost:5000/api/upload', formData, { 
-          headers: { 'Content-Type': 'multipart/form-data' },
-          withCredentials: true 
+        const { data } = await adminApi.post('/upload', formData, { 
+          headers: { 'Content-Type': 'multipart/form-data' }
         });
         return data.imageUrl;
       } catch (err) {
@@ -212,7 +222,7 @@ const AdminDashboard = ({ adminInfo, restaurant, fetchRestaurant }) => {
           const newImageUrl = await uploadFile(editImageFile);
           updatedData.image = newImageUrl;
         }
-        await axios.put(`http://localhost:5000/api/restaurants/menu/${menuItemId}`, updatedData, apiConfig);
+        await adminApi.put(`/restaurants/menu/${menuItemId}`, updatedData);
         setEditingItemId(null);
         fetchRestaurant();
       } catch (error) {
@@ -241,7 +251,7 @@ const AdminDashboard = ({ adminInfo, restaurant, fetchRestaurant }) => {
         const imageUrl = await uploadFile(newImage);
         if (!imageUrl) throw new Error("Image upload returned no URL");
         const newItemData = { ...newItem, price: Number(newItem.price), image: imageUrl };
-        await axios.post('http://localhost:5000/api/restaurants/menu', newItemData, apiConfig);
+        await adminApi.post('/restaurants/menu', newItemData);
         
         setMessage('Item added successfully!');
         setNewItem({ name: '', description: '', price: '', category: 'Appetizer' });
@@ -366,7 +376,7 @@ const DashboardPage = ({ adminInfo }) => {
   const fetchRestaurant = async () => {
     if (adminInfo?.role === 'admin') {
       try {
-        const { data } = await axios.get('http://localhost:5000/api/restaurants/my-restaurant', { withCredentials: true });
+        const { data } = await adminApi.get('/restaurants/my-restaurant');
         setRestaurant(data);
       } catch (error) {
         console.error("Failed to fetch restaurant", error);
@@ -386,10 +396,12 @@ const DashboardPage = ({ adminInfo }) => {
 
   const handleLogout = async () => {
     try {
-      await axios.post('http://localhost:5000/api/auth/logout', {}, { withCredentials: true });
-      window.location.href = import.meta.env.VITE_CLIENT_URL || 'http://localhost:5174/login';
+      await adminApi.post('/auth/logout');
+      // Navigate to login within the same app
+      window.location.href = '/auth/login';
     } catch (error) {
-      window.location.href = import.meta.env.VITE_CLIENT_URL || 'http://localhost:5174/login';
+      // Even on error, redirect to login
+      window.location.href = '/auth/login';
     }
   };
   

@@ -18,6 +18,7 @@ import { toast } from 'react-hot-toast'
 import { useLogin } from '../../api/queries'
 import { loginSuccess } from '../../store/slices/authSlice'
 import LoadingSpinner from '../../components/ui/LoadingSpinner'
+import { navigateByRole } from '../../../utils/roleRedirects'
 
 const LoginPage = () => {
   const navigate = useNavigate()
@@ -40,13 +41,11 @@ const LoginPage = () => {
       dispatch(loginSuccess(result))
       toast.success('Login successful!')
       
-      // Role-based redirection
-      if (result.role === 'admin') {
-        navigate('/restaurant-dashboard', { replace: true })
-      } else if (result.role === 'superadmin') {
-        navigate('/super-admin', { replace: true })
-      } else {
+      // Use centralized role-based navigation (all within same app)
+      if (result.role === 'customer') {
         navigate(from, { replace: true })
+      } else {
+        navigateByRole(result.role, navigate)
       }
     } catch (error) {
       toast.error(error.response?.data?.message || 'Login failed')

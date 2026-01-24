@@ -12,7 +12,8 @@ const AdminGatekeeper = () => {
     const checkAuth = async () => {
       try {
         const config = { withCredentials: true };
-        const { data } = await axios.get('http://localhost:5000/api/users/profile', config);
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+        const { data } = await axios.get(`${apiUrl}/users/profile`, config);
         
         // --- THIS IS THE FIX ---
         // Now checks for 'admin' OR 'superadmin'
@@ -20,11 +21,13 @@ const AdminGatekeeper = () => {
           setIsAdmin(true);
           setAdminInfo(data);
         } else {
-          window.location.href = `${import.meta.env.VITE_CLIENT_URL}/login`;
+          // Navigate to login within the same app
+          window.location.href = '/auth/login';
         }
         // --- END OF FIX ---
       } catch (error) {
-        window.location.href = `${import.meta.env.VITE_CLIENT_URL}/login`;
+        // Navigate to login within the same app
+        window.location.href = '/auth/login';
       } finally {
         setLoading(false);
       }

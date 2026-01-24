@@ -27,12 +27,12 @@ const LoginPage = () => {
       // unwrapResult will either return the successful payload or throw the error
       const user = unwrapResult(resultAction);
 
-      // Use a switch statement for clear, scalable role-based redirection
+      // Use centralized role-based redirect system (all within same app)
       switch (user.role) {
         case 'admin':
         case 'superadmin':
-          // For admins, perform a full browser redirect to the admin app's URL
-          window.location.href = import.meta.env.VITE_ADMIN_URL || 'http://localhost:5173';
+          // Navigate to admin sections within the same app
+          navigate(user.role === 'admin' ? '/admin/dashboard' : '/super-admin/dashboard');
           break;
         
         case 'customer':

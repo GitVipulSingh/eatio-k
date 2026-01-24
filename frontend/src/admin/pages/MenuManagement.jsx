@@ -279,7 +279,8 @@ const MenuManagement = () => {
   menuItems.forEach((item, index) => {
     if (item.image) {
       console.log(`Item ${index} (${item.name}) image URL:`, item.image)
-      console.log(`Constructed URL:`, item.image.startsWith('http') ? item.image : `http://localhost:5000${item.image}`)
+      const baseUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
+      console.log(`Constructed URL:`, item.image.startsWith('http') ? item.image : `${baseUrl}${item.image}`)
     }
   })
 

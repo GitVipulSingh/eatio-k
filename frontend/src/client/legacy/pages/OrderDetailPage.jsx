@@ -28,7 +28,8 @@ const OrderDetailPage = () => {
 
     // 2. Establish the WebSocket connection
     // We connect with withCredentials to ensure our auth cookies are sent
-    const socket = io('http://localhost:5000', {
+    const socketUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
+    const socket = io(socketUrl, {
       withCredentials: true,
     });
 

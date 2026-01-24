@@ -95,7 +95,9 @@ const RegisterPage = () => {
         const user = result.payload;
         if (user.role === 'admin') {
           alert('Registration successful! Your restaurant is pending approval.');
-          window.location.href = 'http://localhost:5174'; 
+          // Use environment variable for client URL, fallback to current origin
+          const clientUrl = import.meta.env.VITE_CLIENT_URL || window.location.origin;
+          window.location.href = clientUrl; 
         } else {
           navigate('/');
         }

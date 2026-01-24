@@ -48,6 +48,7 @@ api.interceptors.response.use(
       // Only redirect if not already on auth pages (login, register, etc.)
       if (!window.location.pathname.includes('/auth/')) {
         console.log('🔒 Unauthorized access, redirecting to login')
+        // Use React Router navigation instead of window.location for SPA
         window.location.href = '/auth/login'
       }
     } else if (error.response?.status === 403) {
