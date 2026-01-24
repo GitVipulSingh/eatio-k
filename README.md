@@ -160,7 +160,7 @@ eatio-unified/
 ### Root Level (Integrated Commands)
 - `npm install` - Install dependencies for both frontend and backend
 - `npm run dev` - **Start both servers** (backend first, then frontend)
-- `npm run build` - Build frontend for production
+- `npm start` - Build frontend for production
 - `npm run start` - Start both servers in production mode
 - `npm run setup` - Complete setup with dependency installation
 
@@ -175,7 +175,7 @@ eatio-unified/
 ### Frontend (frontend/)
 - `npm run dev` - Start development server (port 3000)
 - `npm run dev:wait` - Start frontend after waiting for backend health check
-- `npm run build` - Build for production
+- `npm start` - Build for production
 - `npm run preview` - Preview production build
 
 ## 🎭 Role-Based Routing & Authentication
@@ -253,7 +253,7 @@ eatio-unified/
 
 ### Frontend (eatio-frontend/)
 - `npm run dev` - Start development server (port 5174)
-- `npm run build` - Build for production
+- `npm start` - Build for production
 - `npm run preview` - Preview production build
 - `npm run lint` - Run ESLint
 
@@ -376,7 +376,7 @@ npm run test
 ## 🚀 Deployment
 
 ### Frontend (Vercel/Netlify)
-1. Build the frontend: `npm run build`
+1. Build the frontend: `npm start`
 2. Deploy the `dist` folder
 3. Set environment variables in deployment platform
 
