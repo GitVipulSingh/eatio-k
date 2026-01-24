@@ -1,15 +1,19 @@
 {
-  "name": "eatio-unified-frontend",
+  "name": "eatio-frontend",
   "private": true,
   "version": "1.0.0",
   "type": "module",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
   "scripts": {
     "dev": "vite --port 3000",
     "dev:wait": "wait-on http://localhost:5000/health --timeout 30000 && vite --port 3000",
     "build": "vite build",
     "start": "vite preview --port 3000",
-    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",

@@ -3,13 +3,22 @@
   "version": "1.0.0",
   "description": "Full-stack food delivery application with React frontend and Express backend",
   "private": true,
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
   "scripts": {
-    "install-all": "npm install && npm install --prefix eatio-backend && npm install --prefix frontend",
-    "dev": "concurrently --kill-others-on-fail \"npm run dev --prefix eatio-backend\" \"npm run dev --prefix frontend\"",
-    "build": "npm start --prefix frontend",
-    "start": "concurrently --kill-others-on-fail \"npm run start --prefix eatio-backend\" \"npm run start --prefix frontend\"",
+    "install-backend": "cd eatio-backend/server && npm install",
+    "install-frontend": "cd frontend && npm install",
+    "install-all": "npm run install-backend && npm run install-frontend",
+    "dev": "concurrently --kill-others-on-fail \"npm run dev:backend\" \"npm run dev:frontend\"",
     "dev:backend": "npm run dev --prefix eatio-backend",
     "dev:frontend": "npm run dev --prefix frontend",
+    "build:backend": "cd eatio-backend/server && npm run build",
+    "build:frontend": "cd frontend && npm run build",
+    "start:backend": "npm run start --prefix eatio-backend",
+    "start:frontend": "npm run start --prefix frontend",
+    "start": "concurrently --kill-others-on-fail \"npm run start:backend\" \"npm run start:frontend\"",
     "setup": "npm run install-all && echo ✅ Setup complete! Run 'npm run dev' to start development"
   },
   "keywords": [

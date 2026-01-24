@@ -1,13 +1,18 @@
 {
   "name": "eatio-backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "server/server.js",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
   "scripts": {
-  "install": "npm install --prefix server",
-  "dev": "npm run dev --prefix server",
-  "start": "npm run start --prefix server",
-  "test": "echo \"Error: no test specified\" && exit 1"
-},
+    "install": "npm install --prefix server",
+    "dev": "npm run dev --prefix server",
+    "start": "npm run start --prefix server",
+    "build": "echo 'No build step required for backend'",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
