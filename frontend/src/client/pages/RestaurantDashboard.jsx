@@ -210,7 +210,7 @@ const RestaurantDashboard = () => {
 
     const renderMenu = () => (
         <Box>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, flexWrap: 'wrap', gap: 2 }}>
                 <Typography variant="h5" sx={{ fontWeight: 600 }}>
                     Menu Management
                 </Typography>
@@ -219,8 +219,11 @@ const RestaurantDashboard = () => {
                     startIcon={<PlusIcon className="h-4 w-4" />}
                     onClick={handleAddMenuItem}
                     disabled={restaurant.status !== 'approved'}
+                    size="small"
+                    sx={{ minWidth: 'auto' }}
                 >
-                    Add Menu Item
+                    <Box sx={{ display: { xs: 'none', sm: 'block' } }}>Add Menu Item</Box>
+                    <Box sx={{ display: { xs: 'block', sm: 'none' } }}>Add Item</Box>
                 </Button>
             </Box>
 
@@ -230,62 +233,116 @@ const RestaurantDashboard = () => {
                 </Alert>
             )}
 
-            <TableContainer component={Paper}>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Name</TableCell>
-                            <TableCell>Category</TableCell>
-                            <TableCell>Price</TableCell>
-                            <TableCell>Available</TableCell>
-                            <TableCell>Actions</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {restaurant.menuItems?.map((item) => (
-                            <TableRow key={item._id}>
-                                <TableCell>
-                                    <Box>
-                                        <Typography variant="body1" sx={{ fontWeight: 500 }}>
-                                            {item.name}
-                                        </Typography>
-                                        <Typography variant="body2" color="text.secondary">
-                                            {item.description}
+            {/* Mobile Card View */}
+            <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+                {restaurant.menuItems?.map((item) => (
+                    <Card key={item._id} sx={{ mb: 2 }}>
+                        <CardContent>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                                <Box sx={{ flex: 1, minWidth: 0 }}>
+                                    <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
+                                        {item.name}
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                                        {item.description}
+                                    </Typography>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                                        <Chip label={item.category} size="small" variant="outlined" />
+                                        <Typography variant="h6" sx={{ fontWeight: 600, color: 'primary.main' }}>
+                                            ₹{item.price}
                                         </Typography>
                                     </Box>
-                                </TableCell>
-                                <TableCell>
-                                    <Chip label={item.category} size="small" variant="outlined" />
-                                </TableCell>
-                                <TableCell>₹{item.price}</TableCell>
-                                <TableCell>
+                                </Box>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, ml: 2 }}>
                                     {item.isAvailable ? (
                                         <CheckCircleIcon className="h-5 w-5 text-green-500" />
                                     ) : (
                                         <XCircleIcon className="h-5 w-5 text-red-500" />
                                     )}
-                                </TableCell>
-                                <TableCell>
-                                    <IconButton
-                                        size="small"
-                                        onClick={() => handleEditMenuItem(item)}
-                                        disabled={restaurant.status !== 'approved'}
-                                    >
-                                        <PencilIcon className="h-4 w-4" />
-                                    </IconButton>
-                                    <IconButton
-                                        size="small"
-                                        color="error"
-                                        disabled={restaurant.status !== 'approved'}
-                                    >
-                                        <TrashIcon className="h-4 w-4" />
-                                    </IconButton>
-                                </TableCell>
+                                </Box>
+                            </Box>
+                            <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
+                                <Button
+                                    size="small"
+                                    startIcon={<PencilIcon className="h-4 w-4" />}
+                                    onClick={() => handleEditMenuItem(item)}
+                                    disabled={restaurant.status !== 'approved'}
+                                >
+                                    Edit
+                                </Button>
+                                <Button
+                                    size="small"
+                                    color="error"
+                                    startIcon={<TrashIcon className="h-4 w-4" />}
+                                    disabled={restaurant.status !== 'approved'}
+                                >
+                                    Delete
+                                </Button>
+                            </Box>
+                        </CardContent>
+                    </Card>
+                ))}
+            </Box>
+
+            {/* Desktop Table View */}
+            <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+                <TableContainer component={Paper}>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Name</TableCell>
+                                <TableCell>Category</TableCell>
+                                <TableCell>Price</TableCell>
+                                <TableCell>Available</TableCell>
+                                <TableCell>Actions</TableCell>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+                        </TableHead>
+                        <TableBody>
+                            {restaurant.menuItems?.map((item) => (
+                                <TableRow key={item._id}>
+                                    <TableCell>
+                                        <Box>
+                                            <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                                                {item.name}
+                                            </Typography>
+                                            <Typography variant="body2" color="text.secondary">
+                                                {item.description}
+                                            </Typography>
+                                        </Box>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Chip label={item.category} size="small" variant="outlined" />
+                                    </TableCell>
+                                    <TableCell>₹{item.price}</TableCell>
+                                    <TableCell>
+                                        {item.isAvailable ? (
+                                            <CheckCircleIcon className="h-5 w-5 text-green-500" />
+                                        ) : (
+                                            <XCircleIcon className="h-5 w-5 text-red-500" />
+                                        )}
+                                    </TableCell>
+                                    <TableCell>
+                                        <IconButton
+                                            size="small"
+                                            onClick={() => handleEditMenuItem(item)}
+                                            disabled={restaurant.status !== 'approved'}
+                                        >
+                                            <PencilIcon className="h-4 w-4" />
+                                        </IconButton>
+                                        <IconButton
+                                            size="small"
+                                            color="error"
+                                            disabled={restaurant.status !== 'approved'}
+                                        >
+                                            <TrashIcon className="h-4 w-4" />
+                                        </IconButton>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </Box>
 
             {(!restaurant.menuItems || restaurant.menuItems.length === 0) && (
                 <Box sx={{ textAlign: 'center', py: 8 }}>
@@ -309,29 +366,24 @@ const RestaurantDashboard = () => {
             {ordersLoading ? (
                 <LoadingSpinner />
             ) : (
-                <TableContainer component={Paper}>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>Order ID</TableCell>
-                                <TableCell>Customer</TableCell>
-                                <TableCell>Items</TableCell>
-                                <TableCell>Amount</TableCell>
-                                <TableCell>Status</TableCell>
-                                <TableCell>Time</TableCell>
-                                <TableCell>Actions</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {orders?.map((order) => (
-                                <TableRow key={order._id}>
-                                    <TableCell>#{order._id.slice(-6)}</TableCell>
-                                    <TableCell>{order.user?.name}</TableCell>
-                                    <TableCell>
-                                        {order.items?.map(item => item.name).join(', ')}
-                                    </TableCell>
-                                    <TableCell>₹{order.totalAmount.toFixed(2)}</TableCell>
-                                    <TableCell>
+                <>
+                    {/* Mobile Card View */}
+                    <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+                        {orders?.map((order) => (
+                            <Card key={order._id} sx={{ mb: 2 }}>
+                                <CardContent>
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                                        <Box sx={{ flex: 1, minWidth: 0 }}>
+                                            <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
+                                                #{order._id.slice(-6)}
+                                            </Typography>
+                                            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                                                {order.user?.name}
+                                            </Typography>
+                                            <Typography variant="h6" sx={{ fontWeight: 600, color: 'primary.main', mb: 1 }}>
+                                                ₹{order.totalAmount.toFixed(2)}
+                                            </Typography>
+                                        </Box>
                                         <Chip
                                             label={order.status}
                                             size="small"
@@ -341,20 +393,98 @@ const RestaurantDashboard = () => {
                                                         'warning'
                                             }
                                         />
-                                    </TableCell>
-                                    <TableCell>
-                                        {new Date(order.createdAt).toLocaleString()}
-                                    </TableCell>
-                                    <TableCell>
-                                        <IconButton size="small">
-                                            <EyeIcon className="h-4 w-4" />
-                                        </IconButton>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                                    </Box>
+                                    
+                                    <Box sx={{ mb: 2 }}>
+                                        <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
+                                            Items:
+                                        </Typography>
+                                        <Typography variant="body2" sx={{ 
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis',
+                                            display: '-webkit-box',
+                                            WebkitLineClamp: 2,
+                                            WebkitBoxOrient: 'vertical',
+                                        }}>
+                                            {order.items?.map(item => `${item.quantity}x ${item.name}`).join(', ')}
+                                        </Typography>
+                                    </Box>
+                                    
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <Typography variant="caption" color="text.secondary">
+                                            {new Date(order.createdAt).toLocaleDateString()} {new Date(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                        </Typography>
+                                        <Button
+                                            size="small"
+                                            startIcon={<EyeIcon className="h-4 w-4" />}
+                                        >
+                                            View
+                                        </Button>
+                                    </Box>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </Box>
+
+                    {/* Desktop Table View */}
+                    <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+                        <TableContainer component={Paper}>
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>Order ID</TableCell>
+                                        <TableCell>Customer</TableCell>
+                                        <TableCell>Items</TableCell>
+                                        <TableCell>Amount</TableCell>
+                                        <TableCell>Status</TableCell>
+                                        <TableCell>Time</TableCell>
+                                        <TableCell>Actions</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {orders?.map((order) => (
+                                        <TableRow key={order._id}>
+                                            <TableCell>#{order._id.slice(-6)}</TableCell>
+                                            <TableCell>{order.user?.name}</TableCell>
+                                            <TableCell>
+                                                <Box sx={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                                    {order.items?.map(item => `${item.quantity}x ${item.name}`).join(', ')}
+                                                </Box>
+                                            </TableCell>
+                                            <TableCell>₹{order.totalAmount.toFixed(2)}</TableCell>
+                                            <TableCell>
+                                                <Chip
+                                                    label={order.status}
+                                                    size="small"
+                                                    color={
+                                                        order.status === 'Delivered' ? 'success' :
+                                                            order.status === 'Cancelled' ? 'error' :
+                                                                'warning'
+                                                    }
+                                                />
+                                            </TableCell>
+                                            <TableCell>
+                                                <Box>
+                                                    <Typography variant="body2">
+                                                        {new Date(order.createdAt).toLocaleDateString()}
+                                                    </Typography>
+                                                    <Typography variant="caption" color="text.secondary">
+                                                        {new Date(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                    </Typography>
+                                                </Box>
+                                            </TableCell>
+                                            <TableCell>
+                                                <IconButton size="small">
+                                                    <EyeIcon className="h-4 w-4" />
+                                                </IconButton>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </Box>
+                </>
             )}
 
             {(!orders || orders.length === 0) && !ordersLoading && (

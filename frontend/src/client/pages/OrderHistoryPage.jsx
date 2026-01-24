@@ -173,23 +173,26 @@ const OrderHistoryPage = () => {
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                 >
                   <Card sx={{ '&:hover': { boxShadow: 4 } }}>
-                    <CardContent sx={{ p: 2 }}>
+                    <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
                       {/* Header Row */}
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5 }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2, gap: 2 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flex: 1, minWidth: 0 }}>
                           <Avatar
                             src={`https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80`}
                             alt={order.restaurant?.name}
-                            sx={{ width: 40, height: 40 }}
+                            sx={{ width: { xs: 36, sm: 40 }, height: { xs: 36, sm: 40 }, flexShrink: 0 }}
                           >
                             🍽️
                           </Avatar>
-                          <Box>
-                            <Typography variant="subtitle1" sx={{ fontWeight: 600, lineHeight: 1.2 }}>
+                          <Box sx={{ minWidth: 0, flex: 1 }}>
+                            <Typography variant="subtitle1" sx={{ fontWeight: 600, lineHeight: 1.2, fontSize: { xs: '0.95rem', sm: '1rem' } }}>
                               {order.restaurant?.name || 'Restaurant'}
                             </Typography>
-                            <Typography variant="caption" color="text.secondary">
-                              #{order._id.slice(-8).toUpperCase()} • {format(new Date(order.createdAt), 'MMM dd, hh:mm a')}
+                            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', fontSize: { xs: '0.7rem', sm: '0.75rem' } }}>
+                              #{order._id.slice(-8).toUpperCase()}
+                            </Typography>
+                            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', fontSize: { xs: '0.7rem', sm: '0.75rem' } }}>
+                              {format(new Date(order.createdAt), 'MMM dd, hh:mm a')}
                             </Typography>
                           </Box>
                         </Box>
@@ -199,12 +202,17 @@ const OrderHistoryPage = () => {
                           color={getStatusColor(order.status)}
                           size="small"
                           variant="outlined"
+                          sx={{ 
+                            flexShrink: 0,
+                            fontSize: { xs: '0.7rem', sm: '0.75rem' },
+                            height: { xs: 24, sm: 28 }
+                          }}
                         />
                       </Box>
 
                       {/* Items Summary */}
-                      <Box sx={{ mb: 1.5 }}>
-                        <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
+                      <Box sx={{ mb: 2 }}>
+                        <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5, fontSize: { xs: '0.8rem', sm: '0.875rem' } }}>
                           {order.items?.slice(0, 2).map((item, idx) => (
                             <span key={idx}>
                               {item.quantity}x {item.name}
@@ -218,27 +226,38 @@ const OrderHistoryPage = () => {
                       </Box>
 
                       {/* Bottom Row */}
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <Box>
-                          <Typography variant="h6" sx={{ fontWeight: 600, fontSize: '1.1rem' }}>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: { xs: 'wrap', sm: 'nowrap' }, gap: 2 }}>
+                        <Box sx={{ flex: 1, minWidth: 0 }}>
+                          <Typography variant="h6" sx={{ fontWeight: 600, fontSize: { xs: '1rem', sm: '1.1rem' } }}>
                             ₹{order.totalAmount.toFixed(2)}
                           </Typography>
                           {order.deliveryAddress && (
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mt: 0.5 }}>
                               <MapPinIcon className="h-3 w-3 text-gray-500" />
-                              <Typography variant="caption" color="text.secondary">
+                              <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}>
                                 {order.deliveryAddress.city}
                               </Typography>
                             </Box>
                           )}
                         </Box>
-                        <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                        <Box sx={{ 
+                          display: 'flex', 
+                          gap: 1, 
+                          flexWrap: 'wrap',
+                          justifyContent: { xs: 'flex-start', sm: 'flex-end' },
+                          width: { xs: '100%', sm: 'auto' }
+                        }}>
                           {order.status !== 'Delivered' && order.status !== 'Cancelled' && (
                             <Button
                               variant="outlined"
                               size="small"
                               onClick={() => handleTrackOrder(order)}
-                              sx={{ minWidth: 'auto', px: 1.5 }}
+                              sx={{ 
+                                minWidth: 'auto', 
+                                px: { xs: 2, sm: 1.5 },
+                                fontSize: { xs: '0.75rem', sm: '0.8rem' },
+                                flex: { xs: 1, sm: 'none' }
+                              }}
                             >
                               Track
                             </Button>
@@ -254,7 +273,12 @@ const OrderHistoryPage = () => {
                             variant="contained"
                             size="small"
                             onClick={() => handleReorder(order)}
-                            sx={{ minWidth: 'auto', px: 1.5 }}
+                            sx={{ 
+                              minWidth: 'auto', 
+                              px: { xs: 2, sm: 1.5 },
+                              fontSize: { xs: '0.75rem', sm: '0.8rem' },
+                              flex: { xs: 1, sm: 'none' }
+                            }}
                           >
                             Reorder
                           </Button>
@@ -274,32 +298,55 @@ const OrderHistoryPage = () => {
           onClose={() => setTrackingDialogOpen(false)}
           maxWidth="sm"
           fullWidth
+          PaperProps={{
+            sx: {
+              m: { xs: 2, sm: 4 },
+              width: { xs: 'calc(100% - 32px)', sm: 'auto' },
+              maxHeight: { xs: 'calc(100% - 64px)', sm: 'auto' }
+            }
+          }}
         >
-          <DialogTitle>
-            Track Order #{selectedOrder?._id.slice(-8).toUpperCase()}
+          <DialogTitle sx={{ pb: 1 }}>
+            <Typography variant="h6" sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}>
+              Track Order #{selectedOrder?._id.slice(-8).toUpperCase()}
+            </Typography>
           </DialogTitle>
-          <DialogContent>
+          <DialogContent sx={{ px: { xs: 2, sm: 3 } }}>
             {selectedOrder && (
               <Box>
                 <Box sx={{ mb: 3 }}>
-                  <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
+                  <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1, fontSize: { xs: '0.95rem', sm: '1rem' } }}>
                     {selectedOrder.restaurant?.name}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.8rem', sm: '0.875rem' } }}>
                     Estimated delivery: 30-45 minutes
                   </Typography>
                 </Box>
 
-                <Stepper orientation="vertical" activeStep={getOrderSteps(selectedOrder.status).findIndex(step => step.active)}>
+                <Stepper 
+                  orientation="vertical" 
+                  activeStep={getOrderSteps(selectedOrder.status).findIndex(step => step.active)}
+                  sx={{
+                    '& .MuiStepLabel-root': {
+                      px: { xs: 1, sm: 2 }
+                    },
+                    '& .MuiStepContent-root': {
+                      ml: { xs: 2, sm: 3 }
+                    }
+                  }}
+                >
                   {getOrderSteps(selectedOrder.status).map((step, index) => (
                     <Step key={step.label} completed={step.completed}>
                       <StepLabel>
-                        <Typography variant="body1" sx={{ fontWeight: step.active ? 600 : 400 }}>
+                        <Typography variant="body1" sx={{ 
+                          fontWeight: step.active ? 600 : 400,
+                          fontSize: { xs: '0.9rem', sm: '1rem' }
+                        }}>
                           {step.label}
                         </Typography>
                       </StepLabel>
                       <StepContent>
-                        <Typography variant="body2" color="text.secondary">
+                        <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.8rem', sm: '0.875rem' } }}>
                           {step.label === 'Pending' && 'Your order has been placed and is being processed.'}
                           {step.label === 'Confirmed' && 'Restaurant has confirmed your order.'}
                           {step.label === 'Preparing' && 'Your delicious food is being prepared.'}
@@ -312,11 +359,11 @@ const OrderHistoryPage = () => {
                 </Stepper>
 
                 {selectedOrder.deliveryAddress && (
-                  <Box sx={{ mt: 3, p: 2, backgroundColor: 'background.default', borderRadius: 1 }}>
-                    <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>
+                  <Box sx={{ mt: 3, p: { xs: 1.5, sm: 2 }, backgroundColor: 'background.default', borderRadius: 1 }}>
+                    <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1, fontSize: { xs: '0.85rem', sm: '0.875rem' } }}>
                       Delivery Address:
                     </Typography>
-                    <Typography variant="body2">
+                    <Typography variant="body2" sx={{ fontSize: { xs: '0.8rem', sm: '0.875rem' } }}>
                       {selectedOrder.deliveryAddress.street}<br />
                       {selectedOrder.deliveryAddress.city} - {selectedOrder.deliveryAddress.pincode}
                     </Typography>
@@ -325,8 +372,11 @@ const OrderHistoryPage = () => {
               </Box>
             )}
           </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setTrackingDialogOpen(false)}>
+          <DialogActions sx={{ px: { xs: 2, sm: 3 }, pb: { xs: 2, sm: 3 } }}>
+            <Button 
+              onClick={() => setTrackingDialogOpen(false)}
+              sx={{ fontSize: { xs: '0.85rem', sm: '0.875rem' } }}
+            >
               Close
             </Button>
           </DialogActions>

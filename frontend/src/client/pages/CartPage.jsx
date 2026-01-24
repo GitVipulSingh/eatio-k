@@ -63,14 +63,20 @@ const CartPage = () => {
         transition={{ duration: 0.5 }}
       >
         {/* Header */}
-        <Box sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 4, flexWrap: 'wrap', gap: 1 }}>
           <IconButton
             onClick={() => navigate(-1)}
-            sx={{ mr: 2 }}
+            sx={{ mr: { xs: 1, sm: 2 } }}
+            size={window.innerWidth < 600 ? 'small' : 'medium'}
           >
-            <ArrowLeftIcon className="h-5 w-5" />
+            <ArrowLeftIcon className={window.innerWidth < 600 ? 'h-4 w-4' : 'h-5 w-5'} />
           </IconButton>
-          <Typography variant="h4" component="h1" sx={{ fontWeight: 600 }}>
+          <Typography variant="h4" component="h1" sx={{ 
+            fontWeight: 600,
+            fontSize: { xs: '1.5rem', sm: '2rem' },
+            flex: 1,
+            minWidth: 0
+          }}>
             Your Cart ({totalItems} items)
           </Typography>
         </Box>
@@ -108,21 +114,21 @@ const CartPage = () => {
                       exit={{ opacity: 0, x: 20 }}
                       transition={{ duration: 0.3, delay: index * 0.1 }}
                     >
-                      <Box sx={{ p: 3, borderBottom: index < items.length - 1 ? 1 : 0, borderColor: 'divider' }}>
+                      <Box sx={{ p: { xs: 2, sm: 3 }, borderBottom: index < items.length - 1 ? 1 : 0, borderColor: 'divider' }}>
                         <Grid container spacing={2} alignItems="center">
                           <Grid item xs={12} sm={6}>
-                            <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
+                            <Typography variant="h6" sx={{ fontWeight: 600, mb: 1, fontSize: { xs: '1rem', sm: '1.25rem' } }}>
                               {item.name}
                             </Typography>
-                            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                            <Typography variant="body2" color="text.secondary" sx={{ mb: 1, fontSize: { xs: '0.8rem', sm: '0.875rem' } }}>
                               {item.description}
                             </Typography>
-                            <Typography variant="h6" color="primary.main" sx={{ fontWeight: 600 }}>
+                            <Typography variant="h6" color="primary.main" sx={{ fontWeight: 600, fontSize: { xs: '0.95rem', sm: '1.25rem' } }}>
                               ₹{item.price} each
                             </Typography>
                           </Grid>
 
-                          <Grid item xs={12} sm={3}>
+                          <Grid item xs={8} sm={3}>
                             <Box sx={{ 
                               display: 'flex', 
                               alignItems: 'center', 
@@ -131,19 +137,20 @@ const CartPage = () => {
                               borderColor: 'primary.main',
                               borderRadius: 2,
                               overflow: 'hidden',
-                              width: 'fit-content'
+                              width: 'fit-content',
+                              mx: { xs: 0, sm: 'auto' }
                             }}>
                               <Button
                                 size="small"
                                 onClick={() => handleQuantityChange(item._id, item.quantity - 1)}
                                 sx={{ 
-                                  minWidth: 40,
-                                  height: 40,
+                                  minWidth: { xs: 32, sm: 40 },
+                                  height: { xs: 32, sm: 40 },
                                   borderRadius: 0,
                                   backgroundColor: 'primary.main',
                                   color: 'white',
                                   fontWeight: 700,
-                                  fontSize: '1.2rem',
+                                  fontSize: { xs: '1rem', sm: '1.2rem' },
                                   '&:hover': { 
                                     backgroundColor: 'primary.dark'
                                   }
@@ -154,13 +161,13 @@ const CartPage = () => {
                               
                               <Typography 
                                 sx={{ 
-                                  minWidth: 50, 
+                                  minWidth: { xs: 40, sm: 50 }, 
                                   textAlign: 'center',
                                   fontWeight: 700,
                                   color: 'primary.main',
                                   py: 1,
                                   backgroundColor: 'primary.light',
-                                  fontSize: '1rem',
+                                  fontSize: { xs: '0.9rem', sm: '1rem' },
                                 }}
                               >
                                 {item.quantity}
@@ -170,13 +177,13 @@ const CartPage = () => {
                                 size="small"
                                 onClick={() => handleQuantityChange(item._id, item.quantity + 1)}
                                 sx={{ 
-                                  minWidth: 40,
-                                  height: 40,
+                                  minWidth: { xs: 32, sm: 40 },
+                                  height: { xs: 32, sm: 40 },
                                   borderRadius: 0,
                                   backgroundColor: 'primary.main',
                                   color: 'white',
                                   fontWeight: 700,
-                                  fontSize: '1.2rem',
+                                  fontSize: { xs: '1rem', sm: '1.2rem' },
                                   '&:hover': { 
                                     backgroundColor: 'primary.dark'
                                   }
@@ -187,18 +194,23 @@ const CartPage = () => {
                             </Box>
                           </Grid>
 
-                          <Grid item xs={12} sm={2}>
-                            <Typography variant="h6" sx={{ fontWeight: 600, textAlign: 'center' }}>
+                          <Grid item xs={2} sm={2}>
+                            <Typography variant="h6" sx={{ 
+                              fontWeight: 600, 
+                              textAlign: { xs: 'left', sm: 'center' },
+                              fontSize: { xs: '0.9rem', sm: '1.25rem' }
+                            }}>
                               ₹{item.totalPrice}
                             </Typography>
                           </Grid>
 
-                          <Grid item xs={12} sm={1}>
+                          <Grid item xs={2} sm={1}>
                             <IconButton
                               color="error"
                               onClick={() => handleRemoveItem(item._id)}
+                              size={window.innerWidth < 600 ? 'small' : 'medium'}
                             >
-                              <TrashIcon className="h-4 w-4" />
+                              <TrashIcon className={window.innerWidth < 600 ? 'h-3 w-3' : 'h-4 w-4'} />
                             </IconButton>
                           </Grid>
                         </Grid>

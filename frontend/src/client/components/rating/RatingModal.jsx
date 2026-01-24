@@ -53,26 +53,38 @@ const RatingModal = ({ open, onClose, order, restaurant }) => {
   }
 
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-      <DialogTitle>
+    <Dialog 
+      open={open} 
+      onClose={handleClose} 
+      maxWidth="sm" 
+      fullWidth
+      PaperProps={{
+        sx: {
+          m: { xs: 2, sm: 4 },
+          width: { xs: 'calc(100% - 32px)', sm: 'auto' },
+          maxHeight: { xs: 'calc(100% - 64px)', sm: 'auto' }
+        }
+      }}
+    >
+      <DialogTitle sx={{ pb: 1 }}>
         <Box>
-          <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
+          <Typography variant="h6" sx={{ fontWeight: 600, mb: 1, fontSize: { xs: '1.1rem', sm: '1.25rem' } }}>
             Rate Your Experience
           </Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.8rem', sm: '0.875rem' } }}>
             How was your order from {restaurant?.name}?
           </Typography>
         </Box>
       </DialogTitle>
 
-      <DialogContent>
-        <Box sx={{ py: 2 }}>
+      <DialogContent sx={{ px: { xs: 2, sm: 3 } }}>
+        <Box sx={{ py: { xs: 1, sm: 2 } }}>
           {/* Star Rating */}
           <Box sx={{ textAlign: 'center', mb: 3 }}>
-            <Typography variant="body1" sx={{ mb: 2, fontWeight: 500 }}>
+            <Typography variant="body1" sx={{ mb: 2, fontWeight: 500, fontSize: { xs: '0.9rem', sm: '1rem' } }}>
               Tap to rate:
             </Typography>
-            <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'center', gap: { xs: 0.5, sm: 1 } }}>
               {[1, 2, 3, 4, 5].map((star) => (
                 <Box
                   key={star}
@@ -82,19 +94,28 @@ const RatingModal = ({ open, onClose, order, restaurant }) => {
                   sx={{
                     cursor: 'pointer',
                     color: star <= (hover !== -1 ? hover : rating) ? '#fbbf24' : '#e5e7eb',
-                    transition: 'color 0.2s ease',
+                    transition: 'all 0.2s ease',
+                    p: { xs: 0.5, sm: 1 },
+                    borderRadius: 1,
                     '&:hover': {
                       transform: 'scale(1.1)',
+                      backgroundColor: 'rgba(251, 191, 36, 0.1)'
+                    },
+                    '&:active': {
+                      transform: 'scale(0.95)',
                     }
                   }}
                 >
-                  <StarIcon style={{ width: '2rem', height: '2rem' }} />
+                  <StarIcon style={{ 
+                    width: window.innerWidth < 600 ? '1.75rem' : '2rem', 
+                    height: window.innerWidth < 600 ? '1.75rem' : '2rem' 
+                  }} />
                 </Box>
               ))}
             </Box>
             
             {rating > 0 && (
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 1, fontSize: { xs: '0.8rem', sm: '0.875rem' } }}>
                 {rating === 1 && 'Poor'}
                 {rating === 2 && 'Fair'}
                 {rating === 3 && 'Good'}
@@ -115,26 +136,45 @@ const RatingModal = ({ open, onClose, order, restaurant }) => {
             onChange={(e) => setComment(e.target.value)}
             inputProps={{ maxLength: 500 }}
             helperText={`${comment.length}/500 characters`}
+            sx={{
+              '& .MuiInputBase-input': {
+                fontSize: { xs: '0.9rem', sm: '1rem' }
+              },
+              '& .MuiInputLabel-root': {
+                fontSize: { xs: '0.9rem', sm: '1rem' }
+              }
+            }}
           />
 
           {/* Order Details */}
-          <Box sx={{ mt: 2, p: 2, backgroundColor: 'grey.50', borderRadius: 2 }}>
-            <Typography variant="body2" color="text.secondary">
+          <Box sx={{ mt: 2, p: { xs: 1.5, sm: 2 }, backgroundColor: 'grey.50', borderRadius: 2 }}>
+            <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.8rem', sm: '0.875rem' } }}>
               Order #{order?._id?.slice(-6)} • {order?.items?.length} items • ₹{order?.totalAmount?.toFixed(2)}
             </Typography>
           </Box>
         </Box>
       </DialogContent>
 
-      <DialogActions sx={{ p: 3, pt: 0 }}>
-        <Button onClick={handleClose} color="inherit">
+      <DialogActions sx={{ p: { xs: 2, sm: 3 }, pt: 0, gap: 1 }}>
+        <Button 
+          onClick={handleClose} 
+          color="inherit"
+          sx={{ 
+            fontSize: { xs: '0.85rem', sm: '0.875rem' },
+            flex: { xs: 1, sm: 'none' }
+          }}
+        >
           Cancel
         </Button>
         <Button
           onClick={handleSubmit}
           variant="contained"
           disabled={rating === 0 || submitReviewMutation.isPending}
-          sx={{ minWidth: 120 }}
+          sx={{ 
+            minWidth: { xs: 'auto', sm: 120 },
+            fontSize: { xs: '0.85rem', sm: '0.875rem' },
+            flex: { xs: 1, sm: 'none' }
+          }}
         >
           {submitReviewMutation.isPending ? 'Submitting...' : 'Submit Review'}
         </Button>
