@@ -166,12 +166,24 @@ const resetPassword = asyncHandler(async (req, res) => {
 });
 
 const logoutUser = (req, res) => {
-  // --- THIS IS THE FIX ---
-  // To ensure a clean logout, clear all possible role-based cookies.
-  res.cookie('jwt_customer', '', { httpOnly: true, expires: new Date(0) });
-  res.cookie('jwt_admin', '', { httpOnly: true, expires: new Date(0) });
-  res.cookie('jwt_superadmin', '', { httpOnly: true, expires: new Date(0) });
-  // --- END OF FIX ---
+  // Production-ready cookie clearing
+  const cookieOptions = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    expires: new Date(0)
+  };
+
+  console.log('🍪 Clearing cookies with options:', {
+    secure: cookieOptions.secure,
+    sameSite: cookieOptions.sameSite,
+    environment: process.env.NODE_ENV
+  });
+
+  // Clear all possible role-based cookies with proper options
+  res.cookie('jwt_customer', '', cookieOptions);
+  res.cookie('jwt_admin', '', cookieOptions);
+  res.cookie('jwt_superadmin', '', cookieOptions);
   
   res.status(200).json({ message: 'Logged out successfully' });
 };

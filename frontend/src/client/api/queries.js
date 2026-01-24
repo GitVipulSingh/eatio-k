@@ -98,10 +98,17 @@ export const useLogin = () => {
 
   return useMutation({
     mutationFn: async (credentials) => {
+      console.log('🔐 Attempting login with:', { 
+        email: credentials.email, 
+        apiUrl: import.meta.env.VITE_API_URL 
+      })
+      
       const { data } = await api.post('/auth/login', {
         loginIdentifier: credentials.email, // Backend expects loginIdentifier
         password: credentials.password
       })
+      
+      console.log('✅ Login successful:', { role: data.role, name: data.name })
       return data
     },
     onSuccess: (data) => {
@@ -112,7 +119,16 @@ export const useLogin = () => {
       }
       localStorage.setItem('userInfo', JSON.stringify(userInfo))
       queryClient.setQueryData([QUERY_KEYS.user], data)
+      
+      console.log('💾 User data stored:', { role: data.role, userId: data._id })
     },
+    onError: (error) => {
+      console.error('❌ Login failed:', {
+        status: error.response?.status,
+        message: error.response?.data?.message || error.message,
+        apiUrl: import.meta.env.VITE_API_URL
+      })
+    }
   })
 }
 

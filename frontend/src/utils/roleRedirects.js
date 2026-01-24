@@ -30,6 +30,13 @@ export const navigateByRole = (role, navigate, options = {}) => {
   const path = getRoleRedirect(role)
   const { replace = true, ...otherOptions } = options
   
+  console.log('🧭 Role-based navigation:', { 
+    role, 
+    path, 
+    replace,
+    currentLocation: window.location.pathname 
+  })
+  
   navigate(path, { replace, ...otherOptions })
 }
 

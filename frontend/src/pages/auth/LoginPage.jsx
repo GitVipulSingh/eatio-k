@@ -41,17 +41,24 @@ const LoginPage = () => {
 
   const onSubmit = async (data) => {
     try {
+      console.log('🚀 Login form submitted:', { email: data.email })
+      
       const userData = await loginMutation.mutateAsync({
         email: data.email,
         password: data.password,
       })
       
+      console.log('✅ Login mutation completed:', { role: userData.role })
+      
       dispatch(loginSuccess({ user: userData }))
       toast.success('Welcome back! 🎉')
+      
+      console.log('🧭 Navigating based on role:', userData.role)
       
       // Use centralized role-based redirect
       navigateByRole(userData.role, navigate)
     } catch (error) {
+      console.error('❌ Login error:', error)
       toast.error(error.response?.data?.message || 'Login failed')
     }
   }
