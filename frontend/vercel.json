@@ -23,10 +23,5 @@
         }
       ]
     }
-  ],
-  "functions": {
-    "src/api/**/*.js": {
-      "runtime": "@vercel/node"
-    }
-  }
+  ]
 }
