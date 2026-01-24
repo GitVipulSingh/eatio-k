@@ -148,9 +148,9 @@ const RestaurantCard = ({ restaurant }) => {
           size="small"
         >
           {isFavorite ? (
-            <HeartSolidIcon className="h-4 w-4 text-red-500" />
+            <HeartSolidIcon style={{ width: '16px', height: '16px', color: '#ef4444' }} />
           ) : (
-            <HeartIcon className="h-4 w-4" />
+            <HeartIcon style={{ width: '16px', height: '16px' }} />
           )}
         </IconButton>
 
@@ -188,7 +188,7 @@ const RestaurantCard = ({ restaurant }) => {
               gap: 0.5,
             }}
           >
-            <ClockIcon className="h-3 w-3" />
+            <ClockIcon style={{ width: '12px', height: '12px' }} />
             {getDeliveryTime()}
           </Box>
 
@@ -250,7 +250,7 @@ const RestaurantCard = ({ restaurant }) => {
                 flexShrink: 0
               }}
             >
-              <StarIcon className="h-3 w-3" />
+              <StarIcon style={{ width: '12px', height: '12px' }} />
               {restaurant.averageRating?.toFixed(1) || '4.2'}
             </Box>
           </Box>

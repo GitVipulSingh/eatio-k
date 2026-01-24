@@ -69,7 +69,10 @@ const CartPage = () => {
             sx={{ mr: { xs: 1, sm: 2 } }}
             size={window.innerWidth < 600 ? 'small' : 'medium'}
           >
-            <ArrowLeftIcon className={window.innerWidth < 600 ? 'h-4 w-4' : 'h-5 w-5'} />
+            <ArrowLeftIcon style={{ 
+              width: window.innerWidth < 600 ? '16px' : '20px', 
+              height: window.innerWidth < 600 ? '16px' : '20px' 
+            }} />
           </IconButton>
           <Typography variant="h4" component="h1" sx={{ 
             fontWeight: 600,
@@ -96,7 +99,7 @@ const CartPage = () => {
                     color="error"
                     size="small"
                     onClick={handleClearCart}
-                    startIcon={<TrashIcon className="h-4 w-4" />}
+                    startIcon={<TrashIcon style={{ width: '16px', height: '16px' }} />}
                   >
                     Clear Cart
                   </Button>
@@ -210,7 +213,10 @@ const CartPage = () => {
                               onClick={() => handleRemoveItem(item._id)}
                               size={window.innerWidth < 600 ? 'small' : 'medium'}
                             >
-                              <TrashIcon className={window.innerWidth < 600 ? 'h-3 w-3' : 'h-4 w-4'} />
+                              <TrashIcon style={{ 
+                                width: window.innerWidth < 600 ? '12px' : '16px', 
+                                height: window.innerWidth < 600 ? '12px' : '16px' 
+                              }} />
                             </IconButton>
                           </Grid>
                         </Grid>
@@ -263,7 +269,7 @@ const CartPage = () => {
                   variant="contained"
                   size="large"
                   onClick={() => navigate('/checkout')}
-                  startIcon={<ShoppingBagIcon className="h-5 w-5" />}
+                  startIcon={<ShoppingBagIcon style={{ width: '20px', height: '20px' }} />}
                   sx={{ mb: 2 }}
                 >
                   Proceed to Checkout
@@ -274,7 +280,7 @@ const CartPage = () => {
                   variant="outlined"
                   component={Link}
                   to="/"
-                  startIcon={<ArrowLeftIcon className="h-4 w-4" />}
+                  startIcon={<ArrowLeftIcon style={{ width: '16px', height: '16px' }} />}
                 >
                   Continue Shopping
                 </Button>

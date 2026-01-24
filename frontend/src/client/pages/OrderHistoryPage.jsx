@@ -61,15 +61,16 @@ const OrderHistoryPage = () => {
   }
 
   const getStatusIcon = (status) => {
+    const iconStyle = { width: '16px', height: '16px' }
     const icons = {
-      'Pending': <ClockIcon className="h-4 w-4" />,
-      'Confirmed': <CheckCircleIcon className="h-4 w-4" />,
-      'Preparing': <ClockIcon className="h-4 w-4" />,
-      'Out for Delivery': <TruckIcon className="h-4 w-4" />,
-      'Delivered': <CheckCircleIcon className="h-4 w-4" />,
-      'Cancelled': <ClockIcon className="h-4 w-4" />
+      'Pending': <ClockIcon style={iconStyle} />,
+      'Confirmed': <CheckCircleIcon style={iconStyle} />,
+      'Preparing': <ClockIcon style={iconStyle} />,
+      'Out for Delivery': <TruckIcon style={iconStyle} />,
+      'Delivered': <CheckCircleIcon style={iconStyle} />,
+      'Cancelled': <ClockIcon style={iconStyle} />
     }
-    return icons[status] || <ClockIcon className="h-4 w-4" />
+    return icons[status] || <ClockIcon style={iconStyle} />
   }
 
   const getOrderSteps = (status) => {
@@ -233,7 +234,7 @@ const OrderHistoryPage = () => {
                           </Typography>
                           {order.deliveryAddress && (
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mt: 0.5 }}>
-                              <MapPinIcon className="h-3 w-3 text-gray-500" />
+                              <MapPinIcon style={{ width: '12px', height: '12px', color: '#6b7280' }} />
                               <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}>
                                 {order.deliveryAddress.city}
                               </Typography>

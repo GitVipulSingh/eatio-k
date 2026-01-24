@@ -79,42 +79,42 @@ const ProfilePage = () => {
 
   const menuItems = [
     {
-      icon: <ClockIcon className="h-5 w-5" />,
+      icon: <ClockIcon style={{ width: '20px', height: '20px' }} />,
       title: 'Order History',
       subtitle: `${stats.total} orders placed`,
       action: () => navigate('/order-history'),
       color: 'primary'
     },
     {
-      icon: <MapPinIcon className="h-5 w-5" />,
+      icon: <MapPinIcon style={{ width: '20px', height: '20px' }} />,
       title: 'Saved Addresses',
       subtitle: 'Manage delivery addresses',
       action: () => toast.info('Address management coming soon!'),
       color: 'secondary'
     },
     {
-      icon: <CreditCardIcon className="h-5 w-5" />,
+      icon: <CreditCardIcon style={{ width: '20px', height: '20px' }} />,
       title: 'Payment Methods',
       subtitle: 'Manage payment options',
       action: () => toast.info('Payment management coming soon!'),
       color: 'success'
     },
     {
-      icon: <HeartIcon className="h-5 w-5" />,
+      icon: <HeartIcon style={{ width: '20px', height: '20px' }} />,
       title: 'Favorites',
       subtitle: 'Your favorite restaurants',
       action: () => toast.info('Favorites coming soon!'),
       color: 'error'
     },
     {
-      icon: <BellIcon className="h-5 w-5" />,
+      icon: <BellIcon style={{ width: '20px', height: '20px' }} />,
       title: 'Notifications',
       subtitle: 'Manage notifications',
       action: () => toast.info('Notification settings coming soon!'),
       color: 'warning'
     },
     {
-      icon: <GiftIcon className="h-5 w-5" />,
+      icon: <GiftIcon style={{ width: '20px', height: '20px' }} />,
       title: 'Offers & Coupons',
       subtitle: 'View available offers',
       action: () => toast.info('Offers coming soon!'),
@@ -152,7 +152,7 @@ const ProfilePage = () => {
                       {user?.phone}
                     </Typography>
                     <Chip
-                      icon={<ShieldCheckIcon className="h-3 w-3" />}
+                      icon={<ShieldCheckIcon style={{ width: '12px', height: '12px' }} />}
                       label={user?.role?.charAt(0).toUpperCase() + user?.role?.slice(1)}
                       color="primary"
                       variant="outlined"
@@ -162,7 +162,7 @@ const ProfilePage = () => {
                   <Button
                     variant="outlined"
                     size="small"
-                    startIcon={<UserIcon className="h-4 w-4" />}
+                    startIcon={<UserIcon style={{ width: '16px', height: '16px' }} />}
                     onClick={handleEditProfile}
                   >
                     Edit Profile
@@ -237,7 +237,7 @@ const ProfilePage = () => {
                           secondary={item.subtitle}
                           primaryTypographyProps={{ fontWeight: 500 }}
                         />
-                        <ArrowRightIcon className="h-4 w-4 text-gray-400" />
+                        <ArrowRightIcon style={{ width: '16px', height: '16px', color: '#9ca3af' }} />
                       </ListItemButton>
                       {index < menuItems.length - 1 && <Divider sx={{ my: 1 }} />}
                     </React.Fragment>
@@ -259,7 +259,7 @@ const ProfilePage = () => {
                     variant="contained"
                     fullWidth
                     onClick={() => navigate('/order-history')}
-                    startIcon={<ClockIcon className="h-4 w-4" />}
+                    startIcon={<ClockIcon style={{ width: '16px', height: '16px' }} />}
                   >
                     View Orders
                   </Button>
@@ -267,7 +267,7 @@ const ProfilePage = () => {
                     variant="outlined"
                     fullWidth
                     onClick={() => navigate('/')}
-                    startIcon={<HeartIcon className="h-4 w-4" />}
+                    startIcon={<HeartIcon style={{ width: '16px', height: '16px' }} />}
                   >
                     Browse Restaurants
                   </Button>
@@ -275,7 +275,7 @@ const ProfilePage = () => {
                     variant="outlined"
                     fullWidth
                     onClick={() => toast.info('Support coming soon!')}
-                    startIcon={<BellIcon className="h-4 w-4" />}
+                    startIcon={<BellIcon style={{ width: '16px', height: '16px' }} />}
                   >
                     Contact Support
                   </Button>

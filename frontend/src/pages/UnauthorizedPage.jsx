@@ -25,7 +25,7 @@ const UnauthorizedPage = () => {
         <Paper elevation={3} sx={{ p: 6, textAlign: 'center' }}>
           <Box sx={{ mb: 4 }}>
             <ExclamationTriangleIcon 
-              className="h-16 w-16 mx-auto text-orange-500 mb-4" 
+              style={{ width: '64px', height: '64px', color: '#f97316', margin: '0 auto 16px', display: 'block' }}
             />
             <Typography variant="h3" sx={{ fontWeight: 600, mb: 2 }}>
               403
@@ -43,14 +43,14 @@ const UnauthorizedPage = () => {
               component={Link}
               to="/"
               variant="contained"
-              startIcon={<HomeIcon className="h-4 w-4" />}
+              startIcon={<HomeIcon style={{ width: '16px', height: '16px' }} />}
             >
               Go Home
             </Button>
             <Button
               onClick={() => window.history.back()}
               variant="outlined"
-              startIcon={<ArrowLeftIcon className="h-4 w-4" />}
+              startIcon={<ArrowLeftIcon style={{ width: '16px', height: '16px' }} />}
             >
               Go Back
             </Button>

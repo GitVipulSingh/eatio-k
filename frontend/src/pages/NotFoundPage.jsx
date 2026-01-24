@@ -23,7 +23,7 @@ const NotFoundPage = () => {
         to="/"
         variant="contained"
         size="large"
-        startIcon={<HomeIcon className="h-5 w-5" />}
+        startIcon={<HomeIcon style={{ width: '20px', height: '20px' }} />}
         sx={{ 
           px: 4,
           py: 1.5,
