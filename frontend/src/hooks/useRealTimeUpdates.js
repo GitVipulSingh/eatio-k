@@ -23,11 +23,12 @@ export const useRealTimeUpdates = (options = {}) => {
     // Order status updates for customers
     if (enableOrderUpdates && userId) {
       const handleOrderStatusUpdate = (data) => {
-        console.log('📦 Order status updated:', data)
+        console.log('� Order status updated:', data)
         
         // Invalidate order-related queries
         queryClient.invalidateQueries({ queryKey: ['orders'] })
         queryClient.invalidateQueries({ queryKey: ['order', data.orderId] })
+        queryClient.invalidateQueries({ queryKey: ['order-history'] })
         
         // Show toast notification
         toast.success(`Order status updated to ${data.newStatus}`)
@@ -44,7 +45,7 @@ export const useRealTimeUpdates = (options = {}) => {
     if (enableOrderUpdates && restaurantId) {
       const handleNewOrder = (data) => {
         if (data.restaurantId === restaurantId) {
-          console.log('🛒 New order received:', data)
+          console.log('� New order received:', data)
           
           // Invalidate restaurant orders and stats
           queryClient.invalidateQueries({ queryKey: ['restaurant-orders'] })
@@ -57,7 +58,7 @@ export const useRealTimeUpdates = (options = {}) => {
 
       const handleOrderStatusChange = (data) => {
         if (data.restaurantId === restaurantId) {
-          console.log('📦 Order status changed:', data)
+          console.log('� Order status changed:', data)
           
           // Invalidate restaurant orders
           queryClient.invalidateQueries({ queryKey: ['restaurant-orders'] })
@@ -69,11 +70,11 @@ export const useRealTimeUpdates = (options = {}) => {
         }
       }
 
-      socket.on('new_order_for_admin', handleNewOrder)
+      socket.on('new_order', handleNewOrder)
       socket.on('order_status_changed', handleOrderStatusChange)
       
       return () => {
-        socket.off('new_order_for_admin', handleNewOrder)
+        socket.off('new_order', handleNewOrder)
         socket.off('order_status_changed', handleOrderStatusChange)
       }
     }
@@ -87,8 +88,6 @@ export const useRealTimeUpdates = (options = {}) => {
         queryClient.invalidateQueries({ queryKey: ['pending-restaurants'] })
         queryClient.invalidateQueries({ queryKey: ['all-restaurants'] })
         queryClient.invalidateQueries({ queryKey: ['system-stats'] })
-        
-        // Toast is already handled in SocketContext
       }
 
       socket.on('restaurant_status_updated', handleRestaurantStatusUpdate)
@@ -101,18 +100,12 @@ export const useRealTimeUpdates = (options = {}) => {
     // System stats updates for super admin
     if (enableSystemStatsUpdates) {
       const handleSystemStatsUpdate = (data) => {
-        console.log('📊 System stats updated:', data)
+        console.log('📊 System stats update:', data)
         
         // Invalidate system stats queries
         queryClient.invalidateQueries({ queryKey: ['system-stats'] })
+        queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] })
         queryClient.invalidateQueries({ queryKey: ['all-orders'] })
-        
-        // Show toast for important updates
-        if (data.type === 'new_order') {
-          // Don't show toast for every new order in super admin
-        } else if (data.type === 'order_delivered') {
-          // Could show a subtle notification for delivered orders
-        }
       }
 
       socket.on('system_stats_update', handleSystemStatsUpdate)
@@ -122,17 +115,16 @@ export const useRealTimeUpdates = (options = {}) => {
       }
     }
 
-    // Rating updates for restaurant detail pages
+    // Rating updates
     if (enableRatingUpdates) {
       const handleRatingUpdate = (data) => {
         console.log('⭐ Rating updated:', data)
         
-        // Invalidate restaurant and review queries
-        queryClient.invalidateQueries({ queryKey: ['restaurant', data.restaurantId] })
+        // Invalidate restaurant and rating queries
         queryClient.invalidateQueries({ queryKey: ['restaurants'] })
+        queryClient.invalidateQueries({ queryKey: ['restaurant', data.restaurantId] })
+        queryClient.invalidateQueries({ queryKey: ['reviews'] })
         queryClient.invalidateQueries({ queryKey: ['reviews', data.restaurantId] })
-        
-        // Toast is already handled in SocketContext
       }
 
       socket.on('restaurant_rating_updated', handleRatingUpdate)
@@ -145,7 +137,7 @@ export const useRealTimeUpdates = (options = {}) => {
     // User updates for super admin
     if (enableUserUpdates) {
       const handleUserRegistration = (data) => {
-        console.log('👤 New user registered:', data)
+        console.log('� New user registered:', data)
         
         // Invalidate user-related queries
         queryClient.invalidateQueries({ queryKey: ['allUsers'] })
@@ -174,7 +166,7 @@ export const useRealTimeUpdates = (options = {}) => {
       }
     }
 
-  }, [socket, queryClient, enableOrderUpdates, enableRestaurantUpdates, enableSystemStatsUpdates, enableRatingUpdates, enableUserUpdates, restaurantId, userId])
+  }, [socket, enableOrderUpdates, enableRestaurantUpdates, enableSystemStatsUpdates, enableRatingUpdates, enableUserUpdates, restaurantId, userId, queryClient])
 }
 
 // Specific hooks for different dashboard types

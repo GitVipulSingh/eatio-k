@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { motion } from 'framer-motion'
 import {
@@ -43,6 +43,9 @@ import {
 
 import { useMyRestaurant, useRestaurantOrders } from '../api/queries'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
+// Socket.IO imports
+import { useSocket } from '../../contexts/SocketContext'
+import { useRealTimeUpdates } from '../../hooks/useRealTimeUpdates'
 
 const RestaurantDashboard = () => {
     const { user } = useSelector(state => state.auth)
@@ -52,6 +55,30 @@ const RestaurantDashboard = () => {
 
     const { data: restaurant, isLoading: restaurantLoading } = useMyRestaurant()
     const { data: orders, isLoading: ordersLoading } = useRestaurantOrders()
+    const { joinRestaurantRoom, leaveRestaurantRoom } = useSocket()
+
+    // Get restaurant ID from user data
+    const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}')
+    const currentUser = userInfo.user || {}
+    const restaurantId = currentUser.restaurant
+
+    // Enable real-time updates for restaurant orders
+    useRealTimeUpdates({
+        enableOrderUpdates: true,
+        restaurantId: restaurantId
+    })
+
+    // Join restaurant room for real-time updates
+    useEffect(() => {
+        if (restaurantId) {
+            joinRestaurantRoom(restaurantId)
+
+            // Cleanup: leave room when component unmounts
+            return () => {
+                leaveRestaurantRoom(restaurantId)
+            }
+        }
+    }, [restaurantId, joinRestaurantRoom, leaveRestaurantRoom])
 
     if (restaurantLoading) {
         return <LoadingSpinner message="Loading restaurant dashboard..." fullScreen />

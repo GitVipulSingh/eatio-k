@@ -44,7 +44,7 @@ export const SocketProvider = ({ children }) => {
       return
     }
 
-    if (DEBUG_MODE) console.log('🔌 Connecting to socket:', SOCKET_URL)
+    console.log('🔌 [SOCKET] Connecting to:', SOCKET_URL)
 
     // Initialize socket connection
     const socketInstance = io(SOCKET_URL, {
@@ -56,17 +56,17 @@ export const SocketProvider = ({ children }) => {
     })
 
     socketInstance.on('connect', () => {
-      console.log('✅ Connected to server via WebSocket')
+      console.log('✅ [SOCKET] Connected to server via WebSocket, ID:', socketInstance.id)
       setIsConnected(true)
     })
 
-    socketInstance.on('disconnect', () => {
-      console.log('❌ Disconnected from server')
+    socketInstance.on('disconnect', (reason) => {
+      console.log('❌ [SOCKET] Disconnected from server, reason:', reason)
       setIsConnected(false)
     })
 
     socketInstance.on('connect_error', (error) => {
-      console.error('❌ Socket connection error:', error)
+      console.error('❌ [SOCKET] Connection error:', error)
       setIsConnected(false)
       // Don't show error toast for connection issues during registration/auth flows
       if (!window.location.pathname.includes('/auth/')) {
@@ -76,12 +76,12 @@ export const SocketProvider = ({ children }) => {
 
     // Global event listeners for system-wide updates
     socketInstance.on('restaurant_rating_updated', (data) => {
-      console.log('⭐ Restaurant rating updated:', data)
+      console.log('⭐ [SOCKET] Restaurant rating updated:', data)
       toast.success(`${data.restaurantName} rating updated to ${data.newRating.toFixed(1)}⭐`)
     })
 
     socketInstance.on('restaurant_status_updated', (data) => {
-      console.log('🏪 Restaurant status updated:', data)
+      console.log('🏪 [SOCKET] Restaurant status updated:', data)
       if (data.newStatus === 'approved') {
         toast.success(`${data.restaurantName} has been approved!`)
       } else if (data.newStatus === 'rejected') {
@@ -89,24 +89,30 @@ export const SocketProvider = ({ children }) => {
       }
     })
 
-    socketInstance.on('new_order_for_admin', (data) => {
-      console.log('🛒 New order for admin:', data)
+    socketInstance.on('new_order', (data) => {
+      console.log('🛒 [SOCKET] New order for admin:', data)
       // This will be handled by specific dashboard components
     })
 
     socketInstance.on('order_status_changed', (data) => {
-      console.log('📦 Order status changed:', data)
+      console.log('📦 [SOCKET] Order status changed:', data)
+      // This will be handled by specific dashboard components
+    })
+
+    socketInstance.on('order_status_updated', (data) => {
+      console.log('📦 [SOCKET] Order status updated for customer:', data)
       // This will be handled by specific dashboard components
     })
 
     socketInstance.on('system_stats_update', (data) => {
-      console.log('📊 System stats update:', data)
+      console.log('📊 [SOCKET] System stats update:', data)
       // This will be handled by Super Admin dashboard
     })
 
     setSocket(socketInstance)
 
     return () => {
+      console.log('🔌 [SOCKET] Disconnecting socket')
       socketInstance.disconnect()
     }
   }, [shouldConnect])
@@ -125,11 +131,28 @@ export const SocketProvider = ({ children }) => {
     }
   }
 
+  const joinRestaurantRoom = (restaurantId) => {
+    if (socket && isConnected && shouldConnect) {
+      socket.emit('join_restaurant_room', restaurantId)
+      console.log(`🏪 Joined restaurant room: ${restaurantId}`)
+    }
+  }
+
+  const leaveRestaurantRoom = (restaurantId) => {
+    if (socket && isConnected && shouldConnect) {
+      socket.emit('leave_restaurant_room', restaurantId)
+      console.log(`🏪 Left restaurant room: ${restaurantId}`)
+    }
+  }
+
   const value = {
     socket,
     isConnected,
+    shouldConnect,
     joinOrderRoom,
-    leaveOrderRoom
+    leaveOrderRoom,
+    joinRestaurantRoom,
+    leaveRestaurantRoom
   }
 
   return (

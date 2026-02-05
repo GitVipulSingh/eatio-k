@@ -226,11 +226,13 @@ const updateOrderStatus = async (req, res) => {
         oldStatus,
         newStatus: status,
         order: updatedOrder,
+        customerName: updatedOrder.user.name,
+        restaurantName: updatedOrder.restaurant.name,
         timestamp: new Date()
       });
       
       // Emit to restaurant admin dashboard
-      io.emit('order_status_changed', {
+      io.to(`restaurant_${updatedOrder.restaurant._id}`).emit('order_status_changed', {
         orderId: updatedOrder._id,
         restaurantId: updatedOrder.restaurant._id,
         oldStatus,

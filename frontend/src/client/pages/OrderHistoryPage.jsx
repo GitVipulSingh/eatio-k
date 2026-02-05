@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
@@ -40,6 +40,9 @@ import { useOrderHistory } from '../api/queries'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
 // NEW ADDITIVE IMPORT - RATING SYSTEM
 import RateOrderButton from '../components/rating/RateOrderButton'
+// Socket.IO imports
+import { useSocket } from '../../contexts/SocketContext'
+import { useRealTimeUpdates } from '../../hooks/useRealTimeUpdates'
 
 const OrderHistoryPage = () => {
   const navigate = useNavigate()
@@ -47,6 +50,38 @@ const OrderHistoryPage = () => {
   const [trackingDialogOpen, setTrackingDialogOpen] = useState(false)
 
   const { data: orders, isLoading, error } = useOrderHistory()
+  const { joinOrderRoom, leaveOrderRoom } = useSocket()
+
+  // Get current user ID from localStorage or auth context
+  const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}')
+  const currentUser = userInfo.user || {}
+  
+  // Enable real-time updates for order status changes
+  useRealTimeUpdates({
+    enableOrderUpdates: true,
+    userId: currentUser._id
+  })
+
+  // Join order rooms for real-time tracking
+  useEffect(() => {
+    if (orders && orders.length > 0) {
+      // Join rooms for active orders (not delivered or cancelled)
+      const activeOrders = orders.filter(order => 
+        !['Delivered', 'Cancelled'].includes(order.status)
+      )
+      
+      activeOrders.forEach(order => {
+        joinOrderRoom(order._id)
+      })
+
+      // Cleanup: leave rooms when component unmounts
+      return () => {
+        activeOrders.forEach(order => {
+          leaveOrderRoom(order._id)
+        })
+      }
+    }
+  }, [orders, joinOrderRoom, leaveOrderRoom])
 
   const getStatusColor = (status) => {
     const colors = {
@@ -308,9 +343,7 @@ const OrderHistoryPage = () => {
           }}
         >
           <DialogTitle sx={{ pb: 1 }}>
-            <Typography variant="h6" sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}>
-              Track Order #{selectedOrder?._id.slice(-8).toUpperCase()}
-            </Typography>
+            Track Order #{selectedOrder?._id.slice(-8).toUpperCase()}
           </DialogTitle>
           <DialogContent sx={{ px: { xs: 2, sm: 3 } }}>
             {selectedOrder && (

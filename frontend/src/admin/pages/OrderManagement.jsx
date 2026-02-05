@@ -46,13 +46,15 @@ import {
   ArrowPathIcon,
 } from '@heroicons/react/24/outline'
 import { toast } from 'react-hot-toast'
-import { io } from 'socket.io-client'
 
 import { 
   useRestaurantOrders, 
   useUpdateOrderStatus 
 } from '../../client/api/queries'
 import LoadingSpinner from '../../common/components/LoadingSpinner'
+// Socket.IO imports
+import { useSocket } from '../../contexts/SocketContext'
+import { useRealTimeUpdates } from '../../hooks/useRealTimeUpdates'
 
 const OrderManagement = () => {
   console.log('🚀 [ORDER_MGMT] Component initializing...')
@@ -62,7 +64,6 @@ const OrderManagement = () => {
   const [selectedOrder, setSelectedOrder] = useState(null)
   const [detailsDialogOpen, setDetailsDialogOpen] = useState(false)
   const [statusFilter, setStatusFilter] = useState('all')
-  const [socket, setSocket] = useState(null)
   const [newOrdersCount, setNewOrdersCount] = useState(0)
   const [activeTab, setActiveTab] = useState(0)
   
@@ -76,12 +77,30 @@ const OrderManagement = () => {
 
   const { data: orders, isLoading, refetch, error } = useRestaurantOrders()
   const updateOrderStatusMutation = useUpdateOrderStatus()
+  const { joinRestaurantRoom, leaveRestaurantRoom } = useSocket()
 
-  // Force refresh on component mount
+  // Get current restaurant ID from localStorage or auth context
+  const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}')
+  const currentUser = userInfo.user || {}
+  const restaurantId = currentUser.restaurant
+
+  // Enable real-time updates for restaurant orders
+  useRealTimeUpdates({
+    enableOrderUpdates: true,
+    restaurantId: restaurantId
+  })
+
+  // Join restaurant room for real-time updates
   useEffect(() => {
-    console.log('🔄 [ORDER_MGMT] Component mounted, forcing data refresh')
-    refetch()
-  }, [])
+    if (restaurantId) {
+      joinRestaurantRoom(restaurantId)
+
+      // Cleanup: leave room when component unmounts
+      return () => {
+        leaveRestaurantRoom(restaurantId)
+      }
+    }
+  }, [restaurantId, joinRestaurantRoom, leaveRestaurantRoom])
 
   // Handle URL parameters for filtering
   useEffect(() => {
@@ -137,31 +156,6 @@ const OrderManagement = () => {
     { value: 'Delivered', label: 'Delivered', color: 'success', icon: CheckCircleIcon },
     { value: 'Cancelled', label: 'Cancelled', color: 'error', icon: XCircleIcon },
   ]
-
-  // Socket.IO setup for real-time updates
-  useEffect(() => {
-    const socketUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'
-    console.log('🔌 [SOCKET] Connecting to:', socketUrl)
-    const newSocket = io(socketUrl)
-    setSocket(newSocket)
-
-    // Listen for new orders
-    newSocket.on('new_order', (order) => {
-      toast.success(`New order received! Order #${order._id.slice(-8)}`)
-      setNewOrdersCount(prev => prev + 1)
-      refetch()
-    })
-
-    // Listen for order status updates
-    newSocket.on('order_status_updated', (updatedOrder) => {
-      toast.info(`Order #${updatedOrder._id.slice(-8)} status updated`)
-      refetch()
-    })
-
-    return () => {
-      newSocket.close()
-    }
-  }, [refetch])
 
   // Show confirmation dialog before status update
   const handleStatusUpdateRequest = (orderId, newStatus, currentStatus) => {
@@ -229,11 +223,6 @@ const OrderManagement = () => {
           return prev - 1
         })
       }, 1000)
-      
-      // Emit socket event for real-time updates
-      if (socket) {
-        socket.emit('order_status_update', { orderId, status: newStatus })
-      }
       
       toast.success(
         <Box>

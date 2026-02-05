@@ -160,6 +160,22 @@ io.on("connection", (socket) => {
 
   socket.on("join_order_room", (orderId) => {
     socket.join(orderId);
+    console.log(`🏠 Socket ${socket.id} joined order room: ${orderId}`);
+  });
+
+  socket.on("leave_order_room", (orderId) => {
+    socket.leave(orderId);
+    console.log(`🚪 Socket ${socket.id} left order room: ${orderId}`);
+  });
+
+  socket.on("join_restaurant_room", (restaurantId) => {
+    socket.join(`restaurant_${restaurantId}`);
+    console.log(`🏪 Socket ${socket.id} joined restaurant room: ${restaurantId}`);
+  });
+
+  socket.on("leave_restaurant_room", (restaurantId) => {
+    socket.leave(`restaurant_${restaurantId}`);
+    console.log(`🏪 Socket ${socket.id} left restaurant room: ${restaurantId}`);
   });
 
   socket.on("disconnect", () => {

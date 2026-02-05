@@ -50,7 +50,8 @@ const createOrder = async (req, res) => {
     // Emit real-time update for restaurant admin dashboard
     const io = req.app.get('socketio');
     if (io) {
-      io.emit('new_order_for_admin', {
+      // Emit to specific restaurant room for targeted updates
+      io.to(`restaurant_${populatedOrder.restaurant._id}`).emit('new_order', {
         orderId: populatedOrder._id,
         restaurantId: populatedOrder.restaurant._id,
         restaurantName: populatedOrder.restaurant.name,
@@ -70,7 +71,7 @@ const createOrder = async (req, res) => {
         timestamp: new Date()
       });
       
-      console.log(`📡 [CREATE_ORDER] Socket events emitted for new order`);
+      console.log(`📡 [CREATE_ORDER] Socket events emitted for new order to restaurant_${populatedOrder.restaurant._id}`);
     }
     
     res.status(201).json(createdOrder);
